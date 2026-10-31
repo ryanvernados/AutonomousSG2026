@@ -1,0 +1,3026 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Airport disruption simulator",
+    "description": "Member 1 v1 platform. All numerical defaults are synthetic simulation rules.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scenarios": {
+      "get": {
+        "summary": "Scenarios",
+        "operationId": "scenarios_api_v1_scenarios_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Scenario"
+                  },
+                  "type": "array",
+                  "title": "Response Scenarios Api V1 Scenarios Get"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions": {
+      "post": {
+        "summary": "Create Session",
+        "operationId": "create_session_api_v1_sessions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSession"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/snapshot": {
+      "get": {
+        "summary": "Snapshot",
+        "operationId": "snapshot_api_v1_sessions__session_id__snapshot_get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SnapshotResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/clock": {
+      "post": {
+        "summary": "Clock Command",
+        "operationId": "clock_command_api_v1_sessions__session_id__clock_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClockCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/instructions/preview": {
+      "post": {
+        "summary": "Preview",
+        "operationId": "preview_api_v1_sessions__session_id__instructions_preview_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Instruction"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreviewResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/instructions": {
+      "post": {
+        "summary": "Instruction",
+        "operationId": "instruction_api_v1_sessions__session_id__instructions_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstructionCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/control": {
+      "post": {
+        "summary": "Control",
+        "operationId": "control_api_v1_sessions__session_id__control_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/negotiations": {
+      "post": {
+        "summary": "Negotiate",
+        "operationId": "negotiate_api_v1_sessions__session_id__negotiations_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NegotiationCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/negotiations/{nid}": {
+      "get": {
+        "summary": "Negotiation",
+        "operationId": "negotiation_api_v1_sessions__session_id__negotiations__nid__get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "nid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Nid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NegotiationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/proposals/{pid}/decision": {
+      "post": {
+        "summary": "Decision",
+        "operationId": "decision_api_v1_sessions__session_id__proposals__pid__decision_post",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "pid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommandResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/baseline": {
+      "get": {
+        "summary": "Baseline",
+        "operationId": "baseline_api_v1_sessions__session_id__baseline_get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/events/export": {
+      "get": {
+        "summary": "Export",
+        "operationId": "export_api_v1_sessions__session_id__events_export_get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/events": {
+      "get": {
+        "summary": "Events",
+        "operationId": "events_api_v1_sessions__session_id__events_get",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "after_seq",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "After Seq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentMessage": {
+        "properties": {
+          "message_id": {
+            "type": "string",
+            "title": "Message Id"
+          },
+          "negotiation_id": {
+            "type": "string",
+            "title": "Negotiation Id"
+          },
+          "round": {
+            "type": "integer",
+            "maximum": 2.0,
+            "minimum": 1.0,
+            "title": "Round"
+          },
+          "sender_id": {
+            "type": "string",
+            "title": "Sender Id"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ATC",
+              "PILOT",
+              "GROUND"
+            ],
+            "title": "Role"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "OFFER",
+              "ACCEPT",
+              "REJECT"
+            ],
+            "title": "Type"
+          },
+          "base_state_version": {
+            "type": "integer",
+            "title": "Base State Version"
+          },
+          "instruction_version": {
+            "type": "integer",
+            "title": "Instruction Version"
+          },
+          "proposal_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proposal Id"
+          },
+          "plan_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plan Hash"
+          },
+          "payload": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Payload"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "negotiation_id",
+          "round",
+          "sender_id",
+          "role",
+          "type",
+          "base_state_version",
+          "instruction_version",
+          "proposal_id",
+          "plan_hash",
+          "payload",
+          "reasons"
+        ],
+        "title": "AgentMessage"
+      },
+      "Assignment": {
+        "properties": {
+          "flight_id": {
+            "type": "string",
+            "title": "Flight Id"
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "ARRIVAL",
+              "DEPARTURE"
+            ],
+            "title": "Operation"
+          },
+          "runway_id": {
+            "type": "string",
+            "title": "Runway Id"
+          },
+          "runway_time_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Runway Time Utc"
+          },
+          "taxi_path_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Taxi Path Ids"
+          },
+          "taxi_start_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Taxi Start Utc"
+          },
+          "taxi_end_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Taxi End Utc"
+          },
+          "gate_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gate Id"
+          },
+          "gate_start_utc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gate Start Utc"
+          },
+          "gate_end_utc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gate End Utc"
+          },
+          "crew_reservations": {
+            "items": {
+              "$ref": "#/components/schemas/Interval"
+            },
+            "type": "array",
+            "title": "Crew Reservations"
+          },
+          "equipment_reservations": {
+            "items": {
+              "$ref": "#/components/schemas/Interval"
+            },
+            "type": "array",
+            "title": "Equipment Reservations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "flight_id",
+          "operation",
+          "runway_id",
+          "runway_time_utc",
+          "taxi_path_ids",
+          "taxi_start_utc",
+          "taxi_end_utc",
+          "crew_reservations",
+          "equipment_reservations"
+        ],
+        "title": "Assignment"
+      },
+      "Assumption": {
+        "properties": {
+          "value": {
+            "title": "Value"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "HISTORICAL",
+              "SOURCED",
+              "SYNTHETIC"
+            ],
+            "title": "Source Type"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "source_type",
+          "unit"
+        ],
+        "title": "Assumption"
+      },
+      "CheckResult": {
+        "properties": {
+          "constraint_id": {
+            "type": "string",
+            "title": "Constraint Id"
+          },
+          "domain": {
+            "type": "string",
+            "title": "Domain"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "HARD",
+              "SOFT"
+            ],
+            "title": "Severity",
+            "default": "HARD"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "FAIL",
+              "UNKNOWN"
+            ],
+            "title": "Status"
+          },
+          "affected_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Affected Ids"
+          },
+          "measured_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measured Value"
+          },
+          "limit_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "constraint_id",
+          "domain",
+          "status",
+          "affected_ids",
+          "explanation"
+        ],
+        "title": "CheckResult"
+      },
+      "ClockCommand": {
+        "properties": {
+          "command_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Command Id"
+          },
+          "base_state_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Base State Version"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "PAUSE",
+              "RESUME",
+              "STEP",
+              "RESET"
+            ],
+            "title": "Action"
+          },
+          "seconds": {
+            "type": "integer",
+            "maximum": 7200.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Seconds",
+            "default": 60
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "command_id",
+          "base_state_version",
+          "action"
+        ],
+        "title": "ClockCommand"
+      },
+      "CommandResult": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "state_version": {
+            "type": "integer",
+            "title": "State Version"
+          },
+          "event_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Event Ids"
+          },
+          "snapshot": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Snapshot"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "negotiation_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Negotiation Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "session_id",
+          "state_version",
+          "event_ids"
+        ],
+        "title": "CommandResult"
+      },
+      "ControlCommand": {
+        "properties": {
+          "command_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Command Id"
+          },
+          "base_state_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Base State Version"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "ASSISTED"
+            ],
+            "title": "Mode"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "command_id",
+          "base_state_version",
+          "mode"
+        ],
+        "title": "ControlCommand"
+      },
+      "CreateSession": {
+        "properties": {
+          "command_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Command Id"
+          },
+          "base_state_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Base State Version"
+          },
+          "scenario_id": {
+            "type": "string",
+            "title": "Scenario Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "command_id",
+          "base_state_version",
+          "scenario_id"
+        ],
+        "title": "CreateSession"
+      },
+      "DecisionCommand": {
+        "properties": {
+          "command_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Command Id"
+          },
+          "base_state_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Base State Version"
+          },
+          "plan_hash": {
+            "type": "string",
+            "title": "Plan Hash"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "APPROVE",
+              "REJECT"
+            ],
+            "title": "Decision"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "command_id",
+          "base_state_version",
+          "plan_hash",
+          "decision"
+        ],
+        "title": "DecisionCommand"
+      },
+      "ErrorBody": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Details"
+          },
+          "current_state_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current State Version"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorBody"
+      },
+      "Flight": {
+        "properties": {
+          "flight_id": {
+            "type": "string",
+            "title": "Flight Id"
+          },
+          "source_row_id": {
+            "type": "string",
+            "title": "Source Row Id"
+          },
+          "airline": {
+            "type": "string",
+            "title": "Airline"
+          },
+          "flight_number": {
+            "type": "string",
+            "title": "Flight Number"
+          },
+          "tail_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tail Number"
+          },
+          "origin": {
+            "type": "string",
+            "title": "Origin"
+          },
+          "destination": {
+            "type": "string",
+            "title": "Destination"
+          },
+          "scheduled_gate_departure_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Scheduled Gate Departure Utc"
+          },
+          "scheduled_gate_arrival_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Scheduled Gate Arrival Utc"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "SCHEDULED",
+              "HOLDING",
+              "TAXIING",
+              "AT_GATE",
+              "TURNAROUND",
+              "DEPARTED",
+              "COMPLETED"
+            ],
+            "title": "State"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Assignment"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assumptions": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Assumption"
+            },
+            "type": "object",
+            "title": "Assumptions"
+          },
+          "actual_gate_departure_utc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Gate Departure Utc"
+          },
+          "actual_gate_arrival_utc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actual Gate Arrival Utc"
+          },
+          "wheels_on_utc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wheels On Utc"
+          },
+          "wheels_off_utc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wheels Off Utc"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "flight_id",
+          "source_row_id",
+          "airline",
+          "flight_number",
+          "tail_number",
+          "origin",
+          "destination",
+          "scheduled_gate_departure_utc",
+          "scheduled_gate_arrival_utc",
+          "state",
+          "plan",
+          "assumptions"
+        ],
+        "title": "Flight"
+      },
+      "Impact": {
+        "properties": {
+          "per_flight": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Per Flight"
+          },
+          "aggregate": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Aggregate"
+          },
+          "versus_baseline": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Versus Baseline"
+          },
+          "objective_weights": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Objective Weights"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score",
+            "default": 0
+          },
+          "unresolved_flight_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unresolved Flight Ids"
+          },
+          "unfinished_flight_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unfinished Flight Ids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Impact"
+      },
+      "Infrastructure": {
+        "properties": {
+          "resources": {
+            "items": {
+              "$ref": "#/components/schemas/Resource"
+            },
+            "type": "array",
+            "title": "Resources"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "SOURCED",
+              "SYNTHETIC"
+            ],
+            "title": "Source Type"
+          },
+          "effective_date": {
+            "type": "string",
+            "title": "Effective Date"
+          },
+          "coverage_limits": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Coverage Limits"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "resources",
+          "source_type",
+          "effective_date",
+          "coverage_limits"
+        ],
+        "title": "Infrastructure"
+      },
+      "Instruction": {
+        "properties": {
+          "instruction_id": {
+            "type": "string",
+            "title": "Instruction Id"
+          },
+          "instruction_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Instruction Version",
+            "default": 0
+          },
+          "scenario_id": {
+            "type": "string",
+            "title": "Scenario Id"
+          },
+          "base_state_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Base State Version"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "RUNWAY_UNAVAILABLE",
+              "TAXIWAY_BLOCKED",
+              "EQUIPMENT_FAILURE",
+              "PROTECTED_SLOT"
+            ],
+            "title": "Kind"
+          },
+          "resource_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resource Id"
+          },
+          "starts_at_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Starts At Utc"
+          },
+          "ends_at_utc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At Utc"
+          },
+          "flight_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flight Id"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Parameters"
+          },
+          "entered_by": {
+            "type": "string",
+            "title": "Entered By",
+            "default": ""
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario_id",
+          "base_state_version",
+          "kind",
+          "resource_id",
+          "starts_at_utc",
+          "ends_at_utc"
+        ],
+        "title": "Instruction"
+      },
+      "InstructionCommand": {
+        "properties": {
+          "command_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Command Id"
+          },
+          "base_state_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Base State Version"
+          },
+          "instruction": {
+            "$ref": "#/components/schemas/Instruction"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "command_id",
+          "base_state_version",
+          "instruction"
+        ],
+        "title": "InstructionCommand"
+      },
+      "Interval": {
+        "properties": {
+          "resource_id": {
+            "type": "string",
+            "title": "Resource Id"
+          },
+          "starts_at_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Starts At Utc"
+          },
+          "ends_at_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Ends At Utc"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Quantity",
+            "default": 1
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "resource_id",
+          "starts_at_utc",
+          "ends_at_utc"
+        ],
+        "title": "Interval"
+      },
+      "NegotiationCommand": {
+        "properties": {
+          "command_id": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Command Id"
+          },
+          "base_state_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Base State Version"
+          },
+          "affected_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Affected Ids"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "command_id",
+          "base_state_version"
+        ],
+        "title": "NegotiationCommand"
+      },
+      "NegotiationRecord": {
+        "properties": {
+          "negotiation_id": {
+            "type": "string",
+            "title": "Negotiation Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PROPOSED",
+              "CONSENSUS_REACHED",
+              "AWAITING_AUTHORIZATION",
+              "AUTHORIZED",
+              "REJECTED",
+              "STALE",
+              "EXPIRED",
+              "NO_FEASIBLE_PLAN_FOUND",
+              "RUNNING",
+              "CANCELLED"
+            ],
+            "title": "Status",
+            "default": "RUNNING"
+          },
+          "model_mode": {
+            "type": "string",
+            "enum": [
+              "MOCK",
+              "LIVE",
+              "UNAVAILABLE"
+            ],
+            "title": "Model Mode",
+            "default": "UNAVAILABLE"
+          },
+          "affected_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Affected Ids"
+          },
+          "round": {
+            "type": "integer",
+            "title": "Round",
+            "default": 0
+          },
+          "model_calls": {
+            "type": "integer",
+            "title": "Model Calls",
+            "default": 0
+          },
+          "duration_seconds": {
+            "type": "number",
+            "title": "Duration Seconds",
+            "default": 0
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/AgentMessage"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "proposal_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proposal Id"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "search_metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Search Metadata"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "affected_ids"
+        ],
+        "title": "NegotiationRecord"
+      },
+      "NegotiationResponse": {
+        "properties": {
+          "negotiation": {
+            "$ref": "#/components/schemas/NegotiationRecord"
+          },
+          "proposal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProposalRecord"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "negotiation",
+          "proposal"
+        ],
+        "title": "NegotiationResponse"
+      },
+      "Plan": {
+        "properties": {
+          "proposal_id": {
+            "type": "string",
+            "title": "Proposal Id"
+          },
+          "proposal_version": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Proposal Version",
+            "default": 1
+          },
+          "scenario_id": {
+            "type": "string",
+            "title": "Scenario Id"
+          },
+          "base_state_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Base State Version"
+          },
+          "instruction_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Instruction Version"
+          },
+          "plan_hash": {
+            "type": "string",
+            "title": "Plan Hash",
+            "default": ""
+          },
+          "assignments": {
+            "items": {
+              "$ref": "#/components/schemas/Assignment"
+            },
+            "type": "array",
+            "title": "Assignments"
+          },
+          "impact": {
+            "$ref": "#/components/schemas/Impact"
+          },
+          "expires_at_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expires At Utc"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "CONSENSUS",
+              "FALLBACK",
+              "BASELINE",
+              "MANUAL"
+            ],
+            "title": "Source",
+            "default": "FALLBACK"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario_id",
+          "base_state_version",
+          "instruction_version",
+          "assignments",
+          "expires_at_utc"
+        ],
+        "title": "Plan"
+      },
+      "PreviewResponse": {
+        "properties": {
+          "instruction": {
+            "$ref": "#/components/schemas/Instruction"
+          },
+          "issues": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Issues"
+          },
+          "state_version": {
+            "type": "integer",
+            "title": "State Version"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "instruction",
+          "issues",
+          "state_version"
+        ],
+        "title": "PreviewResponse"
+      },
+      "ProposalRecord": {
+        "properties": {
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PROPOSED",
+              "CONSENSUS_REACHED",
+              "AWAITING_AUTHORIZATION",
+              "AUTHORIZED",
+              "REJECTED",
+              "STALE",
+              "EXPIRED",
+              "NO_FEASIBLE_PLAN_FOUND",
+              "RUNNING",
+              "CANCELLED"
+            ],
+            "title": "Status",
+            "default": "AWAITING_AUTHORIZATION"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/CheckResult"
+            },
+            "type": "array",
+            "title": "Checks"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "plan",
+          "checks"
+        ],
+        "title": "ProposalRecord"
+      },
+      "Reservation": {
+        "properties": {
+          "resource_id": {
+            "type": "string",
+            "title": "Resource Id"
+          },
+          "starts_at_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Starts At Utc"
+          },
+          "ends_at_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Ends At Utc"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Quantity",
+            "default": 1
+          },
+          "reservation_id": {
+            "type": "string",
+            "title": "Reservation Id"
+          },
+          "flight_id": {
+            "type": "string",
+            "title": "Flight Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "RUNWAY",
+              "TAXIWAY",
+              "GATE",
+              "CREW",
+              "EQUIPMENT"
+            ],
+            "title": "Kind"
+          },
+          "wake_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wake Category"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "resource_id",
+          "starts_at_utc",
+          "ends_at_utc",
+          "flight_id",
+          "kind"
+        ],
+        "title": "Reservation"
+      },
+      "Resource": {
+        "properties": {
+          "resource_id": {
+            "type": "string",
+            "title": "Resource Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "RUNWAY",
+              "TAXIWAY",
+              "GATE",
+              "CREW",
+              "EQUIPMENT"
+            ],
+            "title": "Kind"
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Capacity",
+            "default": 1
+          },
+          "node_from": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Node From"
+          },
+          "node_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Node To"
+          },
+          "bidirectional": {
+            "type": "boolean",
+            "title": "Bidirectional",
+            "default": true
+          },
+          "dependent_runway_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Dependent Runway Ids"
+          },
+          "compatible_categories": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Compatible Categories"
+          },
+          "available_from_utc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available From Utc"
+          },
+          "available_until_utc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available Until Utc"
+          },
+          "max_work_seconds": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Work Seconds"
+          },
+          "minimum_traversal_seconds": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Minimum Traversal Seconds",
+            "default": 30
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "resource_id",
+          "kind"
+        ],
+        "title": "Resource"
+      },
+      "RulesConfig": {
+        "properties": {
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "SYNTHETIC",
+              "SOURCED"
+            ],
+            "title": "Source Type",
+            "default": "SYNTHETIC"
+          },
+          "runway_occupancy_seconds": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Runway Occupancy Seconds",
+            "default": 60
+          },
+          "wake_separation_seconds": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Wake Separation Seconds"
+          },
+          "minimum_turnaround_seconds": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Minimum Turnaround Seconds",
+            "default": 1200
+          },
+          "search_step_seconds": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Search Step Seconds",
+            "default": 120
+          },
+          "search_limit": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Search Limit",
+            "default": 100
+          },
+          "proposal_validity_seconds": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Proposal Validity Seconds",
+            "default": 300
+          },
+          "round_budget_seconds": {
+            "type": "number",
+            "maximum": 30.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Round Budget Seconds",
+            "default": 30
+          },
+          "total_budget_seconds": {
+            "type": "number",
+            "maximum": 60.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Total Budget Seconds",
+            "default": 60
+          },
+          "objective_weights": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Objective Weights"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "RulesConfig"
+      },
+      "Scenario": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "1",
+            "title": "Schema Version",
+            "default": "1"
+          },
+          "scenario_id": {
+            "type": "string",
+            "title": "Scenario Id"
+          },
+          "project_id": {
+            "type": "string",
+            "title": "Project Id"
+          },
+          "airport_iata": {
+            "type": "string",
+            "title": "Airport Iata"
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone"
+          },
+          "seed": {
+            "type": "integer",
+            "title": "Seed"
+          },
+          "start_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start Utc"
+          },
+          "end_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "End Utc"
+          },
+          "source_manifest": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Source Manifest"
+          },
+          "rules_config": {
+            "$ref": "#/components/schemas/RulesConfig"
+          },
+          "flights": {
+            "items": {
+              "$ref": "#/components/schemas/Flight"
+            },
+            "type": "array",
+            "title": "Flights"
+          },
+          "infrastructure": {
+            "$ref": "#/components/schemas/Infrastructure"
+          },
+          "initial_occupancy": {
+            "items": {
+              "$ref": "#/components/schemas/Reservation"
+            },
+            "type": "array",
+            "title": "Initial Occupancy"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario_id",
+          "project_id",
+          "airport_iata",
+          "timezone",
+          "seed",
+          "start_utc",
+          "end_utc",
+          "source_manifest",
+          "rules_config",
+          "flights",
+          "infrastructure",
+          "initial_occupancy"
+        ],
+        "title": "Scenario"
+      },
+      "Snapshot": {
+        "properties": {
+          "schema_version": {
+            "type": "string",
+            "const": "1",
+            "title": "Schema Version",
+            "default": "1"
+          },
+          "scenario_id": {
+            "type": "string",
+            "title": "Scenario Id"
+          },
+          "state_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "State Version"
+          },
+          "sim_time_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Sim Time Utc"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "MANUAL",
+              "ASSISTED"
+            ],
+            "title": "Mode",
+            "default": "ASSISTED"
+          },
+          "flights": {
+            "items": {
+              "$ref": "#/components/schemas/Flight"
+            },
+            "type": "array",
+            "title": "Flights"
+          },
+          "resource_reservations": {
+            "items": {
+              "$ref": "#/components/schemas/Reservation"
+            },
+            "type": "array",
+            "title": "Resource Reservations"
+          },
+          "active_instructions": {
+            "items": {
+              "$ref": "#/components/schemas/Instruction"
+            },
+            "type": "array",
+            "title": "Active Instructions"
+          },
+          "data_quality": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data Quality"
+          },
+          "instruction_version": {
+            "type": "integer",
+            "title": "Instruction Version",
+            "default": 0
+          },
+          "clock_status": {
+            "type": "string",
+            "enum": [
+              "PAUSED",
+              "RUNNING"
+            ],
+            "title": "Clock Status",
+            "default": "PAUSED"
+          },
+          "infrastructure": {
+            "$ref": "#/components/schemas/Infrastructure"
+          },
+          "rules_config": {
+            "$ref": "#/components/schemas/RulesConfig"
+          },
+          "start_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start Utc"
+          },
+          "end_utc": {
+            "type": "string",
+            "format": "date-time",
+            "title": "End Utc"
+          },
+          "airport_iata": {
+            "type": "string",
+            "title": "Airport Iata"
+          },
+          "seed": {
+            "type": "integer",
+            "title": "Seed"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario_id",
+          "state_version",
+          "sim_time_utc",
+          "flights",
+          "resource_reservations",
+          "active_instructions",
+          "data_quality",
+          "infrastructure",
+          "rules_config",
+          "start_utc",
+          "end_utc",
+          "airport_iata",
+          "seed"
+        ],
+        "title": "Snapshot"
+      },
+      "SnapshotResponse": {
+        "properties": {
+          "snapshot": {
+            "$ref": "#/components/schemas/Snapshot"
+          },
+          "proposals": {
+            "items": {
+              "$ref": "#/components/schemas/ProposalRecord"
+            },
+            "type": "array",
+            "title": "Proposals"
+          },
+          "negotiations": {
+            "items": {
+              "$ref": "#/components/schemas/NegotiationRecord"
+            },
+            "type": "array",
+            "title": "Negotiations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "snapshot",
+          "proposals",
+          "negotiations"
+        ],
+        "title": "SnapshotResponse"
+      }
+    }
+  }
+}

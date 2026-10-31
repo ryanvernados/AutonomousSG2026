@@ -1,0 +1,12 @@
+{
+  "name": "airport-platform-contract-tools",
+  "private": true,
+  "scripts": {
+    "types": "openapi-typescript backend/contracts/openapi.json -o backend/contracts/client.d.ts",
+    "test:sql": "node tests/sql/platform.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "openapi-typescript": "7.10.1"
+  }
+}

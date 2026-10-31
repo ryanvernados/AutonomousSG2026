@@ -1,0 +1,704 @@
+{
+  "$defs": {
+    "Assignment": {
+      "additionalProperties": false,
+      "properties": {
+        "flight_id": {
+          "title": "Flight Id",
+          "type": "string"
+        },
+        "operation": {
+          "enum": [
+            "ARRIVAL",
+            "DEPARTURE"
+          ],
+          "title": "Operation",
+          "type": "string"
+        },
+        "runway_id": {
+          "title": "Runway Id",
+          "type": "string"
+        },
+        "runway_time_utc": {
+          "format": "date-time",
+          "title": "Runway Time Utc",
+          "type": "string"
+        },
+        "taxi_path_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Taxi Path Ids",
+          "type": "array"
+        },
+        "taxi_start_utc": {
+          "format": "date-time",
+          "title": "Taxi Start Utc",
+          "type": "string"
+        },
+        "taxi_end_utc": {
+          "format": "date-time",
+          "title": "Taxi End Utc",
+          "type": "string"
+        },
+        "gate_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gate Id"
+        },
+        "gate_start_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gate Start Utc"
+        },
+        "gate_end_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gate End Utc"
+        },
+        "crew_reservations": {
+          "items": {
+            "$ref": "#/$defs/Interval"
+          },
+          "title": "Crew Reservations",
+          "type": "array"
+        },
+        "equipment_reservations": {
+          "items": {
+            "$ref": "#/$defs/Interval"
+          },
+          "title": "Equipment Reservations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "flight_id",
+        "operation",
+        "runway_id",
+        "runway_time_utc",
+        "taxi_path_ids",
+        "taxi_start_utc",
+        "taxi_end_utc",
+        "crew_reservations",
+        "equipment_reservations"
+      ],
+      "title": "Assignment",
+      "type": "object"
+    },
+    "Assumption": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "title": "Value"
+        },
+        "source_type": {
+          "enum": [
+            "HISTORICAL",
+            "SOURCED",
+            "SYNTHETIC"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "explanation": {
+          "default": "",
+          "title": "Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "source_type",
+        "unit"
+      ],
+      "title": "Assumption",
+      "type": "object"
+    },
+    "Flight": {
+      "additionalProperties": false,
+      "properties": {
+        "flight_id": {
+          "title": "Flight Id",
+          "type": "string"
+        },
+        "source_row_id": {
+          "title": "Source Row Id",
+          "type": "string"
+        },
+        "airline": {
+          "title": "Airline",
+          "type": "string"
+        },
+        "flight_number": {
+          "title": "Flight Number",
+          "type": "string"
+        },
+        "tail_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Tail Number"
+        },
+        "origin": {
+          "title": "Origin",
+          "type": "string"
+        },
+        "destination": {
+          "title": "Destination",
+          "type": "string"
+        },
+        "scheduled_gate_departure_utc": {
+          "format": "date-time",
+          "title": "Scheduled Gate Departure Utc",
+          "type": "string"
+        },
+        "scheduled_gate_arrival_utc": {
+          "format": "date-time",
+          "title": "Scheduled Gate Arrival Utc",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "SCHEDULED",
+            "HOLDING",
+            "TAXIING",
+            "AT_GATE",
+            "TURNAROUND",
+            "DEPARTED",
+            "COMPLETED"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "plan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Assignment"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "assumptions": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Assumption"
+          },
+          "title": "Assumptions",
+          "type": "object"
+        },
+        "actual_gate_departure_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Gate Departure Utc"
+        },
+        "actual_gate_arrival_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actual Gate Arrival Utc"
+        },
+        "wheels_on_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wheels On Utc"
+        },
+        "wheels_off_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wheels Off Utc"
+        }
+      },
+      "required": [
+        "flight_id",
+        "source_row_id",
+        "airline",
+        "flight_number",
+        "tail_number",
+        "origin",
+        "destination",
+        "scheduled_gate_departure_utc",
+        "scheduled_gate_arrival_utc",
+        "state",
+        "plan",
+        "assumptions"
+      ],
+      "title": "Flight",
+      "type": "object"
+    },
+    "Infrastructure": {
+      "additionalProperties": false,
+      "properties": {
+        "resources": {
+          "items": {
+            "$ref": "#/$defs/Resource"
+          },
+          "title": "Resources",
+          "type": "array"
+        },
+        "source_type": {
+          "enum": [
+            "SOURCED",
+            "SYNTHETIC"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "effective_date": {
+          "title": "Effective Date",
+          "type": "string"
+        },
+        "coverage_limits": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Coverage Limits",
+          "type": "array"
+        }
+      },
+      "required": [
+        "resources",
+        "source_type",
+        "effective_date",
+        "coverage_limits"
+      ],
+      "title": "Infrastructure",
+      "type": "object"
+    },
+    "Interval": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "starts_at_utc": {
+          "format": "date-time",
+          "title": "Starts At Utc",
+          "type": "string"
+        },
+        "ends_at_utc": {
+          "format": "date-time",
+          "title": "Ends At Utc",
+          "type": "string"
+        },
+        "quantity": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource_id",
+        "starts_at_utc",
+        "ends_at_utc"
+      ],
+      "title": "Interval",
+      "type": "object"
+    },
+    "Reservation": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "starts_at_utc": {
+          "format": "date-time",
+          "title": "Starts At Utc",
+          "type": "string"
+        },
+        "ends_at_utc": {
+          "format": "date-time",
+          "title": "Ends At Utc",
+          "type": "string"
+        },
+        "quantity": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "reservation_id": {
+          "title": "Reservation Id",
+          "type": "string"
+        },
+        "flight_id": {
+          "title": "Flight Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "RUNWAY",
+            "TAXIWAY",
+            "GATE",
+            "CREW",
+            "EQUIPMENT"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "wake_category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wake Category"
+        }
+      },
+      "required": [
+        "resource_id",
+        "starts_at_utc",
+        "ends_at_utc",
+        "flight_id",
+        "kind"
+      ],
+      "title": "Reservation",
+      "type": "object"
+    },
+    "Resource": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "title": "Resource Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "RUNWAY",
+            "TAXIWAY",
+            "GATE",
+            "CREW",
+            "EQUIPMENT"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "capacity": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Capacity",
+          "type": "integer"
+        },
+        "node_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Node From"
+        },
+        "node_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Node To"
+        },
+        "bidirectional": {
+          "default": true,
+          "title": "Bidirectional",
+          "type": "boolean"
+        },
+        "dependent_runway_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependent Runway Ids",
+          "type": "array"
+        },
+        "compatible_categories": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Compatible Categories",
+          "type": "array"
+        },
+        "available_from_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Available From Utc"
+        },
+        "available_until_utc": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Available Until Utc"
+        },
+        "max_work_seconds": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Work Seconds"
+        },
+        "minimum_traversal_seconds": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "title": "Minimum Traversal Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "resource_id",
+        "kind"
+      ],
+      "title": "Resource",
+      "type": "object"
+    },
+    "RulesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "source_type": {
+          "default": "SYNTHETIC",
+          "enum": [
+            "SYNTHETIC",
+            "SOURCED"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "runway_occupancy_seconds": {
+          "default": 60,
+          "exclusiveMinimum": 0,
+          "title": "Runway Occupancy Seconds",
+          "type": "integer"
+        },
+        "wake_separation_seconds": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Wake Separation Seconds",
+          "type": "object"
+        },
+        "minimum_turnaround_seconds": {
+          "default": 1200,
+          "minimum": 0,
+          "title": "Minimum Turnaround Seconds",
+          "type": "integer"
+        },
+        "search_step_seconds": {
+          "default": 120,
+          "exclusiveMinimum": 0,
+          "title": "Search Step Seconds",
+          "type": "integer"
+        },
+        "search_limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Search Limit",
+          "type": "integer"
+        },
+        "proposal_validity_seconds": {
+          "default": 300,
+          "exclusiveMinimum": 0,
+          "title": "Proposal Validity Seconds",
+          "type": "integer"
+        },
+        "round_budget_seconds": {
+          "default": 30,
+          "exclusiveMinimum": 0,
+          "maximum": 30,
+          "title": "Round Budget Seconds",
+          "type": "number"
+        },
+        "total_budget_seconds": {
+          "default": 60,
+          "exclusiveMinimum": 0,
+          "maximum": 60,
+          "title": "Total Budget Seconds",
+          "type": "number"
+        },
+        "objective_weights": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "title": "Objective Weights",
+          "type": "object"
+        }
+      },
+      "title": "RulesConfig",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1",
+      "default": "1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scenario_id": {
+      "title": "Scenario Id",
+      "type": "string"
+    },
+    "project_id": {
+      "title": "Project Id",
+      "type": "string"
+    },
+    "airport_iata": {
+      "title": "Airport Iata",
+      "type": "string"
+    },
+    "timezone": {
+      "title": "Timezone",
+      "type": "string"
+    },
+    "seed": {
+      "title": "Seed",
+      "type": "integer"
+    },
+    "start_utc": {
+      "format": "date-time",
+      "title": "Start Utc",
+      "type": "string"
+    },
+    "end_utc": {
+      "format": "date-time",
+      "title": "End Utc",
+      "type": "string"
+    },
+    "source_manifest": {
+      "additionalProperties": true,
+      "title": "Source Manifest",
+      "type": "object"
+    },
+    "rules_config": {
+      "$ref": "#/$defs/RulesConfig"
+    },
+    "flights": {
+      "items": {
+        "$ref": "#/$defs/Flight"
+      },
+      "title": "Flights",
+      "type": "array"
+    },
+    "infrastructure": {
+      "$ref": "#/$defs/Infrastructure"
+    },
+    "initial_occupancy": {
+      "items": {
+        "$ref": "#/$defs/Reservation"
+      },
+      "title": "Initial Occupancy",
+      "type": "array"
+    }
+  },
+  "required": [
+    "scenario_id",
+    "project_id",
+    "airport_iata",
+    "timezone",
+    "seed",
+    "start_utc",
+    "end_utc",
+    "source_manifest",
+    "rules_config",
+    "flights",
+    "infrastructure",
+    "initial_occupancy"
+  ],
+  "title": "Scenario",
+  "type": "object"
+}
