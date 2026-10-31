@@ -9,12 +9,12 @@ resolved, or resolve inconsistently, keep their original values and carry flags.
 from __future__ import annotations
 
 from datetime import date, datetime, timedelta, timezone
+from functools import lru_cache
 
 from . import config
 from .timezones import zone
 
 UTC = timezone.utc
-DAY_OFFSETS = (-1, 0, 1, 2)
 
 CLOCK_FIELDS = ("SCHEDULED_DEPARTURE", "DEPARTURE_TIME", "WHEELS_OFF", "WHEELS_ON",
                 "SCHEDULED_ARRIVAL", "ARRIVAL_TIME")
@@ -23,7 +23,7 @@ DELAY_FIELDS = ("AIR_SYSTEM_DELAY", "SECURITY_DELAY", "AIRLINE_DELAY",
 
 
 def iso(dt: datetime | None) -> str | None:
-    return dt.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ") if dt else None
+    return dt.astimezone(UTC).isoformat(timespec="seconds")[:-6] + "Z" if dt else None
 
 
 def to_float(value: str) -> float | None:
@@ -44,28 +44,33 @@ def parse_hhmm(value: str) -> tuple[int | None, list[str]]:
     return hh * 60 + mm, (["HHMM_2400"] if hh == 24 else [])
 
 
-def local_to_utc(day: date, minutes: int, tz_name: str) -> tuple[datetime, list[str]]:
+@lru_cache(maxsize=1 << 18)
+def local_to_utc(day: date, minutes: int, tz_name: str) -> tuple[datetime, tuple[str, ...]]:
+    # Cached: schedules repeat the same (date, clock time, zone) many times.
     tz = zone(tz_name)
     naive = datetime(day.year, day.month, day.day) + timedelta(minutes=minutes)
-    flags = []
     aware = naive.replace(tzinfo=tz)
     if aware.astimezone(UTC).astimezone(tz).replace(tzinfo=None) != naive:
-        flags.append("LOCAL_TIME_NONEXISTENT_DST")
-    elif aware.utcoffset() != naive.replace(tzinfo=tz, fold=1).utcoffset():
-        flags.append("LOCAL_TIME_AMBIGUOUS_DST")
-    return aware.astimezone(UTC), flags
+        return aware.astimezone(UTC), ("LOCAL_TIME_NONEXISTENT_DST",)
+    if aware.utcoffset() != naive.replace(tzinfo=tz, fold=1).utcoffset():
+        return aware.astimezone(UTC), ("LOCAL_TIME_AMBIGUOUS_DST",)
+    return aware.astimezone(UTC), ()
 
 
-def resolve_near(minutes: int, tz_name: str, base_day: date, expected: datetime
-                 ) -> tuple[datetime, float, list[str]]:
-    """Pick the calendar day for a local clock time that lands closest to `expected`."""
-    best = None
-    for offset in DAY_OFFSETS:
-        utc, flags = local_to_utc(base_day + timedelta(days=offset), minutes, tz_name)
-        gap = abs((utc - expected).total_seconds()) / 60
-        if best is None or gap < best[1]:
-            best = (utc, gap, flags)
-    return best
+def resolve_near(minutes: int, tz_name: str, expected: datetime
+                 ) -> tuple[datetime, float, tuple[str, ...]]:
+    """Pick the calendar day for a local clock time that lands closest to `expected`.
+
+    Start on the local date of `expected`; the nearest instance is at most one day away,
+    so shift a day only when the first candidate is more than 12 hours off.
+    """
+    day = expected.astimezone(zone(tz_name)).date()
+    utc, flags = local_to_utc(day, minutes, tz_name)
+    offset_min = (utc - expected).total_seconds() / 60
+    if abs(offset_min) > 720:
+        day += timedelta(days=-1 if offset_min > 0 else 1)
+        utc, flags = local_to_utc(day, minutes, tz_name)
+    return utc, abs((utc - expected).total_seconds()) / 60, flags
 
 
 def normalize_row(row: dict, row_number: int, file_sha256: str,
@@ -120,7 +125,7 @@ def normalize_row(row: dict, row_number: int, file_sha256: str,
         minutes = clocks[field]
         if minutes is None or tz_name is None or expected is None:
             return None
-        utc, gap, f = resolve_near(minutes, tz_name, sched_date, expected)
+        utc, gap, f = resolve_near(minutes, tz_name, expected)
         flags.extend(f"{field}:{x}" for x in f)
         if check and gap > tol:
             flags.append(f"{field}:INCONSISTENT_WITH_DURATIONS")

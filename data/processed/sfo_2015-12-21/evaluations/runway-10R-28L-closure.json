@@ -2,7 +2,7 @@
   "fixture_id": "runway-10R-28L-closure",
   "scenario_id": "sfo-2015-12-21-2000-full",
   "seed": 20151221,
-  "input_sha256": "dbd2f9c87b93d14b8c0897c1b2ce2ebc4e705ba586a8240247a676a7e86c7772",
+  "input_sha256": "d0477c2df149fe8e4cc36b57b2b1621bef4900444c1501318c2a35e06f2f0739",
   "runs": {
     "a": {
       "policy": "scheduled",

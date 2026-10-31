@@ -8,7 +8,6 @@
   "end_utc": "2015-12-22T07:00:00Z",
   "source_manifest": {
     "generated_by": "python -m backend.data.build",
-    "generated_at_utc": "2026-10-31T03:33:42Z",
     "source_links": {
       "dataset": "https://www.kaggle.com/datasets/usdot/flight-delays",
       "field_definitions": "https://www.transtats.bts.gov/Fields.asp?gnoyr_VQ=FGJ",

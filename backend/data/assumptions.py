@@ -58,7 +58,7 @@ def _a(name: str, value, unit: str | None, source_type: str, basis: str) -> dict
 
 
 def parse(s: str) -> datetime:
-    return datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+    return datetime.fromisoformat(s)  # ISO 8601 with Z; C parser, much faster than strptime
 
 
 def iso(dt: datetime) -> str:

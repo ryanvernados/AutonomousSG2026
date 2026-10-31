@@ -41,12 +41,12 @@ def read_csv(path: Path) -> list[dict]:
         return list(csv.DictReader(f))
 
 
-def file_entry(path: Path, rows: int | None = None) -> dict:
+def file_entry(path: Path, rows: int | None = None, sha256: str | None = None) -> dict:
     with path.open(newline="", encoding="utf-8") as f:
         header = next(csv.reader(f))
         if rows is None:
             rows = sum(1 for _ in f)
-    return {"file": path.name, "sha256": sha256_of(path), "bytes": path.stat().st_size,
+    return {"file": path.name, "sha256": sha256 or sha256_of(path), "bytes": path.stat().st_size,
             "header": header, "data_rows": rows}
 
 
@@ -85,7 +85,7 @@ def sfo_movement(leg: dict) -> tuple[str, str | None]:
 
 
 def parse_iso(s: str) -> datetime:
-    return datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=UTC)
+    return datetime.fromisoformat(s)  # ISO 8601 with Z; C parser, much faster than strptime
 
 
 def load_sfo_rows(flights_path: Path, numeric_lookup: dict | None) -> tuple[pd.DataFrame, dict]:
@@ -107,9 +107,11 @@ def load_sfo_rows(flights_path: Path, numeric_lookup: dict | None) -> tuple[pd.D
 
 
 def iter_rows(frame: pd.DataFrame):
+    # Object arrays iterate far faster than pandas string arrays row by row.
     columns = [c for c in frame.columns if c != "_row_number"]
-    for values in frame.itertuples(index=False, name=None):
-        yield values[0], dict(zip(columns, values[1:]))
+    arrays = [frame[c].to_numpy(dtype=object) for c in columns]
+    for row_number, *values in zip(frame["_row_number"].tolist(), *arrays):
+        yield row_number, dict(zip(columns, values))
 
 
 def scan(sfo_rows: pd.DataFrame, stats: dict, file_sha: str, zones: dict, numeric_lookup: dict | None):
@@ -267,10 +269,9 @@ def main(argv: list[str] | None = None) -> None:
 
     manifest = {
         "generated_by": "python -m backend.data.build",
-        "generated_at_utc": iso(datetime.now(UTC)),
         "source_links": config.SOURCE_LINKS,
         "files": [
-            {**file_entry(flights_path, stats["data_rows"]), "sha256": flights_sha},
+            file_entry(flights_path, stats["data_rows"], flights_sha),
             file_entry(raw / "airlines.csv"),
             file_entry(raw / "airports.csv"),
             *([lookup_entry] if lookup_entry else []),
