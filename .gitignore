@@ -1,2 +1,44 @@
 dataset/
 datasets/
+
+# JavaScript dependencies and generated output
+node_modules/
+.pnpm-store/
+.npm/
+dist/
+build/
+*.tsbuildinfo
+.vite/
+.cache/
+
+# Python environments and caches
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Test and coverage output
+coverage/
+.coverage
+.coverage.*
+htmlcov/
+.nyc_output/
+test-results/
+playwright-report/
+blob-report/
+
+# Local configuration and logs; keep shareable templates
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
