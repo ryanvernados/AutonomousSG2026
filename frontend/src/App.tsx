@@ -47,6 +47,7 @@ import {
 } from "./domain";
 import AirportMap from "./components/AirportMap";
 import GroundMovements from "./components/GroundMovements";
+import StaffInstructions from "./components/StaffInstructions";
 import type { LiveSnapshot } from "./api/canonical";
 import Instructions from "./components/Instructions";
 import ProposalReview from "./components/ProposalReview";
@@ -923,6 +924,12 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
                   </div>
                 </section>
                 <GroundMovements
+                  snapshot={visible}
+                  map={(visible as LiveSnapshot).layout_map}
+                  selected={selected}
+                  onSelect={setSelected}
+                />
+                <StaffInstructions
                   snapshot={visible}
                   map={(visible as LiveSnapshot).layout_map}
                   selected={selected}

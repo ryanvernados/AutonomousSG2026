@@ -11,7 +11,9 @@ param(
     [ValidateSet('mock', 'live')][string]$ModelMode = 'mock',
     [string]$DemoToken = 'local-integration-token',
     # Simulated seconds per real second while the clock runs (1 = real time; 30 plays 2 h in 4 min).
-    [ValidateRange(1, 600)][int]$SimSpeed = 30
+    [ValidateRange(1, 600)][int]$SimSpeed = 30,
+    # The 218-flight scenario takes minutes to plan and currently finds no plan; offer it only on request.
+    [switch]$IncludeFull
 )
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
@@ -38,8 +40,11 @@ foreach ($port in 8000, 5173) {
 $run = Join-Path $env:LOCALAPPDATA 'Temp\airport-run'
 $scenarios = Join-Path $run 'scenarios'
 New-Item -ItemType Directory -Force $scenarios | Out-Null
+Remove-Item (Join-Path $scenarios '*.json') -Force -ErrorAction SilentlyContinue
 Copy-Item (Join-Path $root 'fixtures\sfo-synthetic-v1.json') $scenarios -Force
-Copy-Item (Join-Path $root 'data\processed\scenarios\*.json') $scenarios -Force
+Get-ChildItem (Join-Path $root 'data\processed\scenarios\*.json') |
+    Where-Object { $IncludeFull -or $_.Name -notlike '*-full.json' } |
+    Copy-Item -Destination $scenarios -Force
 
 # Each service gets its own generated script, started with -File to avoid argument quoting issues.
 $apiScript = Join-Path $run 'run-api.ps1'

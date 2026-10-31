@@ -19,6 +19,7 @@ from backend.contracts import (
     utcnow,
 )
 from backend.engine import advance_clock, feasible, reservations_for, select_fallback, validate_plan
+from backend.engine.isolation import run_in_process
 from backend.engine.scenarios import initial_snapshot
 from backend.engine.validation import instruction_issues
 
@@ -269,7 +270,7 @@ class PlatformService:
         if reason == "CONSENSUS":
             plan, checks, metadata = outcome.plan, validate_plan(frozen, outcome.plan), {}
         else:
-            fallback = await asyncio.to_thread(select_fallback, frozen, reason)
+            fallback = await run_in_process(select_fallback, frozen, reason)
             plan, checks, metadata = fallback.plan, fallback.checks, fallback.search_metadata
         duration = time.monotonic() - started
         await asyncio.to_thread(self.finish_negotiation, session_id, negotiation_id, actor_id, frozen,
@@ -364,8 +365,14 @@ class PlatformService:
                 event = self.event(updated, "SYSTEM", "CLOCK_TICK", uid())
                 self.store.commit(updated, doc.revision, [event], "SYSTEM", uid(), "tick", {}, internal=True)
 
-    def recover(self):
-        """Pause recovered running clocks. Interrupted jobs become explicit labelled fallbacks."""
+    def recover(self, defer_fallbacks=False):
+        """Pause recovered running clocks. Interrupted jobs become explicit labelled fallbacks.
+
+        With defer_fallbacks the (possibly minutes-long) fallback searches are not run here; the
+        interrupted (session_id, negotiation_id, snapshot) triples are returned for the caller to
+        finish in the background, so a large interrupted scenario cannot block API startup.
+        """
+        deferred = []
         for doc in self.store.all_documents():
             if doc.snapshot.clock_status == "RUNNING":
                 snap = doc.snapshot.model_copy(update={"clock_status": "PAUSED",
@@ -376,6 +383,15 @@ class PlatformService:
                 doc = self.store.get(doc.session_id)
             for nid, record in doc.negotiations.items():
                 if record.status == "RUNNING":
+                    if defer_fallbacks:
+                        deferred.append((doc.session_id, nid, doc.snapshot))
+                        continue
                     result = select_fallback(doc.snapshot, "PROCESS_RESTART")
                     self.finish_negotiation(doc.session_id, nid, "SYSTEM", doc.snapshot, None, result.plan,
                         result.checks, result.search_metadata, "PROCESS_RESTART", 0)
+        return deferred
+
+    async def finish_recovered(self, session_id, nid, snapshot):
+        result = await run_in_process(select_fallback, snapshot, "PROCESS_RESTART")
+        await asyncio.to_thread(self.finish_negotiation, session_id, nid, "SYSTEM", snapshot, None, result.plan,
+                                result.checks, result.search_metadata, "PROCESS_RESTART", 0)

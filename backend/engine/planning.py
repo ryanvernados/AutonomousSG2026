@@ -1,5 +1,6 @@
 """Bounded constructive search. Finding no candidate is not an infeasibility proof."""
 from collections import Counter, defaultdict, deque
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 from backend.contracts import (
@@ -92,7 +93,21 @@ def _paths(snapshot, start, end, max_paths=4):
     return found
 
 
-def _assignment(snapshot, flight, runway, route, slot):
+@dataclass(frozen=True)
+class FlightRequest:
+    """A coordinator agent's request for one flight. The search honours it or places nothing.
+
+    runway_ids limits runway choice; earliest/latest bound the runway time (UTC); gate_id
+    replaces the scenario's gate. Requests never bypass a hard check: every placement is still
+    validated, so an unsafe request simply yields no candidate.
+    """
+    runway_ids: tuple[str, ...] = ()
+    earliest_utc: datetime | None = None
+    latest_utc: datetime | None = None
+    gate_id: str | None = None
+
+
+def _assignment(snapshot, flight, runway, route, slot, gate_id=None):
     assumptions = flight.assumptions
     gate = assumptions.get("gate_id")
     crew = assumptions.get("crew_id")
@@ -117,7 +132,7 @@ def _assignment(snapshot, flight, runway, route, slot):
     return Assignment(flight_id=flight.flight_id, operation="ARRIVAL" if arrival else "DEPARTURE",
                       runway_id=runway, runway_time_utc=slot, taxi_path_ids=route,
                       taxi_start_utc=taxi_start, taxi_end_utc=taxi_end,
-                      gate_id=str(gate.value), gate_start_utc=gate_start, gate_end_utc=gate_end,
+                      gate_id=gate_id or str(gate.value), gate_start_utc=gate_start, gate_end_utc=gate_end,
                       crew_reservations=[Interval(resource_id=str(crew.value), starts_at_utc=crew_start,
                                                   ends_at_utc=crew_end)],
                       equipment_reservations=[Interval(resource_id=str(equipment.value),
@@ -127,7 +142,7 @@ def _assignment(snapshot, flight, runway, route, slot):
 PLACEMENTS_PER_FLIGHT = 1
 
 
-def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseline=False):
+def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseline=False, requests=None):
     """Bounded search with two separate limits.
 
     ``limit`` (at most rules_config.search_limit and 100) caps complete candidate plans, as the
@@ -136,8 +151,10 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
     so a full traffic slice can be placed at all. No wall-clock limit is used, so baseline and
     fallback runs stay reproducible. constraints is a typed Instruction list from Member 3's
     tools, never arbitrary executable input. Two stable orderings share the placement budget.
-    The search is non-exhaustive.
+    The search is non-exhaustive. ``requests`` maps flight IDs to FlightRequest; when given,
+    flights are sequenced by their requested times and placed only inside their requests.
     """
+    requests = requests or {}
     if not all((snapshot.infrastructure, snapshot.rules_config, snapshot.start_utc,
                 snapshot.end_utc, snapshot.airport_iata)):
         return [], {"attempted_placements": 0, "limit": min(max(int(limit), 1), 100),
@@ -169,6 +186,11 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
     # Fuel-urgent flights take precedence; otherwise first come first served.
     orderings = [sorted(flights, key=lambda f: (
         urgency(f) > snapshot.sim_time_utc + timedelta(minutes=30), scheduled(f), f.flight_id))]
+    if requests:
+        # The agents' sequence first: requested earliest time, else the schedule.
+        orderings.insert(0, sorted(flights, key=lambda f: (
+            (requests[f.flight_id].earliest_utc if f.flight_id in requests and requests[f.flight_id].earliest_utc
+             else scheduled(f)), f.flight_id)))
     if not baseline:
         orderings.append(sorted(flights, key=lambda f: (urgency(f), scheduled(f), f.flight_id)))
     for ordered in orderings:
@@ -177,24 +199,30 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
         assignments = []
         for flight in ordered:
             arrival = flight.destination == snapshot.airport_iata
+            request = requests.get(flight.flight_id, FlightRequest())
             gate = flight.assumptions.get("gate_id")
             if gate is None:
                 rejected["gate.missing_assumption"] += 1
                 break
-            options = [(r, path) for r in runways for path in _paths(snapshot,
-                r if arrival else str(gate.value), str(gate.value) if arrival else r)]
+            gate_id = request.gate_id or str(gate.value)
+            usable = [r for r in runways if not request.runway_ids or r in request.runway_ids]
+            options = [(r, path) for r in usable for path in _paths(snapshot,
+                r if arrival else gate_id, gate_id if arrival else r)]
             if not options:
                 rejected["taxi.no_connected_route"] += 1
                 break
-            anchor = max(snapshot.sim_time_utc + timedelta(minutes=5), scheduled(flight) + (
-                timedelta(minutes=-4) if arrival else timedelta(minutes=3)))
+            earliest = snapshot.sim_time_utc + timedelta(minutes=5)
+            anchor = max(earliest, request.earliest_utc) if request.earliest_utc else max(
+                earliest, scheduled(flight) + (timedelta(minutes=-4) if arrival else timedelta(minutes=3)))
+            last = min(snapshot.end_utc, request.latest_utc) if request.latest_utc else snapshot.end_utc
             chosen = None
             offset = 0
-            while attempted < budget and anchor + timedelta(seconds=offset) <= snapshot.end_utc:
+            while attempted < budget and anchor + timedelta(seconds=offset) <= last:
                 for runway, route in options:
                     if attempted >= budget:
                         break
-                    candidate = _assignment(snapshot, flight, runway, route, anchor + timedelta(seconds=offset))
+                    candidate = _assignment(snapshot, flight, runway, route, anchor + timedelta(seconds=offset),
+                                            gate_id)
                     attempted += 1
                     if not candidate:
                         rejected["flight.missing_assumptions"] += 1
@@ -214,6 +242,8 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
                     break
                 offset += snapshot.rules_config.search_step_seconds
             if chosen is None:
+                if flight.flight_id in requests:
+                    rejected["request.unplaceable:" + flight.flight_id] += 1
                 break
             assignments.append(chosen)
         if assignments and len(assignments) == len(ordered):
@@ -228,7 +258,9 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
                    "exhaustive": False, "limit_reached": attempted >= budget,
                    "rejection_counts": dict(rejected),
                    "objective_weights": snapshot.rules_config.objective_weights,
-                   "policy": "FUEL_URGENT_THEN_FCFS" if baseline else "BOUNDED_STABLE_SEARCH"}
+                   "requests": len(requests),
+                   "policy": "AGENT_REQUESTS" if requests else
+                   "FUEL_URGENT_THEN_FCFS" if baseline else "BOUNDED_STABLE_SEARCH"}
 
 
 def enumerate_candidates(snapshot: Snapshot, constraints=None, limit=100) -> list[Plan]:

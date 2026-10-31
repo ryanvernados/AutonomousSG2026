@@ -24,15 +24,15 @@ cancelled or timed-out negotiation (the process is terminated before the platfor
 from __future__ import annotations
 
 import asyncio
-import multiprocessing
 import os
-from concurrent.futures import ProcessPoolExecutor
 from datetime import timedelta
+from functools import partial
 
 from backend.agents.adapters import MockAdapter, ModelAdapter
 from backend.api.coordinator import CoordinationOutcome
 from backend.contracts import AgentMessage, Plan, Snapshot, plan_hash
-from backend.engine.planning import compute_impact, search_candidates, select_fallback
+from backend.engine.isolation import run_in_process
+from backend.engine.planning import FlightRequest, compute_impact, search_candidates, select_fallback
 from backend.engine.validation import validate_plan
 
 from .coordinator import Budgets, Coordinator
@@ -42,19 +42,39 @@ from .trace import MemoryPersistence
 OBJECTIVE = {"weights": {"score": 1.0}, "source_type": "SYNTHETIC",
              "explanation": "Impact.score already applies Member 1's fixed objective weights"}
 GROUND_WINDOW_MARGIN = timedelta(hours=6)
+ALTERNATIVE_GATES = 3  # compatible gates offered to the ground agent besides the scheduled one
 
 
-async def run_in_process(fn, *args):
-    """Run picklable CPU-bound engine work in a fresh child process, terminated on cancellation."""
-    executor = ProcessPoolExecutor(max_workers=1, mp_context=multiprocessing.get_context("spawn"))
-    try:
-        return await asyncio.get_running_loop().run_in_executor(executor, fn, *args)
-    finally:
-        # shutdown() cannot stop a running task; terminate the worker so a cancelled search ends now.
-        for proc in list((getattr(executor, "_processes", None) or {}).values()):
-            if proc.is_alive():
-                proc.terminate()
-        executor.shutdown(wait=False, cancel_futures=True)
+def requests_from_offers(snapshot: Snapshot, constraints: list[Json]) -> dict[str, FlightRequest]:
+    """Turn the agents' round-1 constraints into engine requests (runway, time bounds, gate).
+
+    ATC runway windows and pilot timing windows bound the runway time; ATC's resource picks the
+    runway; the pilot's latest safe arrival caps it; ground's gate window picks the gate. Two
+    different runways or gates for one flight cancel that choice (the offer check then rejects
+    any plan, so the platform falls back rather than guessing).
+    """
+    from backend.coordination.protocol import utc
+
+    gates = {r.resource_id for r in snapshot.infrastructure.resources if r.kind == "GATE"}
+    fields: dict[str, dict] = {}
+    for c in constraints:
+        f = fields.setdefault(c["subject_id"], {"runways": set(), "gates": set(), "earliest": None, "latest": None})
+        if c["kind"] == "GROUND_WINDOW":
+            if c["resource_id"] in gates:
+                f["gates"].add(c["resource_id"])
+            continue
+        start = utc(c["starts_at_utc"]) if c.get("starts_at_utc") else None
+        end = utc(c["ends_at_utc"]) if c.get("ends_at_utc") else None
+        if c["kind"] == "RUNWAY_WINDOW" and c["resource_id"]:
+            f["runways"].add(c["resource_id"])
+        if start and (f["earliest"] is None or start > f["earliest"]):
+            f["earliest"] = start
+        if end and (f["latest"] is None or end < f["latest"]):
+            f["latest"] = end
+    return {fid: FlightRequest(runway_ids=tuple(f["runways"]) if len(f["runways"]) == 1 else (),
+                               earliest_utc=f["earliest"], latest_utc=f["latest"],
+                               gate_id=next(iter(f["gates"])) if len(f["gates"]) == 1 else None)
+            for fid, f in fields.items()}
 
 
 def iso(dt) -> str:
@@ -78,6 +98,7 @@ class PlatformEngine:
     def __init__(self, snapshot: Snapshot):
         self.snapshot = snapshot
         self._search: tuple[list[Plan], dict] | None = None
+        self.request_search: dict = {}
         self._search_lock = asyncio.Lock()
 
     def _json_snapshot(self) -> Json:
@@ -103,8 +124,9 @@ class PlatformEngine:
         return self._search
 
     async def _preview_plan(self) -> Plan | None:
+        # The engine-only plan: what the agents start from and what their plan is compared with.
         plans, _ = await self._search_once()
-        return plans[0] if plans else None
+        return min(plans, key=lambda p: (p.impact.score, p.plan_hash)) if plans else None
 
     async def domain_view(self, snapshot: Json, role: str, flight_id: str | None,
                           affected_ids: list[str]) -> Json:
@@ -118,20 +140,39 @@ class PlatformEngine:
             return {"kind": kind, "subject_id": subject, "resource_id": resource, "starts_at_utc": start,
                     "ends_at_utc": end, "unit": "UTC", "source_type": "SYNTHETIC"}
 
+        def slot(f):
+            a = by_flight.get(f)
+            return {"flight_id": f, "operation": a.operation, "runway_id": a.runway_id,
+                    "runway_time_utc": iso(a.runway_time_utc), "gate_id": a.gate_id,
+                    "gate_start_utc": iso(a.gate_start_utc), "gate_end_utc": iso(a.gate_end_utc)} if a else None
+
+        engine_plan = [x for x in (slot(f) for f in affected_ids) if x]
         if role == "ATC":
+            # Any runway for any flight: ATC chooses each flight's runway and slot window (the sequence).
             runways = sorted(r.resource_id for r in s.infrastructure.resources if r.kind == "RUNWAY")
-            return {"authorized_windows": [
-                window("RUNWAY_WINDOW", f, by_flight[f].runway_id if f in by_flight else runways[0], *horizon)
-                for f in affected_ids],
-                "runway_ids": runways, "rules": s.rules_config.model_dump(mode="json")}
+            return {"authorized_windows": [window("RUNWAY_WINDOW", f, r, *horizon)
+                                           for f in affected_ids for r in runways],
+                    "runway_ids": runways, "engine_plan": engine_plan,
+                    "affected_ids": list(affected_ids), "required_constraints": len(affected_ids),
+                    "rules": s.rules_config.model_dump(mode="json")}
         if role == "GROUND":
+            gate_resources = sorted((r for r in s.infrastructure.resources if r.kind == "GATE"),
+                                    key=lambda r: r.resource_id)
+            used = {a.gate_id for a in by_flight.values()}
             windows = []
             for f in affected_ids:
                 gate = flights[f].assumptions.get("gate_id")
-                if gate:
-                    windows.append(window("GROUND_WINDOW", f, str(gate.value), horizon[0],
-                                          iso(s.end_utc + GROUND_WINDOW_MARGIN)))
-            return {"authorized_windows": windows}
+                category = flights[f].assumptions.get("wake_category")
+                if not gate:
+                    continue
+                choices = [str(gate.value)] + [
+                    r.resource_id for r in gate_resources
+                    if r.resource_id != str(gate.value) and r.resource_id not in used
+                    and (not category or str(category.value) in r.compatible_categories)][:ALTERNATIVE_GATES]
+                windows += [window("GROUND_WINDOW", f, g, horizon[0], iso(s.end_utc + GROUND_WINDOW_MARGIN))
+                            for g in choices]
+            return {"authorized_windows": windows, "engine_plan": engine_plan,
+                    "affected_ids": list(affected_ids), "required_constraints": len(affected_ids)}
         flight = flights[flight_id]
         arrival = flight.destination == s.airport_iata
         windows = [window("TIMING_WINDOW", flight_id, None, *horizon)]
@@ -149,7 +190,15 @@ class PlatformEngine:
                 "assumptions": {k: v.model_dump(mode="json") for k, v in flight.assumptions.items()}}
 
     async def enumerate_candidates(self, snapshot: Json, constraints: list[Json], limit: int = 100) -> Json:
-        plans, metadata = await self._search_once()
+        # Plans built around the agents' requests first, then the engine-only plans; the coordinator
+        # keeps those satisfying every offer and ranks them by Impact.score.
+        engine_plans, metadata = await self._search_once()
+        requests = requests_from_offers(self.snapshot, constraints) if constraints else {}
+        requested = []
+        if requests:
+            requested, self.request_search = await run_in_process(
+                partial(search_candidates, requests=requests), self.snapshot, None, 100)
+        plans = requested + engine_plans
         out = []
         for p in plans[:limit]:
             p = p.model_copy(update={"source": "CONSENSUS"})
@@ -161,7 +210,9 @@ class PlatformEngine:
         return [c.model_dump(mode="json") for c in checks]
 
     async def compute_impact(self, snapshot: Json, plan: Json, baseline: Json | None) -> Json:
-        base = Plan.model_validate(baseline) if baseline else None
+        # Without a caller baseline, compare with the engine-only plan, so versus_baseline shows
+        # what the agents' negotiation changed.
+        base = Plan.model_validate(baseline) if baseline else await self._preview_plan()
         impact = await asyncio.to_thread(compute_impact, self.snapshot, Plan.model_validate(plan), base)
         return impact.model_dump(mode="json")
 

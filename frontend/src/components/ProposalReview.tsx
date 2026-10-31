@@ -147,6 +147,18 @@ export default function ProposalReview({
               <span>protocol rounds</span>
             </div>
           </div>
+          {p.impact.baseline_delay_minutes !== p.impact.delay_minutes && (() => {
+            const holdingBase = (p.impact as { baseline_holding_minutes?: number }).baseline_holding_minutes;
+            const delayDelta = p.impact.delay_minutes - p.impact.baseline_delay_minutes;
+            const holdDelta = holdingBase === undefined ? null : p.impact.holding_minutes - holdingBase;
+            const fmt = (v: number) => `${v > 0 ? "+" : "−"}${Math.abs(v).toFixed(0)} min`;
+            return (
+              <p className={`vs-engine ${delayDelta < 0 ? "better" : "worse"}`}>
+                Agent-negotiated plan vs engine-only plan: {fmt(delayDelta)} total delay
+                {holdDelta !== null ? `, ${fmt(holdDelta)} holding` : ""}.
+              </p>
+            );
+          })()}
           <div className="review-scroll">
             <table className="comparison-table">
               <caption>Published → proposed runway slots</caption>

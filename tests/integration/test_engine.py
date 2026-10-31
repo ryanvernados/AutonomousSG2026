@@ -200,3 +200,23 @@ def test_same_tail_requires_turnaround(snapshot, plan):
     flights[1] = flights[1].model_copy(update={"tail_number": flights[0].tail_number,
         "scheduled_gate_departure_utc": flights[0].scheduled_gate_arrival_utc + timedelta(minutes=5)})
     assert "rotation.turnaround" in failures(snapshot.model_copy(update={"flights": flights}), plan)
+
+
+def test_agent_requests_shape_the_search_and_never_bypass_checks(snapshot, plan):
+    from backend.engine.planning import FlightRequest
+
+    target = plan.assignments[0]
+    runways = sorted(r.resource_id for r in snapshot.infrastructure.resources if r.kind == "RUNWAY")
+    other = next(r for r in runways if r != target.runway_id)
+    later = target.runway_time_utc + timedelta(minutes=15)
+    requests = {target.flight_id: FlightRequest(runway_ids=(other,), earliest_utc=later,
+                                                latest_utc=later + timedelta(minutes=20))}
+    plans, meta = search_candidates(snapshot, requests=requests)
+    assert plans and meta["policy"] == "AGENT_REQUESTS"
+    placed = next(a for a in plans[0].assignments if a.flight_id == target.flight_id)
+    assert placed.runway_id == other and later <= placed.runway_time_utc <= later + timedelta(minutes=20)
+    assert feasible(validate_plan(snapshot, plans[0]))
+    # An impossible request (window already in the past) produces no plan rather than an unsafe one.
+    past = snapshot.sim_time_utc - timedelta(hours=2)
+    impossible = {target.flight_id: FlightRequest(earliest_utc=past, latest_utc=past + timedelta(minutes=1))}
+    assert search_candidates(snapshot, requests=impossible)[0] == []

@@ -105,6 +105,7 @@ function impact(i: Json | undefined): Plan["impact"] {
   return {
     delay_minutes: delay,
     baseline_delay_minutes: delay - Number(vs.delay_minutes ?? 0),
+    baseline_holding_minutes: Number(agg.holding_minutes ?? 0) - Number(vs.holding_minutes ?? 0),
     holding_minutes: Number(agg.holding_minutes ?? 0),
     taxi_minutes: Number(agg.taxi_minutes ?? 0),
     maximum_wait_minutes: Number(agg.max_wait_minutes ?? 0),

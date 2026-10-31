@@ -2076,3 +2076,118 @@ p.check-failed {
   max-width: 220px;
   color: #7b5ea7;
 }
+.staff-panel .panel-heading {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.role-tabs {
+  display: inline-flex;
+  border: 1px solid #d5ded1;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.role-tabs button {
+  border: 0;
+  background: #fff;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 12px;
+  color: #5e7a61;
+  cursor: pointer;
+}
+.role-tabs button.active {
+  background: #e3ecdc;
+  color: #2c3a33;
+  font-weight: 600;
+}
+.staff-status {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #2e8b57;
+}
+.staff-status.proposal {
+  color: #9c6a12;
+}
+.staff-body {
+  max-height: 520px;
+  overflow: auto;
+}
+.staff-block h3 {
+  margin: 12px 0 6px;
+  font-size: 13px;
+}
+.staff-alerts {
+  margin: 0 0 8px;
+  padding: 8px 12px 8px 26px;
+  background: #fbefe9;
+  border-radius: 6px;
+  color: #a5432c;
+  font-size: 12px;
+}
+.ground-table tr.done {
+  opacity: 0.45;
+}
+.agent-notes {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-left: 3px solid #b9c8e0;
+  background: #f5f7fb;
+  font-size: 12px;
+}
+.agent-notes p {
+  margin: 4px 0 0;
+}
+.pilot-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+.pilot-card {
+  border: 1px solid #dfe6da;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fbfcf9;
+  font-size: 12px;
+  cursor: pointer;
+}
+.pilot-card.selected {
+  border-color: #2e8b57;
+  box-shadow: 0 0 0 1px #2e8b57;
+}
+.pilot-card.done {
+  opacity: 0.5;
+}
+.pilot-card ol {
+  margin: 6px 0;
+  padding-left: 18px;
+}
+.pilot-card .fuel {
+  margin: 4px 0 0;
+  color: #5e7a61;
+}
+.pilot-card .fuel.warn {
+  color: #b7783d;
+  font-weight: 600;
+}
+.pilot-card .agent-line {
+  margin: 6px 0 0;
+  color: #4b5d7a;
+  font-style: italic;
+}
+.vs-engine {
+  margin: 8px 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.vs-engine.better {
+  background: #e6f2e8;
+  color: #2e7a4b;
+}
+.vs-engine.worse {
+  background: #fbefe6;
+  color: #9c5a1f;
+}

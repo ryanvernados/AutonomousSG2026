@@ -31,6 +31,7 @@ from backend.contracts import (
     SnapshotResponse,
     utcnow,
 )
+from backend.engine.isolation import run_in_process
 from backend.engine.planning import baseline_plan, compute_impact
 from backend.engine.scenarios import ScenarioRepository
 from backend.persistence import SQLiteStore
@@ -79,7 +80,10 @@ def create_app(settings=None, store=None, coordinator=None):
                 persistence = PostgresStore(config.database_url)
         app.state.service = PlatformService(persistence, ScenarioRepository(config.scenario_dir), coordinator,
                                             default_clock_speed=config.sim_speed)
-        await asyncio.to_thread(app.state.service.recover)
+        interrupted = await asyncio.to_thread(app.state.service.recover, True)
+        for session_id, nid, snapshot in interrupted:
+            tasks[(session_id, nid)] = asyncio.create_task(
+                app.state.service.finish_recovered(session_id, nid, snapshot))
 
         async def run_clock():
             while True:
@@ -220,9 +224,9 @@ def create_app(settings=None, store=None, coordinator=None):
         return request.app.state.service.decision(session_id, pid, body, actor)
 
     @app.get(prefix + "/sessions/{session_id}/baseline", response_model=FallbackResult)
-    def baseline(session_id: str, request: Request, actor=Depends(authenticate)):
-        doc = request.app.state.service.read(session_id, actor)
-        return baseline_plan(doc.snapshot)
+    async def baseline(session_id: str, request: Request, actor=Depends(authenticate)):
+        doc = await asyncio.to_thread(request.app.state.service.read, session_id, actor)
+        return await run_in_process(baseline_plan, doc.snapshot)
 
     @app.get(prefix + "/sessions/{session_id}/metrics")
     def metrics(session_id: str, request: Request, actor=Depends(authenticate)):

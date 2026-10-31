@@ -24,6 +24,21 @@ class ModelAdapter(Protocol):
     async def generate(self, request: Json, timeout_seconds: float) -> ModelResponse: ...
 
 
+def _choose(view: Json) -> list[Json]:
+    """Mock round-1 choice: one runway and one gate per flight (the engine's), all other windows as given."""
+    engine = {e["flight_id"]: e for e in view.get("engine_plan", [])}
+    chosen, seen = [], set()
+    for w in view["authorized_windows"]:
+        if w["kind"] in ("RUNWAY_WINDOW", "GROUND_WINDOW"):
+            key = "runway_id" if w["kind"] == "RUNWAY_WINDOW" else "gate_id"
+            pick = engine.get(w["subject_id"], {}).get(key)
+            if (w["kind"], w["subject_id"]) in seen or (pick and w["resource_id"] != pick):
+                continue
+            seen.add((w["kind"], w["subject_id"]))
+        chosen.append(clone(w))
+    return chosen
+
+
 class MockAdapter:
     mode = "MOCK"
     model = "deterministic-domain-v1"
@@ -41,7 +56,7 @@ class MockAdapter:
             raise ProtocolError("MISSING_BALLOT")
         reply = {key: request[key] for key in ("base_state_version", "instruction_version", "proposal_id", "plan_hash")}
         reply.update(type="OFFER" if round_number == 1 else "ACCEPT",
-                     constraints=clone(request["view"]["authorized_windows"]) if round_number == 1 else [], reasons=[])
+                     constraints=_choose(request["view"]) if round_number == 1 else [], reasons=[])
         if round_number == 2 and ((self.behavior == "pilot_veto" and role == "PILOT") or
                                   (self.behavior == "ground_conflict" and role == "GROUND")):
             reply.update(type="REJECT", reasons=[{"code": "DOMAIN_CONFLICT", "detail": "Mock domain veto",
@@ -108,6 +123,25 @@ class ResponsesAdapter:
         return ModelResponse(payload, data.get("model", self.model), safe_usage)
 
 
+def bound_schema(request: Json) -> Json:
+    """REPLY_SCHEMA with this call's identity and round pinned, so decoding cannot mistype a hash.
+
+    The coordinator still validates every echoed field; this only removes copying errors.
+    """
+    schema = json.loads(json.dumps(REPLY_SCHEMA))
+    props = schema["properties"]
+    for field in ("base_state_version", "instruction_version", "proposal_id", "plan_hash"):
+        value = request[field]
+        props[field] = {"type": "null"} if value is None else {
+            "type": "integer" if isinstance(value, int) else "string", "enum": [value]}
+    props["type"] = {**props["type"], "enum": ["OFFER"] if request["round"] == 1 else ["ACCEPT", "REJECT"]}
+    if request["round"] == 2:
+        # A ballot cannot amend the plan: the vote schema has no constraints field (added back empty).
+        del props["constraints"]
+        schema["required"] = [k for k in schema["required"] if k != "constraints"]
+    return schema
+
+
 class ClaudeAdapter:
     """Anthropic Messages adapter: one structured-output call per agent per round.
 
@@ -139,7 +173,7 @@ class ClaudeAdapter:
                 messages=[{"role": "user", "content": json.dumps(
                     {k: v for k, v in request.items() if k != "instructions"}, allow_nan=False)}],
                 output_config={"effort": self.effort,
-                               "format": {"type": "json_schema", "schema": REPLY_SCHEMA}},
+                               "format": {"type": "json_schema", "schema": bound_schema(request)}},
                 # On a safety decline the API re-runs the call on a fallback model in the same request.
                 betas=[self.FALLBACK_BETA], fallbacks="default",
             )
@@ -159,5 +193,7 @@ class ClaudeAdapter:
             payload = json.loads(texts[0])
         except (ValueError, TypeError) as exc:
             raise ProtocolError("INVALID_MESSAGE") from exc
+        if request["round"] == 2 and isinstance(payload, dict) and "constraints" not in payload:
+            payload["constraints"] = []
         usage = {"input_tokens": response.usage.input_tokens, "output_tokens": response.usage.output_tokens}
         return ModelResponse(payload, response.model, usage)
