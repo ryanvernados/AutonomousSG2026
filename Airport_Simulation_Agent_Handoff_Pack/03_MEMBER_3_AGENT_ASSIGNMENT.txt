@@ -1,0 +1,34 @@
+ASSIGNMENT 3
+Member 3 agents and bounded coordination
+
+First read 00_READ_FIRST_COMMON_SPECIFICATION.txt. Treat it as the shared integration contract.
+
+Mission: implement independent domain reasoning and a traceable agreement protocol. Own backend/agents and backend/coordination. Four team members are implementation owners; the runtime still has separate ATC, pilot and ground agents.
+
+Implement in this order
+
+- Build a provider neutral model adapter and a deterministic mock adapter with the same structured response schema. Read credentials from backend environment variables. Track model identity, latency, token usage where available and live or mock mode.
+
+- Implement separate ATC, pilot and ground instructions, contexts, histories and tool access. Each flight pilot evaluates its own fuel and operational limits. Other agents cannot rewrite those limits or approve on the pilot behalf.
+
+- Select affected participants from engine dependency information. Implement round 1 offers with explicit constraints and units. Reject malformed output and unauthorized field changes.
+
+- Combine offers through the engine candidate interface and deterministic validation. Rank feasible multi flight plans using the shared objective. Keep the selected plan immutable and compute its stable hash through the shared model utility.
+
+- Implement round 2 ballots for the same plan_hash and state versions. Require every participant acceptance. Enforce round and time budgets across failures, cancellations and transport retries.
+
+- Write protocol messages through Member 1 Supabase persistence adapter and support JSONL export. Return consensus awaiting authorization or a fallback reason. Use the engine fallback interface; never commit a schedule directly or let an LLM write arbitrary database records.
+
+Handoff and completion criteria
+
+- Deliver agent classes, domain instructions, message validation, coordinator, model and mock adapters, trace fixtures and module run instructions.
+
+- Provide tests for consensus, a pilot veto, a ground conflict, an invalid message, missing ballot, timeout and stale snapshot. Confirm that none creates a third negotiation round.
+
+- Demonstrate live model calls from distinct domain contexts. Record actual call counts and rounds. Explain a multi flight concession and its effect on other flights.
+
+Instruction to your coding agent
+
+Implement Member 3 only using common contracts and injected engine interfaces. Do not merge domains into one prompt, mutate simulation state, relax safety checks or hide corrective turns. Provide independent role agents and the exact two round protocol. Keep agent explanations concise and reasons structured. Finish with setup, live and mock commands, protocol tests, redacted trace, provider assumptions and integration notes.
+
+Dependency: work first with the shared synthetic scenario and mocked engine responses. Upgrade to Member 2 historical scenario and Member 1 validator when available; keep MOCK visibly labelled.

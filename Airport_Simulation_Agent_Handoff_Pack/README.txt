@@ -1,0 +1,1 @@
+Assign one member packet per teammate. Give each coding agent 00_READ_FIRST_COMMON_SPECIFICATION.txt plus its assigned packet. The Word document is the human readable master plan. Member 1 owns contract changes and coordinates integration. No implementation or source data is included in this handoff pack.

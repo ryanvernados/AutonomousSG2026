@@ -1,0 +1,2711 @@
+{
+  "schema_version": "1",
+  "scenario_id": "sfo-synthetic-v1",
+  "project_id": "00000000-0000-0000-0000-000000000010",
+  "airport_iata": "SFO",
+  "timezone": "America/Los_Angeles",
+  "seed": 2026,
+  "start_utc": "2015-01-01T16:00:00Z",
+  "end_utc": "2015-01-01T18:30:00Z",
+  "source_manifest": {
+    "source_type": "SYNTHETIC",
+    "fixture_checksum": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba",
+    "description": "24 synthetic flight legs for Member 1 integration; not sourced airport geometry",
+    "traffic_window_minutes": 120,
+    "initialization_buffer_minutes": 15,
+    "traffic_window_start_utc": "2015-01-01T16:00:00+00:00",
+    "traffic_window_end_utc": "2015-01-01T18:00:00+00:00",
+    "recovery_buffer_minutes": 30,
+    "historical_coverage": false,
+    "limitations": [
+      "No passenger connections or overtime model",
+      "Taxi time is a declared proxy",
+      "Dedicated synthetic crews; ground equipment serves both movement directions"
+    ]
+  },
+  "rules_config": {
+    "source_type": "SYNTHETIC",
+    "runway_occupancy_seconds": 60,
+    "wake_separation_seconds": {
+      "MEDIUM:MEDIUM": 120,
+      "HEAVY:MEDIUM": 180,
+      "MEDIUM:HEAVY": 120,
+      "HEAVY:HEAVY": 150
+    },
+    "minimum_turnaround_seconds": 1200,
+    "search_step_seconds": 120,
+    "search_limit": 100,
+    "proposal_validity_seconds": 300,
+    "round_budget_seconds": 30.0,
+    "total_budget_seconds": 60.0,
+    "objective_weights": {
+      "delay_minutes": 1.0,
+      "holding_minutes": 2.0,
+      "taxi_minutes": 0.2,
+      "max_wait_minutes": 0.5
+    }
+  },
+  "flights": [
+    {
+      "flight_id": "3d2e1f5f013c1325:1",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:1",
+      "airline": "DEMO",
+      "flight_number": "100",
+      "tail_number": "SYN-000",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T15:10:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T16:14:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T17:20:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G00",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-00",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:2",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:2",
+      "airline": "DEMO",
+      "flight_number": "101",
+      "tail_number": "SYN-001",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T16:11:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:14:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T17:24:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G01",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-01",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:3",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:3",
+      "airline": "DEMO",
+      "flight_number": "102",
+      "tail_number": "SYN-002",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T15:18:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T16:22:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T17:28:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G02",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-02",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:4",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:4",
+      "airline": "DEMO",
+      "flight_number": "103",
+      "tail_number": "SYN-003",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T16:19:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:22:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T17:32:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G03",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-03",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:5",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:5",
+      "airline": "DEMO",
+      "flight_number": "104",
+      "tail_number": "SYN-004",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T15:26:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T16:30:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T17:36:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G04",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-04",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:6",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:6",
+      "airline": "DEMO",
+      "flight_number": "105",
+      "tail_number": "SYN-005",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T16:27:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:30:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T17:40:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G05",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-05",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:7",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:7",
+      "airline": "DEMO",
+      "flight_number": "106",
+      "tail_number": "SYN-006",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T15:34:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T16:38:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T17:44:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G06",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-06",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:8",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:8",
+      "airline": "DEMO",
+      "flight_number": "107",
+      "tail_number": "SYN-007",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T16:35:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:38:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T17:48:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G07",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-07",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:9",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:9",
+      "airline": "DEMO",
+      "flight_number": "108",
+      "tail_number": "SYN-008",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T15:42:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T16:46:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T17:52:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G08",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-08",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:10",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:10",
+      "airline": "DEMO",
+      "flight_number": "109",
+      "tail_number": "SYN-009",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T16:43:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:46:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T17:56:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G09",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-09",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:11",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:11",
+      "airline": "DEMO",
+      "flight_number": "110",
+      "tail_number": "SYN-010",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T15:50:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T16:54:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:00:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G10",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-10",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:12",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:12",
+      "airline": "DEMO",
+      "flight_number": "111",
+      "tail_number": "SYN-011",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T16:51:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:54:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:04:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G11",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-11",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:13",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:13",
+      "airline": "DEMO",
+      "flight_number": "112",
+      "tail_number": "SYN-012",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T15:58:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:02:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:08:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G12",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-12",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:14",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:14",
+      "airline": "DEMO",
+      "flight_number": "113",
+      "tail_number": "SYN-013",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T16:59:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T18:02:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:12:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G13",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-13",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:15",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:15",
+      "airline": "DEMO",
+      "flight_number": "114",
+      "tail_number": "SYN-014",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T16:06:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:10:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:16:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G14",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-14",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:16",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:16",
+      "airline": "DEMO",
+      "flight_number": "115",
+      "tail_number": "SYN-015",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T17:07:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T18:10:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:20:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G15",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-15",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:17",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:17",
+      "airline": "DEMO",
+      "flight_number": "116",
+      "tail_number": "SYN-016",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T16:14:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:18:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:24:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G16",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-16",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:18",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:18",
+      "airline": "DEMO",
+      "flight_number": "117",
+      "tail_number": "SYN-017",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T17:15:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T18:18:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:28:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G17",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-17",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:19",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:19",
+      "airline": "DEMO",
+      "flight_number": "118",
+      "tail_number": "SYN-018",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T16:22:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:26:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:32:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G18",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-18",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:20",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:20",
+      "airline": "DEMO",
+      "flight_number": "119",
+      "tail_number": "SYN-019",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T17:23:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T18:26:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:36:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G19",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-19",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:21",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:21",
+      "airline": "DEMO",
+      "flight_number": "120",
+      "tail_number": "SYN-020",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T16:30:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:34:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:40:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G20",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-20",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:22",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:22",
+      "airline": "DEMO",
+      "flight_number": "121",
+      "tail_number": "SYN-021",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T17:31:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T18:34:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:44:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G21",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-21",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:23",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:23",
+      "airline": "DEMO",
+      "flight_number": "122",
+      "tail_number": "SYN-022",
+      "origin": "LAX",
+      "destination": "SFO",
+      "scheduled_gate_departure_utc": "2015-01-01T16:38:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T17:42:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:48:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G22",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-22",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    },
+    {
+      "flight_id": "3d2e1f5f013c1325:24",
+      "source_row_id": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba:24",
+      "airline": "DEMO",
+      "flight_number": "123",
+      "tail_number": "SYN-023",
+      "origin": "SFO",
+      "destination": "LAX",
+      "scheduled_gate_departure_utc": "2015-01-01T17:39:00Z",
+      "scheduled_gate_arrival_utc": "2015-01-01T18:42:00Z",
+      "state": "SCHEDULED",
+      "plan": null,
+      "assumptions": {
+        "wake_category": {
+          "value": "MEDIUM",
+          "source_type": "SYNTHETIC",
+          "unit": "category",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "latest_safe_arrival_utc": {
+          "value": "2015-01-01T18:52:00+00:00",
+          "source_type": "SYNTHETIC",
+          "unit": "UTC",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "gate_id": {
+          "value": "G23",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "crew_id": {
+          "value": "CREW-23",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        },
+        "equipment_id": {
+          "value": "GSE-POOL",
+          "source_type": "SYNTHETIC",
+          "unit": "resource_id",
+          "explanation": "Declared platform fixture parameter; not historical or certified"
+        }
+      },
+      "actual_gate_departure_utc": null,
+      "actual_gate_arrival_utc": null,
+      "wheels_on_utc": null,
+      "wheels_off_utc": null
+    }
+  ],
+  "infrastructure": {
+    "resources": [
+      {
+        "resource_id": "28L",
+        "kind": "RUNWAY",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [
+          "28R"
+        ],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "28R",
+        "kind": "RUNWAY",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [
+          "28L"
+        ],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "GSE-POOL",
+        "kind": "EQUIPMENT",
+        "capacity": 2,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "G00",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-00",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G00",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G00",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G00",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G00",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G01",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-01",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G01",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G01",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G01",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G01",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G02",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-02",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G02",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G02",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G02",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G02",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G03",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-03",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G03",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G03",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G03",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G03",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G04",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-04",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G04",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G04",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G04",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G04",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G05",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-05",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G05",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G05",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G05",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G05",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G06",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-06",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G06",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G06",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G06",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G06",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G07",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-07",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G07",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G07",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G07",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G07",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G08",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-08",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G08",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G08",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G08",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G08",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G09",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-09",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G09",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G09",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G09",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G09",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G10",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-10",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G10",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G10",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G10",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G10",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G11",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-11",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G11",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G11",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G11",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G11",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G12",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-12",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G12",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G12",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G12",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G12",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G13",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-13",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G13",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G13",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G13",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G13",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G14",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-14",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G14",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G14",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G14",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G14",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G15",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-15",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G15",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G15",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G15",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G15",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G16",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-16",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G16",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G16",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G16",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G16",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G17",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-17",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G17",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G17",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G17",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G17",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G18",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-18",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G18",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G18",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G18",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G18",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G19",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-19",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G19",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G19",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G19",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G19",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G20",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-20",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G20",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G20",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G20",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G20",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G21",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-21",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G21",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G21",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G21",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G21",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G22",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-22",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G22",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G22",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G22",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G22",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "G23",
+        "kind": "GATE",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [
+          "MEDIUM",
+          "HEAVY"
+        ],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "CREW-23",
+        "kind": "CREW",
+        "capacity": 1,
+        "node_from": null,
+        "node_to": null,
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": "2015-01-01T16:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
+        "max_work_seconds": 28800,
+        "minimum_traversal_seconds": 30
+      },
+      {
+        "resource_id": "TX-28L-G23",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28L",
+        "node_to": "G23",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      },
+      {
+        "resource_id": "TX-28R-G23",
+        "kind": "TAXIWAY",
+        "capacity": 1,
+        "node_from": "28R",
+        "node_to": "G23",
+        "bidirectional": true,
+        "dependent_runway_ids": [],
+        "compatible_categories": [],
+        "available_from_utc": null,
+        "available_until_utc": null,
+        "max_work_seconds": null,
+        "minimum_traversal_seconds": 120
+      }
+    ],
+    "source_type": "SYNTHETIC",
+    "effective_date": "2015-01-01",
+    "coverage_limits": [
+      "Schematic dependent runway pair 28L/28R, not a verified SFO diagram",
+      "24 declared gates and direct taxi segments",
+      "No real-world safety certification"
+    ]
+  },
+  "initial_occupancy": [
+    {
+      "resource_id": "G23",
+      "starts_at_utc": "2015-01-01T15:45:00Z",
+      "ends_at_utc": "2015-01-01T16:05:00Z",
+      "quantity": 1,
+      "reservation_id": "initial-gate-occupancy",
+      "flight_id": "BUFFER-OCCUPANT",
+      "kind": "GATE",
+      "wake_category": null
+    }
+  ]
+}

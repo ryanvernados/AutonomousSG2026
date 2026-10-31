@@ -1,8 +1,17 @@
 .venv/
 __pycache__/
-*.pyc
+*.py[cod]
 .pytest_cache/
-# Raw Kaggle files stay outside version control
+.ruff_cache/
+.env
+*.sqlite3*
+dataset/
+node_modules/
+dist/
+.coverage
+htmlcov/
+
+# Raw Kaggle files stay outside version control (Member 2)
 data/raw/
 *.csv
 !backend/**/fixtures/*.csv

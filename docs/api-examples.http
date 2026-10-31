@@ -1,0 +1,80 @@
+@base = http://127.0.0.1:8000/api/v1
+@token = local-demo-change-me
+@session = REPLACE_WITH_SESSION_ID
+@negotiation = REPLACE_WITH_NEGOTIATION_ID
+@proposal = REPLACE_WITH_PROPOSAL_ID
+@hash = REPLACE_WITH_EXACT_PLAN_HASH
+
+### List inputs
+GET {{base}}/scenarios
+Authorization: Bearer {{token}}
+
+### Create (copy session_id into variable above)
+POST {{base}}/sessions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"command_id":"demo-create-1","base_state_version":0,"scenario_id":"sfo-synthetic-v1"}
+
+### Snapshot: current operations and proposals remain separate
+GET {{base}}/sessions/{{session}}/snapshot
+Authorization: Bearer {{token}}
+
+### Read-only preview (no state change)
+POST {{base}}/sessions/{{session}}/instructions/preview
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"instruction_id":"runway-demo","scenario_id":"sfo-synthetic-v1","base_state_version":0,"kind":"RUNWAY_UNAVAILABLE","resource_id":"28L","starts_at_utc":"2015-01-01T16:00:00Z","ends_at_utc":"2015-01-01T16:15:00Z"}
+
+### Confirm restriction (version becomes 1)
+POST {{base}}/sessions/{{session}}/instructions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"command_id":"demo-instruction-1","base_state_version":0,"instruction":{"instruction_id":"runway-demo","scenario_id":"sfo-synthetic-v1","base_state_version":0,"kind":"RUNWAY_UNAVAILABLE","resource_id":"28L","starts_at_utc":"2015-01-01T16:00:00Z","ends_at_utc":"2015-01-01T16:15:00Z"}}
+
+### Start asynchronous negotiation (202, still version 1 while paused)
+POST {{base}}/sessions/{{session}}/negotiations
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"command_id":"demo-negotiation-1","base_state_version":1,"affected_ids":[]}
+
+### Poll result; default is explicit FALLBACK, never live consensus
+GET {{base}}/sessions/{{session}}/negotiations/{{negotiation}}
+Authorization: Bearer {{token}}
+
+### Staff approval (version becomes 2); duplicate identical request is idempotent
+POST {{base}}/sessions/{{session}}/proposals/{{proposal}}/decision
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"command_id":"demo-approve-1","base_state_version":1,"plan_hash":"{{hash}}","decision":"APPROVE"}
+
+### Advance (version becomes 3)
+POST {{base}}/sessions/{{session}}/clock
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"command_id":"demo-step-1","base_state_version":2,"action":"STEP","seconds":1200}
+
+### Suspend replanning, preserve restrictions/reservations (version becomes 4)
+POST {{base}}/sessions/{{session}}/control
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"command_id":"demo-manual-1","base_state_version":3,"mode":"MANUAL"}
+
+### SSE: use authenticated fetch, no token in the URL
+GET {{base}}/sessions/{{session}}/events?after_seq=0
+Authorization: Bearer {{token}}
+Last-Event-ID: 2
+
+### Export redacted audit
+GET {{base}}/sessions/{{session}}/events/export
+Authorization: Bearer {{token}}
+
+### Metrics include unsupported/null values and unfinished/unresolved flights
+GET {{base}}/sessions/{{session}}/metrics
+Authorization: Bearer {{token}}
