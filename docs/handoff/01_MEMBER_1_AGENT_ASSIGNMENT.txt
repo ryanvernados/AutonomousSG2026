@@ -1,0 +1,34 @@
+ASSIGNMENT 1
+Member 1 platform and simulation rules
+
+First read 00_READ_FIRST_COMMON_SPECIFICATION.txt. Treat it as the shared integration contract.
+
+Mission: own the canonical backend and the rules that determine whether a proposed airport schedule is feasible. Act as integration lead. Your coding agent receives the common specification plus this packet.
+
+Implement in this order
+
+- Publish contract version 1, FastAPI configuration, lockfile and synthetic fixture. Own Supabase migrations, seed data, membership policies and persistence adapters. Publish API examples and frontend and backend environment templates before parallel integration.
+
+- Build the simulation clock, flight states and time interval reservation engine. Support arrivals, departures, turnaround and shared runway, taxiway, gate, crew and equipment resources.
+
+- Implement deterministic validators and a bounded candidate generator. Include unrelated existing reservations when checking each plan. Return structured PASS, FAIL and UNKNOWN results with units and reasons.
+
+- Implement the safety constrained baseline, fallback ranking and impact computation. Keep objective configuration fixed across comparison runs and expose it in run metadata.
+
+- Expose authenticated HTTP and event interfaces. Verify Supabase users and project roles. Implement idempotency, version conflicts, plan hashing, expiration and one database transaction for approval. Add session checkpoints and restart recovery; keep model work asynchronous.
+
+- Integrate Member 2 scenarios, Member 3 coordinator and Member 4 UI. Supply one documented command to start the backend and one to run integration verification.
+
+Handoff and completion criteria
+
+- Deliver backend contracts, engine, API, persistence adapters, Supabase migrations and access policies, generated specification, synthetic seeds, README and integration tests.
+
+- Reject insufficient separation, occupied gates, blocked taxiways, unknown fuel and stale approval. Prove database rollback, duplicate command handling, unauthorized user rejection and checkpoint recovery.
+
+- Prove that timeout invokes labelled fallback, that manual mode disables automatic replanning, and that the baseline and agent path use identical configured hard checks.
+
+Instruction to your coding agent
+
+Implement Member 1 using FastAPI, Pydantic, SimPy and Supabase Postgres against the common specification. Publish contracts and synthetic fixtures first. Own backend, Supabase migrations and root configuration; inject missing modules. Route operational writes through authenticated backend checks and durable transactions. Preserve hard constraints. Finish with files, setup, tests, API examples, migrations, policies, recovery behavior and a handoff note.
+
+Dependency: initial progress must not require Kaggle access or an LLM key. Coordinate later scenario and agent adapters through the shared contract.
