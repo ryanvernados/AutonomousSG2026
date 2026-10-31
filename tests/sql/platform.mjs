@@ -34,6 +34,7 @@ try {
       ('00000000-0000-0000-0000-000000000003');
   `);
   await pg.exec(await readFile('supabase/migrations/202610310001_platform.sql', 'utf8'));
+  await pg.exec(await readFile('supabase/migrations/202610310002_https_backend_reads.sql', 'utf8'));
   await pg.exec(await readFile('supabase/seed.sql', 'utf8'));
   await pg.exec(`
     insert into public.project_members values

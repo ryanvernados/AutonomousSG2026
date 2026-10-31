@@ -9,7 +9,9 @@ class Settings(BaseSettings):
     demo_token: str = ""
     sqlite_path: str = "airport.sqlite3"
     database_url: str = ""
+    persistence_mode: Literal["postgres", "supabase_http"] = "postgres"
     supabase_url: str = ""
     supabase_publishable_key: str = ""
+    supabase_secret_key: str = ""
     scenario_dir: str = "fixtures"
     cors_origins: list[str] = ["http://localhost:5173"]
