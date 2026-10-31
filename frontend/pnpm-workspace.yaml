@@ -1,0 +1,6 @@
+packages:
+  - .
+# Isolate this project's cache from other local installations.
+storeDir: .pnpm-store
+allowBuilds:
+  esbuild: true
