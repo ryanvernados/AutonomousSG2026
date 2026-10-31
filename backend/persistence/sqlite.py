@@ -5,6 +5,7 @@ import threading
 
 from backend.api.errors import PlatformError
 from backend.contracts import AuditEvent, SessionDocument
+from backend.persistence.base import check_transition
 
 
 class SQLiteStore:
@@ -86,6 +87,8 @@ class SQLiteStore:
                         raise PlatformError(409, "REVISION_CONFLICT", "Session already exists")
                 elif not row or row[0] != expected_revision:
                     raise PlatformError(409, "REVISION_CONFLICT", "Concurrent durable update; reload snapshot")
+                else:
+                    check_transition(self.get(document.session_id), document)
                 revision = 0 if expected_revision is None else expected_revision + 1
                 document = document.model_copy(update={"revision": revision})
                 serialized = document.model_dump_json()

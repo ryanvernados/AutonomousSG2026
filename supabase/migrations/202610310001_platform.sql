@@ -219,7 +219,8 @@ begin
         if found then raise exception 'Session exists' using errcode='40001'; end if;
         rev := 0;
     else
-        if not found or current_row.revision<>p_expected_revision or current_row.project_id<>pid then
+        if not found or current_row.revision<>p_expected_revision or current_row.project_id<>pid
+           or current_row.scenario_id<>p_document->'snapshot'->>'scenario_id' then
             raise exception 'Concurrent update' using errcode='40001';
         end if;
         -- Operational state and proposal validity are checked again INSIDE the transaction.

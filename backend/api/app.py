@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from starlette.exceptions import HTTPException
 
-from backend.api.auth import authenticate
+from backend.api.auth import authenticate, bearer
 from backend.api.config import Settings
 from backend.api.errors import PlatformError
 from backend.api.service import PlatformService
@@ -21,6 +21,7 @@ from backend.contracts import (
     CreateSession,
     DecisionCommand,
     ErrorBody,
+    FallbackResult,
     Instruction,
     InstructionCommand,
     NegotiationCommand,
@@ -30,7 +31,7 @@ from backend.contracts import (
     SnapshotResponse,
     utcnow,
 )
-from backend.engine.planning import baseline_plan
+from backend.engine.planning import baseline_plan, compute_impact
 from backend.engine.scenarios import ScenarioRepository
 from backend.persistence import SQLiteStore
 from backend.persistence.postgres import PostgresStore
@@ -52,7 +53,7 @@ def redact(value):
 
 def create_app(settings=None, store=None, coordinator=None):
     config = settings or Settings()
-    tasks = set()
+    tasks = {}
 
     @asynccontextmanager
     async def lifespan(app):
@@ -83,9 +84,10 @@ def create_app(settings=None, store=None, coordinator=None):
             yield
         finally:
             clock_task.cancel()
-            for task in tasks:
+            pending = list(tasks.values())
+            for task in pending:
                 task.cancel()
-            await asyncio.gather(clock_task, *tasks, return_exceptions=True)
+            await asyncio.gather(clock_task, *pending, return_exceptions=True)
             if owned_store:
                 persistence.close()
 
@@ -123,6 +125,17 @@ def create_app(settings=None, store=None, coordinator=None):
 
     prefix = "/api/v1"
 
+    def cancel_jobs(session_id):
+        import anyio
+
+        current = app.state.service.store.get(session_id)
+
+        def cancel():
+            for (sid, nid), task in list(tasks.items()):
+                if sid == session_id and current.negotiations[nid].status != "RUNNING":
+                    task.cancel()
+        anyio.from_thread.run_sync(cancel)
+
     @app.get(prefix + "/scenarios", response_model=list[Scenario])
     def scenarios(request: Request, actor=Depends(authenticate)):
         service = request.app.state.service
@@ -142,7 +155,9 @@ def create_app(settings=None, store=None, coordinator=None):
 
     @app.post(prefix + "/sessions/{session_id}/clock", response_model=CommandResult)
     def clock_command(session_id: str, body: ClockCommand, request: Request, actor=Depends(authenticate)):
-        return request.app.state.service.clock(session_id, body, actor)
+        result = request.app.state.service.clock(session_id, body, actor)
+        cancel_jobs(session_id)
+        return result
 
     @app.post(prefix + "/sessions/{session_id}/instructions/preview", response_model=PreviewResponse)
     def preview(session_id: str, body: Instruction, request: Request, actor=Depends(authenticate)):
@@ -150,11 +165,15 @@ def create_app(settings=None, store=None, coordinator=None):
 
     @app.post(prefix + "/sessions/{session_id}/instructions", response_model=CommandResult)
     def instruction(session_id: str, body: InstructionCommand, request: Request, actor=Depends(authenticate)):
-        return request.app.state.service.instruction(session_id, body, actor)
+        result = request.app.state.service.instruction(session_id, body, actor)
+        cancel_jobs(session_id)
+        return result
 
     @app.post(prefix + "/sessions/{session_id}/control", response_model=CommandResult)
     def control(session_id: str, body: ControlCommand, request: Request, actor=Depends(authenticate)):
-        return request.app.state.service.control(session_id, body, actor)
+        result = request.app.state.service.control(session_id, body, actor)
+        cancel_jobs(session_id)
+        return result
 
     @app.post(prefix + "/sessions/{session_id}/negotiations", response_model=CommandResult, status_code=202)
     def negotiate(session_id: str, body: NegotiationCommand, request: Request, actor=Depends(authenticate)):
@@ -164,9 +183,18 @@ def create_app(settings=None, store=None, coordinator=None):
         import anyio
 
         def schedule():
+            key = (session_id, result["negotiation_id"])
+            if key in tasks:
+                return
             task = asyncio.create_task(service.negotiate(session_id, result["negotiation_id"], actor))
-            tasks.add(task)
-            task.add_done_callback(tasks.discard)
+            tasks[key] = task
+
+            def finished(completed):
+                if tasks.get(key) is completed:
+                    tasks.pop(key, None)
+                if not completed.cancelled() and completed.exception():
+                    log.error("Negotiation job failed; durable state retained", exc_info=completed.exception())
+            task.add_done_callback(finished)
         anyio.from_thread.run_sync(schedule)
         return result
 
@@ -182,10 +210,40 @@ def create_app(settings=None, store=None, coordinator=None):
     def decision(session_id: str, pid: str, body: DecisionCommand, request: Request, actor=Depends(authenticate)):
         return request.app.state.service.decision(session_id, pid, body, actor)
 
-    @app.get(prefix + "/sessions/{session_id}/baseline")
+    @app.get(prefix + "/sessions/{session_id}/baseline", response_model=FallbackResult)
     def baseline(session_id: str, request: Request, actor=Depends(authenticate)):
         doc = request.app.state.service.read(session_id, actor)
         return baseline_plan(doc.snapshot)
+
+    @app.get(prefix + "/sessions/{session_id}/metrics")
+    def metrics(session_id: str, request: Request, actor=Depends(authenticate)):
+        from datetime import timedelta
+
+        from backend.contracts import Plan, seal_plan
+        service = request.app.state.service
+        doc = service.read(session_id, actor)
+        s = doc.snapshot
+        current = seal_plan(Plan(scenario_id=s.scenario_id, base_state_version=s.state_version,
+            instruction_version=s.instruction_version, assignments=[f.plan for f in s.flights if f.plan],
+            expires_at_utc=utcnow() + timedelta(minutes=5)))
+        impact = compute_impact(s, current)
+        records = list(doc.negotiations.values())
+        authorized = [p for p in doc.proposals.values() if p.status == "AUTHORIZED"]
+        checks = [c for p in authorized for c in p.checks]
+        return {"schema_version": "1", "scenario_id": s.scenario_id, "seed": s.seed,
+                "state_version": s.state_version, "horizon_start_utc": s.start_utc,
+                "horizon_end_utc": s.end_utc, "rules_config": s.rules_config,
+                "impact": impact, "authorization_checks": {
+                    "hard_violations": sum(c.status == "FAIL" and c.severity == "HARD" for c in checks),
+                    "unknown": sum(c.status == "UNKNOWN" for c in checks)},
+                "active_alerts": s.alerts, "negotiation_rounds": sum(n.round for n in records),
+                "model_calls": sum(n.model_calls or 0 for n in records),
+                "model_call_counts_incomplete": any(n.model_calls is None for n in records),
+                "negotiation_duration_seconds": sum(n.duration_seconds for n in records),
+                "fallback_count": sum(p.plan.source == "FALLBACK" for p in doc.proposals.values()),
+                "staff_actions": sum(e.actor_id != "SYSTEM" and e.event_type != "NEGOTIATION_FINISHED"
+                                     for e in service.store.events(session_id)),
+                "holding_model": "Gate delay proxy with fixed taxi duration; no fuel model"}
 
     @app.get(prefix + "/sessions/{session_id}/events/export")
     def export(session_id: str, request: Request, actor=Depends(authenticate)):
@@ -213,7 +271,7 @@ def create_app(settings=None, store=None, coordinator=None):
                 try:
                     await asyncio.to_thread(service.read, session_id, actor)
                     if heartbeat >= 60:
-                        await authenticate(request)
+                        await authenticate(request, await bearer(request))
                         heartbeat = 0
                     records = await asyncio.to_thread(service.store.events, session_id, cursor)
                 except PlatformError as exc:

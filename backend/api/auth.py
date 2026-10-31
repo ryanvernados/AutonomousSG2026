@@ -1,16 +1,16 @@
 import hmac
 
 import httpx
-from fastapi import Request
+from fastapi import Depends, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from backend.api.errors import PlatformError
 
-bearer = HTTPBearer(auto_error=False)
+bearer = HTTPBearer(auto_error=False, scheme_name="SupabaseBearer")
 
 
-async def authenticate(request: Request) -> str:
-    credentials: HTTPAuthorizationCredentials | None = await bearer(request)
+async def authenticate(request: Request,
+                       credentials: HTTPAuthorizationCredentials | None = Depends(bearer)) -> str:
     if not credentials:
         raise PlatformError(401, "UNAUTHENTICATED", "Bearer access token required")
     config = request.app.state.settings
@@ -27,6 +27,12 @@ async def authenticate(request: Request) -> str:
         raise PlatformError(503, "AUTH_UNAVAILABLE", "Supabase Auth unavailable") from exc
     if response.status_code == 429 or response.status_code >= 500:
         raise PlatformError(503, "AUTH_UNAVAILABLE", "Supabase Auth unavailable")
-    if response.status_code != 200 or not response.json().get("id"):
+    if response.status_code != 200:
         raise PlatformError(401, "UNAUTHENTICATED", "Invalid or expired Supabase access token")
-    return response.json()["id"]
+    try:
+        identity = response.json()["id"]
+        from uuid import UUID
+        UUID(identity)
+    except (ValueError, KeyError, TypeError) as exc:
+        raise PlatformError(503, "AUTH_UNAVAILABLE", "Invalid response from Supabase Auth") from exc
+    return identity

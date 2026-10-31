@@ -19,7 +19,7 @@ def utcnow() -> datetime:
 
 
 class Model(BaseModel):
-    model_config = ConfigDict(extra="forbid", frozen=True)
+    model_config = ConfigDict(extra="forbid", frozen=True, allow_inf_nan=False)
 
     @field_validator("*", mode="after")
     @classmethod
@@ -108,6 +108,13 @@ class RulesConfig(Model):
             raise ValueError("Rule values must be nonnegative")
         return value
 
+    @field_validator("objective_weights")
+    @classmethod
+    def supported_objective(cls, value):
+        if set(value) - {"delay_minutes", "holding_minutes", "taxi_minutes", "max_wait_minutes"}:
+            raise ValueError("Objective may only use implemented delay, holding, taxi and fairness metrics")
+        return value
+
 
 class Assignment(Model):
     flight_id: str
@@ -146,7 +153,7 @@ class Flight(Model):
 class Scenario(Model):
     schema_version: Literal["1"] = "1"
     scenario_id: str
-    project_id: str
+    project_id: str = "00000000-0000-0000-0000-000000000010"
     airport_iata: str
     timezone: str
     seed: int
@@ -200,13 +207,15 @@ class CheckResult(Model):
 
 
 class Impact(Model):
-    per_flight: dict[str, dict[str, float | bool]] = Field(default_factory=dict)
-    aggregate: dict[str, float] = Field(default_factory=dict)
+    per_flight: dict[str, dict[str, float | bool | None]] = Field(default_factory=dict)
+    aggregate: dict[str, float | None] = Field(default_factory=dict)
     versus_baseline: dict[str, float] = Field(default_factory=dict)
     objective_weights: dict[str, float] = Field(default_factory=dict)
     score: float = 0
     unresolved_flight_ids: list[str] = Field(default_factory=list)
     unfinished_flight_ids: list[str] = Field(default_factory=list)
+    unsupported_metrics: list[str] = Field(default_factory=lambda: [
+        "turnaround_delay_minutes", "connection_penalty", "permitted_overtime_minutes"])
 
 
 class Plan(Model):
@@ -244,12 +253,15 @@ class Snapshot(Model):
     data_quality: dict[str, Any]
     instruction_version: int = 0
     clock_status: Literal["PAUSED", "RUNNING"] = "PAUSED"
-    infrastructure: Infrastructure
-    rules_config: RulesConfig
-    start_utc: AwareDatetime
-    end_utc: AwareDatetime
-    airport_iata: str
-    seed: int
+    # Optional v1 extensions. Backend-generated snapshots always include this context.
+    # Omitted context makes engine validation UNKNOWN rather than silently inventing inputs.
+    infrastructure: Infrastructure | None = None
+    rules_config: RulesConfig | None = None
+    start_utc: AwareDatetime | None = None
+    end_utc: AwareDatetime | None = None
+    airport_iata: str | None = None
+    seed: int | None = None
+    alerts: list[CheckResult] = Field(default_factory=list)
 
 
 PlanningStatus = Literal["PROPOSED", "CONSENSUS_REACHED", "AWAITING_AUTHORIZATION", "AUTHORIZED",
@@ -296,7 +308,7 @@ class NegotiationRecord(Model):
     model_mode: Literal["MOCK", "LIVE", "UNAVAILABLE"] = "UNAVAILABLE"
     affected_ids: list[str]
     round: int = 0
-    model_calls: int = 0
+    model_calls: int | None = 0
     duration_seconds: float = 0
     messages: list[AgentMessage] = Field(default_factory=list)
     proposal_id: str | None = None

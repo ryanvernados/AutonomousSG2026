@@ -161,7 +161,12 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ]
       }
     },
     "/api/v1/sessions": {
@@ -249,13 +254,23 @@
               }
             }
           }
-        }
+        },
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ]
       }
     },
     "/api/v1/sessions/{session_id}/snapshot": {
       "get": {
         "summary": "Snapshot",
         "operationId": "snapshot_api_v1_sessions__session_id__snapshot_get",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -345,6 +360,11 @@
       "post": {
         "summary": "Clock Command",
         "operationId": "clock_command_api_v1_sessions__session_id__clock_post",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -444,6 +464,11 @@
       "post": {
         "summary": "Preview",
         "operationId": "preview_api_v1_sessions__session_id__instructions_preview_post",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -543,6 +568,11 @@
       "post": {
         "summary": "Instruction",
         "operationId": "instruction_api_v1_sessions__session_id__instructions_post",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -642,6 +672,11 @@
       "post": {
         "summary": "Control",
         "operationId": "control_api_v1_sessions__session_id__control_post",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -741,6 +776,11 @@
       "post": {
         "summary": "Negotiate",
         "operationId": "negotiate_api_v1_sessions__session_id__negotiations_post",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -840,6 +880,11 @@
       "get": {
         "summary": "Negotiation",
         "operationId": "negotiation_api_v1_sessions__session_id__negotiations__nid__get",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -938,6 +983,11 @@
       "post": {
         "summary": "Decision",
         "operationId": "decision_api_v1_sessions__session_id__proposals__pid__decision_post",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -1046,6 +1096,105 @@
       "get": {
         "summary": "Baseline",
         "operationId": "baseline_api_v1_sessions__session_id__baseline_get",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FallbackResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBody"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/sessions/{session_id}/metrics": {
+      "get": {
+        "summary": "Metrics",
+        "operationId": "metrics_api_v1_sessions__session_id__metrics_get",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -1133,6 +1282,11 @@
       "get": {
         "summary": "Export",
         "operationId": "export_api_v1_sessions__session_id__events_export_get",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -1220,6 +1374,11 @@
       "get": {
         "summary": "Events",
         "operationId": "events_api_v1_sessions__session_id__events_get",
+        "security": [
+          {
+            "SupabaseBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -1860,6 +2019,54 @@
         ],
         "title": "ErrorBody"
       },
+      "FallbackResult": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "AWAITING_AUTHORIZATION",
+              "NO_FEASIBLE_PLAN_FOUND"
+            ],
+            "title": "Status"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Plan"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/CheckResult"
+            },
+            "type": "array",
+            "title": "Checks"
+          },
+          "search_metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Search Metadata"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "status",
+          "reason",
+          "plan",
+          "checks",
+          "search_metadata"
+        ],
+        "title": "FallbackResult"
+      },
       "Flight": {
         "properties": {
           "flight_id": {
@@ -2015,6 +2222,9 @@
                   },
                   {
                     "type": "boolean"
+                  },
+                  {
+                    "type": "null"
                   }
                 ]
               },
@@ -2025,7 +2235,14 @@
           },
           "aggregate": {
             "additionalProperties": {
-              "type": "number"
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
             },
             "type": "object",
             "title": "Aggregate"
@@ -2062,6 +2279,13 @@
             },
             "type": "array",
             "title": "Unfinished Flight Ids"
+          },
+          "unsupported_metrics": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Unsupported Metrics"
           }
         },
         "additionalProperties": false,
@@ -2333,7 +2557,14 @@
             "default": 0
           },
           "model_calls": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Model Calls",
             "default": 0
           },
@@ -2809,7 +3040,8 @@
           },
           "project_id": {
             "type": "string",
-            "title": "Project Id"
+            "title": "Project Id",
+            "default": "00000000-0000-0000-0000-000000000010"
           },
           "airport_iata": {
             "type": "string",
@@ -2863,7 +3095,6 @@
         "type": "object",
         "required": [
           "scenario_id",
-          "project_id",
           "airport_iata",
           "timezone",
           "seed",
@@ -2949,28 +3180,77 @@
             "default": "PAUSED"
           },
           "infrastructure": {
-            "$ref": "#/components/schemas/Infrastructure"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Infrastructure"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "rules_config": {
-            "$ref": "#/components/schemas/RulesConfig"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RulesConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "start_utc": {
-            "type": "string",
-            "format": "date-time",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Start Utc"
           },
           "end_utc": {
-            "type": "string",
-            "format": "date-time",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "End Utc"
           },
           "airport_iata": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Airport Iata"
           },
           "seed": {
-            "type": "integer",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Seed"
+          },
+          "alerts": {
+            "items": {
+              "$ref": "#/components/schemas/CheckResult"
+            },
+            "type": "array",
+            "title": "Alerts"
           }
         },
         "additionalProperties": false,
@@ -2982,13 +3262,7 @@
           "flights",
           "resource_reservations",
           "active_instructions",
-          "data_quality",
-          "infrastructure",
-          "rules_config",
-          "start_utc",
-          "end_utc",
-          "airport_iata",
-          "seed"
+          "data_quality"
         ],
         "title": "Snapshot"
       },
@@ -3020,6 +3294,12 @@
           "negotiations"
         ],
         "title": "SnapshotResponse"
+      }
+    },
+    "securitySchemes": {
+      "SupabaseBearer": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   }

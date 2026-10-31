@@ -61,6 +61,11 @@ def instruction_issues(snapshot: Snapshot, instruction) -> list[str]:
 
 
 def validate_plan(snapshot: Snapshot, plan: Plan) -> list[CheckResult]:
+    if not all((snapshot.infrastructure, snapshot.rules_config, snapshot.start_utc,
+                snapshot.end_utc, snapshot.airport_iata)):
+        return [CheckResult(constraint_id="snapshot.context", domain="PLATFORM", status="UNKNOWN",
+                            affected_ids=[snapshot.scenario_id],
+                            explanation="Infrastructure, rules, UTC horizon and airport context required")]
     results: list[CheckResult] = []
 
     def check(cid, domain, passed, ids, explanation, measured=None, limit=None, unit=None):
@@ -211,8 +216,25 @@ def validate_plan(snapshot: Snapshot, plan: Plan) -> list[CheckResult]:
     for rid, resource in resources.items():
         intervals = [r for r in occupied if r.resource_id == rid]
         # End events sort before starts: touching intervals do not overlap.
-        points = sorted([(r.starts_at_utc, r.quantity) for r in intervals] +
-                        [(r.ends_at_utc, -r.quantity) for r in intervals])
+        capacity_intervals = [(r.starts_at_utc, r.ends_at_utc, r.quantity) for r in intervals]
+        if resource.kind == "GATE":
+            # Arrival and next departure may describe the SAME aircraft's continuous gate stay.
+            by_aircraft = {}
+            for r in intervals:
+                flight = flights.get(r.flight_id)
+                key = flight.tail_number if flight and flight.tail_number else r.flight_id
+                by_aircraft.setdefault(key, []).append(r)
+            capacity_intervals = []
+            for group in by_aircraft.values():
+                merged = []
+                for r in sorted(group, key=lambda x: x.starts_at_utc):
+                    if merged and r.starts_at_utc <= merged[-1][1] and r.quantity == merged[-1][2]:
+                        merged[-1][1] = max(merged[-1][1], r.ends_at_utc)
+                    else:
+                        merged.append([r.starts_at_utc, r.ends_at_utc, r.quantity])
+                capacity_intervals.extend(merged)
+        points = sorted([(start, quantity) for start, _, quantity in capacity_intervals] +
+                        [(end, -quantity) for _, end, quantity in capacity_intervals])
         load = peak = 0
         for _, delta in points:
             load += delta
@@ -252,16 +274,29 @@ def validate_plan(snapshot: Snapshot, plan: Plan) -> list[CheckResult]:
     # Aircraft rotation and crew coupling are checked across assigned and untouched flight plans.
     assignments = {f.flight_id: f.plan for f in snapshot.flights if f.plan}
     assignments.update({a.flight_id: a for a in plan.assignments})
-    for f, g in combinations(snapshot.flights, 2):
-        if not f.tail_number or f.tail_number != g.tail_number:
-            continue
-        a, b = assignments.get(f.flight_id), assignments.get(g.flight_id)
-        if not a or not b:
-            continue
-        arrival = a if a.operation == "ARRIVAL" else b
-        departure = b if a.operation == "ARRIVAL" else a
-        if arrival.operation == "ARRIVAL" and departure.operation == "DEPARTURE":
-            check("rotation.turnaround", "GROUND", arrival.taxi_end_utc + timedelta(
-                seconds=snapshot.rules_config.minimum_turnaround_seconds) <= departure.taxi_start_utc,
-                [f.flight_id, g.flight_id], "Same-tail departure must follow arrival turnaround")
+    for instruction in snapshot.active_instructions:
+        if instruction.kind == "PROTECTED_SLOT":
+            check("instruction.protected_presence", "ATC", True if instruction.flight_id in assignments else None,
+                  [instruction.flight_id], "A protected flight must have a published or proposed assignment")
+    rotations = {}
+    for f in snapshot.flights:
+        if f.tail_number and f.flight_id in assignments:
+            rotations.setdefault(f.tail_number, []).append(f)
+    for legs in rotations.values():
+        # Only adjacent legs form a rotation edge; an aircraft can make several trips in one window.
+        legs.sort(key=lambda f: (f.scheduled_gate_arrival_utc if f.destination == snapshot.airport_iata
+                                  else f.scheduled_gate_departure_utc, f.flight_id))
+        for f, g in zip(legs, legs[1:]):
+            a, b = assignments[f.flight_id], assignments[g.flight_id]
+            if a.operation == "ARRIVAL" and b.operation == "DEPARTURE":
+                check("rotation.turnaround", "GROUND", a.taxi_end_utc + timedelta(
+                    seconds=snapshot.rules_config.minimum_turnaround_seconds) <= b.taxi_start_utc,
+                    [f.flight_id, g.flight_id], "Same-tail departure must follow arrival turnaround")
+                check("rotation.gate_continuity", "GROUND", a.gate_id == b.gate_id and
+                      a.gate_start_utc <= b.gate_start_utc <= a.gate_end_utc and
+                      max(a.gate_end_utc, b.gate_end_utc) >= b.taxi_start_utc,
+                      [f.flight_id, g.flight_id], "Same aircraft retains continuous gate occupancy until departure")
+            else:
+                check("rotation.sequence", "GROUND", a.runway_time_utc < b.runway_time_utc,
+                      [f.flight_id, g.flight_id], "Same-tail movement order must match source leg sequence")
     return results

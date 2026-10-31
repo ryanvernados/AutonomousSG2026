@@ -144,6 +144,17 @@ class PlatformService:
                 "instruction_version": doc.snapshot.instruction_version + 1})
             snap = doc.snapshot.model_copy(update={"active_instructions": doc.snapshot.active_instructions + [instruction],
                 "state_version": doc.snapshot.state_version + 1, "instruction_version": instruction.instruction_version})
+            current_assignments = [f.plan for f in snap.flights if f.plan]
+            if current_assignments:
+                from datetime import timedelta
+
+                from backend.contracts import seal_plan
+                check_plan = seal_plan(Plan(scenario_id=snap.scenario_id, base_state_version=snap.state_version,
+                    instruction_version=snap.instruction_version, assignments=current_assignments,
+                    expires_at_utc=utcnow() + timedelta(minutes=5)))
+                alerts = [c for c in validate_plan(snap, check_plan)
+                          if c.constraint_id.startswith("instruction.") and c.status != "PASS"]
+                snap = snap.model_copy(update={"alerts": alerts})
             return self.invalidate(doc).model_copy(update={"snapshot": snap}), "INSTRUCTION_CONFIRMED", {
                 "instruction": instruction.model_dump(mode="json")}, {}
         return self._execute(session_id, command, actor_id, "instruction", mutate)
@@ -186,6 +197,11 @@ class PlatformService:
             raise ValueError("Consensus identity or validity missing")
         if outcome.rounds != 2 or not feasible(validate_plan(snapshot, p)):
             raise ValueError("Two rounds and passing deterministic checks required")
+        assigned_ids = {a.flight_id for a in p.assignments}
+        required_assignments = {f.flight_id for f in snapshot.flights
+                                if f.flight_id in record.affected_ids and f.plan is None}
+        if not required_assignments <= assigned_ids:
+            raise ValueError("Recovery plan omits unscheduled affected flights")
         required = {"ATC", "GROUND"} | {"PILOT:" + f for f in record.affected_ids}
         # Exactly one offer and one ballot per participant; no hidden correction turns.
         if len(outcome.messages) != len(required) * 2:
@@ -225,6 +241,8 @@ class PlatformService:
                 raise
             except Exception as exc:
                 reason = "INVALID_OR_FAILED_COORDINATION:" + type(exc).__name__
+        if not isinstance(outcome, CoordinationOutcome):
+            outcome = None
         if reason == "CONSENSUS":
             plan, checks, metadata = outcome.plan, validate_plan(frozen, outcome.plan), {}
         else:
@@ -248,7 +266,7 @@ class PlatformService:
                 proposals[plan.proposal_id] = ProposalRecord(plan=plan, checks=checks)
             record = record.model_copy(update={"status": status, "reason": reason,
                 "round": outcome.rounds if outcome else 0, "messages": outcome.messages if outcome else [],
-                "model_calls": outcome.model_calls if outcome else 0,
+                "model_calls": outcome.model_calls if outcome else None if self.coordinator else 0,
                 "model_mode": outcome.model_mode if outcome else "UNAVAILABLE",
                 "duration_seconds": duration, "proposal_id": plan.proposal_id if plan and not stale else None,
                 "search_metadata": metadata})
@@ -275,7 +293,7 @@ class PlatformService:
         flights = [f.model_copy(update={"plan": assignments[f.flight_id]}) if f.flight_id in assignments else f
                    for f in s.flights]
         snap = s.model_copy(update={"resource_reservations": reservations, "flights": flights,
-                                   "state_version": s.state_version + 1})
+                                   "state_version": s.state_version + 1, "alerts": []})
         updated = self.invalidate(doc).model_copy(update={"snapshot": snap})
         proposals = dict(updated.proposals)
         proposals[plan.proposal_id] = doc.proposals[plan.proposal_id].model_copy(update={"status": "AUTHORIZED"})

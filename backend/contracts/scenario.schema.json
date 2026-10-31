@@ -634,6 +634,7 @@
       "type": "string"
     },
     "project_id": {
+      "default": "00000000-0000-0000-0000-000000000010",
       "title": "Project Id",
       "type": "string"
     },
@@ -687,7 +688,6 @@
   },
   "required": [
     "scenario_id",
-    "project_id",
     "airport_iata",
     "timezone",
     "seed",

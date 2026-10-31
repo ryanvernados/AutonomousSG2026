@@ -6,14 +6,16 @@
   "timezone": "America/Los_Angeles",
   "seed": 2026,
   "start_utc": "2015-01-01T16:00:00Z",
-  "end_utc": "2015-01-01T18:00:00Z",
+  "end_utc": "2015-01-01T18:30:00Z",
   "source_manifest": {
     "source_type": "SYNTHETIC",
     "fixture_checksum": "3d2e1f5f013c132548280364a100978ec1620d8b5726c28ff1d4cf8ba32ddfba",
     "description": "24 synthetic flight legs for Member 1 integration; not sourced airport geometry",
     "traffic_window_minutes": 120,
     "initialization_buffer_minutes": 15,
-    "recovery_buffer_minutes": 240,
+    "traffic_window_start_utc": "2015-01-01T16:00:00+00:00",
+    "traffic_window_end_utc": "2015-01-01T18:00:00+00:00",
+    "recovery_buffer_minutes": 30,
     "historical_coverage": false,
     "limitations": [
       "No passenger connections or overtime model",
@@ -1296,7 +1298,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1355,7 +1357,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1414,7 +1416,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1473,7 +1475,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1532,7 +1534,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1591,7 +1593,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1650,7 +1652,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1709,7 +1711,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1768,7 +1770,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1827,7 +1829,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1886,7 +1888,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -1945,7 +1947,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2004,7 +2006,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2063,7 +2065,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2122,7 +2124,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2181,7 +2183,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2240,7 +2242,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2299,7 +2301,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2358,7 +2360,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2417,7 +2419,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2476,7 +2478,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2535,7 +2537,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2594,7 +2596,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },
@@ -2653,7 +2655,7 @@
         "dependent_runway_ids": [],
         "compatible_categories": [],
         "available_from_utc": "2015-01-01T16:00:00Z",
-        "available_until_utc": "2015-01-01T22:00:00Z",
+        "available_until_utc": "2015-01-01T22:30:00Z",
         "max_work_seconds": 28800,
         "minimum_traversal_seconds": 30
       },

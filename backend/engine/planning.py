@@ -16,6 +16,8 @@ from backend.engine.validation import feasible, validate_plan
 
 
 def compute_impact(snapshot: Snapshot, plan: Plan, baseline_plan: Plan | None = None) -> Impact:
+    if snapshot.end_utc is None or snapshot.rules_config is None:
+        raise ValueError("Authoritative snapshot horizon and rules required for impact computation")
     assignments = {f.flight_id: f.plan for f in snapshot.flights if f.plan}
     assignments.update({a.flight_id: a for a in plan.assignments})
     per_flight = {}
@@ -36,24 +38,33 @@ def compute_impact(snapshot: Snapshot, plan: Plan, baseline_plan: Plan | None = 
             holding = 0
             arrival_delay, departure_delay = 0, delay
         completion = a.taxi_end_utc if a.operation == "ARRIVAL" else a.runway_time_utc
-        complete_in_horizon = completion <= snapshot.end_utc
-        if not complete_in_horizon:
+        planned_complete_in_horizon = completion <= snapshot.end_utc
+        observed_completion = f.actual_gate_arrival_utc if a.operation == "ARRIVAL" else f.wheels_off_utc
+        complete_in_horizon = bool(observed_completion and snapshot.start_utc <= observed_completion
+                                   <= min(snapshot.sim_time_utc, snapshot.end_utc))
+        if not complete_in_horizon or not planned_complete_in_horizon:
             unfinished.append(f.flight_id)
         per_flight[f.flight_id] = {"delay_minutes": delay, "arrival_delay_minutes": arrival_delay,
                                   "departure_delay_minutes": departure_delay, "holding_minutes": holding,
-                                  "taxi_minutes": taxi, "completed_in_horizon": complete_in_horizon}
+                                  "taxi_minutes": taxi, "completed_in_horizon": complete_in_horizon,
+                                  "planned_completion_in_horizon": planned_complete_in_horizon,
+                                  "turnaround_delay_minutes": None, "connection_penalty": None,
+                                  "permitted_overtime_minutes": None}
     aggregates = {key: sum(float(v[key]) for v in per_flight.values()) for key in (
         "delay_minutes", "arrival_delay_minutes", "departure_delay_minutes", "holding_minutes", "taxi_minutes")}
     aggregates["max_wait_minutes"] = max((float(v["delay_minutes"]) for v in per_flight.values()), default=0)
     aggregates["completed_movements"] = sum(bool(v["completed_in_horizon"]) for v in per_flight.values())
+    aggregates["planned_completed_movements"] = sum(bool(v["planned_completion_in_horizon"]) for v in per_flight.values())
     aggregates["unresolved_flights"] = len(unresolved)
     aggregates["unfinished_flights"] = len(unfinished)
+    aggregates.update({k: None for k in ("turnaround_delay_minutes", "connection_penalty", "permitted_overtime_minutes")})
     weights = snapshot.rules_config.objective_weights
     score = sum(aggregates.get(key, 0) * weight for key, weight in weights.items())
     comparison = {}
     if baseline_plan:
         baseline = compute_impact(snapshot, baseline_plan)
-        comparison = {k: v - baseline.aggregate[k] for k, v in aggregates.items()}
+        comparison = {k: v - baseline.aggregate[k] for k, v in aggregates.items()
+                      if v is not None and baseline.aggregate[k] is not None}
     return Impact(per_flight=per_flight, aggregate=aggregates, versus_baseline=comparison,
                   objective_weights=weights, score=score, unresolved_flight_ids=unresolved,
                   unfinished_flight_ids=unfinished)
@@ -114,6 +125,11 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
     constraints is a typed Instruction list from Member 3's tools, never arbitrary executable input.
     Two stable orderings are explored within one shared budget. The search is non-exhaustive.
     """
+    if not all((snapshot.infrastructure, snapshot.rules_config, snapshot.start_utc,
+                snapshot.end_utc, snapshot.airport_iata)):
+        return [], {"attempted_placements": 0, "limit": min(max(int(limit), 1), 100),
+                    "exhaustive": False, "limit_reached": False,
+                    "rejection_counts": {"snapshot.context_unknown": 1}}
     if constraints:
         snapshot = snapshot.model_copy(update={"active_instructions": snapshot.active_instructions + list(constraints)})
     budget = min(max(int(limit), 1), snapshot.rules_config.search_limit, 100)
