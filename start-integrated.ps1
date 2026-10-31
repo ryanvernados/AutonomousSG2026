@@ -47,6 +47,16 @@ else { npx -y pnpm@11 install --frozen-lockfile; npx -y pnpm@11 dev }
 foreach ($script in $apiScript, $uiScript) {
     Start-Process powershell -ArgumentList '-NoExit', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', "`"$script`""
 }
+Write-Host 'Waiting for the UI (first run installs dependencies)...'
+$deadline = (Get-Date).AddMinutes(5)
+while ((Get-Date) -lt $deadline -and -not (Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue)) {
+    Start-Sleep -Seconds 2
+}
+if (Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue) {
+    Start-Process 'http://127.0.0.1:5173'
+} else {
+    Write-Warning 'UI did not start within 5 minutes; check the "Airport UI :5173" window.'
+}
 Write-Host "API:  http://127.0.0.1:8000/docs  (Authorize with token: $DemoToken)"
 Write-Host 'UI:   http://127.0.0.1:5173'
 Write-Host ("Walkthrough: `$env:DEMO_TOKEN='$DemoToken'; uv run python -m backend.coordination.walkthrough")
