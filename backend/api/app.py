@@ -35,6 +35,7 @@ from backend.engine.planning import baseline_plan, compute_impact
 from backend.engine.scenarios import ScenarioRepository
 from backend.persistence import SQLiteStore
 from backend.persistence.postgres import PostgresStore
+from backend.persistence.supabase_http import SupabaseHTTPStore
 
 log = logging.getLogger(__name__)
 DEMO_USER = "00000000-0000-0000-0000-000000000001"
@@ -66,9 +67,16 @@ def create_app(settings=None, store=None, coordinator=None):
             persistence = SQLiteStore(config.sqlite_path)
             persistence.add_member(DEMO_PROJECT, DEMO_USER)
         else:
-            if not all((config.database_url, config.supabase_url, config.supabase_publishable_key)):
-                raise RuntimeError("Configure DATABASE_URL, SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY")
-            persistence = PostgresStore(config.database_url)
+            if not all((config.supabase_url, config.supabase_publishable_key)):
+                raise RuntimeError("Configure SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY")
+            if config.persistence_mode == "supabase_http":
+                if not config.supabase_secret_key:
+                    raise RuntimeError("Configure backend-only SUPABASE_SECRET_KEY for HTTPS persistence")
+                persistence = SupabaseHTTPStore(config.supabase_url, config.supabase_secret_key)
+            else:
+                if not config.database_url:
+                    raise RuntimeError("Configure DATABASE_URL for direct Postgres persistence")
+                persistence = PostgresStore(config.database_url)
         app.state.service = PlatformService(persistence, ScenarioRepository(config.scenario_dir), coordinator)
         await asyncio.to_thread(app.state.service.recover)
 

@@ -113,7 +113,7 @@ prompt and identity fields. Raw durable audit records stay in the backend store.
 
 ## Supabase setup
 
-1. Apply `supabase/migrations/202610310001_platform.sql` to your Supabase database, then `supabase/seed.sql`.
+1. Apply both SQL files in `supabase/migrations/` in filename order to your Supabase database, then `supabase/seed.sql`.
 2. Create real users through Supabase Auth. Add their project memberships from a privileged SQL session:
 
 ```sql
@@ -127,6 +127,40 @@ values ('00000000-0000-0000-0000-000000000010','YOUR_AUTH_USER_UUID','controller
 4. Member 4 signs users in with Supabase Auth and sends their access tokens to FastAPI. FastAPI validates
    each token through Supabase `/auth/v1/user` and checks membership and role. Populate only publishable
    client configuration from `frontend.env.example`.
+
+If `DATABASE_URL` contains the literal `[YOUR-PASSWORD]` placeholder, privately enter your existing
+database password using `uv run python -m scripts.configure_supabase` in your own terminal. The helper
+percent-encodes special characters, checks the connection and airport schema with read-only queries,
+then saves the connection and sets `AUTH_MODE=supabase` only after verification succeeds. It never
+prints the password or full connection string. Restart the backend afterward. This helper uses your
+existing database password; it does not create users, change passwords or apply migrations.
+
+If the network cannot reach Postgres ports, use the HTTPS adapter instead:
+
+```dotenv
+AUTH_MODE=supabase
+PERSISTENCE_MODE=supabase_http
+SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_YOUR_KEY
+SUPABASE_SECRET_KEY=sb_secret_YOUR_BACKEND_ONLY_KEY
+DATABASE_URL=
+```
+
+Obtain the existing secret key from the project's Server connection panel and keep it in the backend's
+ignored `.env` only. Never put it in frontend variables. The second migration grants backend reads;
+operational writes still use the original atomic Postgres transaction function over HTTPS. Browser
+access continues to use the signed-in user's token, explicit read grants and RLS. This mode does not
+need the database password. Restart the backend after configuration changes.
+
+To get a signed-in user token for Swagger before the frontend is available, run:
+
+```powershell
+uv run python -m scripts.login
+```
+
+Enter your simulator application's email and password at the local prompts. The helper verifies login,
+checks access to the local backend and prints a short-lived access token for Swagger's **Authorize**
+field. Keep that token private. This uses the application's Auth user, not the Supabase dashboard login.
 
 All tables enable RLS. Browser roles receive project-scoped reads and no operational mutation grants.
 The backend-only `commit_simulation_session` function holds a session lock, compares the durable

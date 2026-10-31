@@ -11,7 +11,7 @@ needs the historical scenario, live domain agents and controller UI.
 | `backend/contracts/` | Strict Pydantic v1 models, SHA-256 plan identity, OpenAPI, Scenario JSON Schema, generated TypeScript |
 | `backend/engine/` | Scenario loader, SimPy clock, reservations, deterministic checks, bounded candidate search, FCFS baseline, fallback, metrics |
 | `backend/api/` | Authenticated HTTP, read-only preview, asynchronous coordinator injection, approval boundary, SSE and redacted JSONL |
-| `backend/persistence/` | Transactional SQLite offline adapter and Supabase Postgres adapter, idempotent command store, checkpoints |
+| `backend/persistence/` | Transactional SQLite offline adapter, direct Supabase Postgres and HTTPS/RPC adapters, idempotent command store, checkpoints |
 | `supabase/` | All required tables, RLS, immutable ledgers/plans, backend-only atomic transaction function, generated synthetic seed |
 | `fixtures/` | 24-flight synthetic scenario with initial occupancy and three typed disruption examples |
 | `scripts/` | Start, verification, contract generation, fixture generation and HTTP walkthrough |
@@ -90,6 +90,11 @@ intersection, taxi, gate, crew, equipment, missing fuel, versions, expiry, retry
 membership, recovery, manual suspension, malformed/vetoed ballots and timeout fallback. PostgreSQL tests
 execute migration/seed, compare atomic transaction results and test project RLS with three users.
 The embedded runtime uses Auth stubs; it is not a hosted Supabase integration test.
+
+For networks that block Postgres ports, set `PERSISTENCE_MODE=supabase_http` with the backend-only
+`SUPABASE_SECRET_KEY`. Apply `202610310002_https_backend_reads.sql` after the main migration. Both remote
+adapters commit through the same transaction function; project membership, versions and atomicity are
+unchanged. The HTTPS adapter supports paginated reads and keeps privileged credentials off browser clients.
 
 Pending team gates: historical qualifying row/window and sourced map (Member 2), genuine independent
 live model negotiation with measured trace (Member 3), controller UI/login/usability/disconnection review
