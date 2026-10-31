@@ -1,18 +1,30 @@
 import json
-from pathlib import Path
+from datetime import timedelta
 
 import pytest
 
 from backend.airport import sfo_layout
+from backend.contracts import Instruction, Plan, Scenario, seal_plan, utcnow
 from backend.data import config, contract_check
 from backend.data.evaluate import run
+from backend.data.scenario import SCENARIO_DIR
 
 SLICES = sorted(config.PROCESSED_DIR.glob("sfo_*"))
-pytestmark = pytest.mark.skipif(not SLICES, reason="run python -m backend.data.build first")
+pytestmark = pytest.mark.skipif(not SLICES or not SCENARIO_DIR.is_dir(),
+                                reason="run python -m backend.data.build and backend.data.scenario first")
 
 
 def load(name):
     return json.loads((SLICES[-1] / name).read_text(encoding="utf-8"))
+
+
+@pytest.fixture(scope="module")
+def scenarios() -> dict[str, Scenario]:
+    out = {}
+    for p in sorted(SCENARIO_DIR.glob("*.json")):
+        s = Scenario.model_validate_json(p.read_text(encoding="utf-8"))
+        out["dev" if s.scenario_id.endswith("-dev") else "full"] = s
+    return out
 
 
 def test_layout_connected_and_sourced():
@@ -21,27 +33,44 @@ def test_layout_connected_and_sourced():
     assert {r["runway_id"] for r in layout["runways"]} == {"10L-28R", "10R-28L", "01R-19L", "01L-19R"}
     assert layout["source"]["effective_from"] == "2026-10-29"
     assert sum(g["max_wake_category"] == "HEAVY" for g in layout["gates"]) == 5
-    crossing = [r for r in layout["runway_relationships"] if r["relationship"] == "INTERSECTING"]
-    assert len(crossing) == 4
+    assert len([r for r in layout["runway_relationships"] if r["relationship"] == "INTERSECTING"]) == 4
 
 
-def test_scenarios_pass_contract_check():
-    for name in ("scenario_full.json", "scenario_dev.json"):
-        assert contract_check.check_scenario(load(name)) == []
+def test_split_segment_keeps_order_and_length():
+    seg = {"segment_id": "X:a-b", "from_node": "a", "to_node": "b", "length_m": 1000}
+    pieces = sfo_layout.split_segment(seg, 400)
+    assert [p[0] for p in pieces] == ["X:a-b#1", "X:a-b#2", "X:a-b#3"]
+    assert pieces[0][1] == "a" and pieces[-1][2] == "b"
+    assert all(pieces[i][2] == pieces[i + 1][1] for i in range(len(pieces) - 1))
+    assert sum(p[3] for p in pieces) == pytest.approx(1000)
 
 
-def test_dev_fixture_size_and_mix():
-    dev = load("scenario_dev.json")
-    assert 20 <= len(dev["flights"]) <= 40
-    assert {f["operation"] for f in dev["flights"]} == {"ARRIVAL", "DEPARTURE"}
+def test_both_scenarios_pass_member1_models_and_engine_needs(scenarios):
+    assert set(scenarios) == {"full", "dev"}
+    for s in scenarios.values():
+        assert s.schema_version == "1"
+        assert contract_check.engine_issues(s) == []
 
 
-def test_expected_facts_match_scenario():
-    facts, full = load("expected_facts.json"), load("scenario_full.json")
-    assert facts["flights_full"] == len(full["flights"])
-    assert facts["initial_occupancy"] == len(full["initial_occupancy"]) > 0
-    assert facts["initial_occupancy_unassigned"] == 0
-    assert any(f["flight_id"] == facts["traced_qualifying_flight_id"] for f in full["flights"])
+def test_member1_repository_loads_scenario_dir(scenarios):
+    pytest.importorskip("simpy")
+    from backend.engine.scenarios import ScenarioRepository
+    repo = ScenarioRepository(str(SCENARIO_DIR))
+    assert {s.scenario_id for s in repo.list_scenarios()} == {s.scenario_id for s in scenarios.values()}
+
+
+def test_dev_fixture_size_and_mix(scenarios):
+    dev = scenarios["dev"]
+    assert 20 <= len(dev.flights) <= 40
+    assert {f.destination == "SFO" for f in dev.flights} == {True, False}
+
+
+def test_expected_facts_match_scenario(scenarios):
+    facts, full = load("expected_facts.json"), scenarios["full"]
+    assert facts["flights_full"] == len(full.flights)
+    assert facts["initial_occupancy"] == len(full.initial_occupancy) > 0
+    assert facts["flights_without_gate"] == 0
+    assert any(f.flight_id == facts["traced_qualifying_flight_id"] for f in full.flights)
 
 
 def test_traced_row_is_raw_source_line():
@@ -50,16 +79,58 @@ def test_traced_row_is_raw_source_line():
     assert raw == q["normalized"]["source_values"]
 
 
-def test_occupied_gates_are_unique():
-    occ = load("scenario_full.json")["initial_occupancy"]
-    gates = [o["gate_id"] for o in occ]
-    assert len(gates) == len(set(gates))
+def test_initial_occupancy_gates_do_not_overlap(scenarios):
+    occ = scenarios["full"].initial_occupancy
+    assert len({o.resource_id for o in occ}) == len(occ)
+    assert all(o.kind == "GATE" and o.flight_id.startswith("OCCUPANT:") for o in occ)
 
 
-def test_historical_actuals_not_in_decision_fields():
-    for f in load("scenario_full.json")["flights"]:
-        assert f["plan"] is None and f["state"] == "SCHEDULED"
-        assert "actual_gate_arrival_utc" not in f
+def test_rotation_keeps_same_gate(scenarios):
+    flights = {f.flight_id: f for f in scenarios["full"].flights}
+    pairs = [(f, flights[f.assumptions["next_departure_flight_id"].value]) for f in flights.values()
+             if "next_departure_flight_id" in f.assumptions
+             and f.assumptions["next_departure_flight_id"].value in flights]
+    assert pairs
+    assert all(a.assumptions["gate_id"].value == d.assumptions["gate_id"].value for a, d in pairs)
+
+
+def test_historical_outcomes_not_in_assumptions(scenarios):
+    for f in scenarios["full"].flights:
+        assert f.state == "SCHEDULED" and f.plan is None
+        assert not {"historical", "cancelled", "attributed_delay_min"} & set(f.assumptions)
+
+
+def test_engine_places_first_flight_with_all_checks_passing(scenarios):
+    pytest.importorskip("simpy")
+    from backend.engine import planning
+    from backend.engine.scenarios import initial_snapshot
+    from backend.engine.validation import validate_plan
+
+    snap = initial_snapshot(scenarios["dev"])
+    f = min(snap.flights, key=lambda f: (f.scheduled_gate_arrival_utc if f.destination == "SFO"
+                                         else f.scheduled_gate_departure_utc, f.flight_id))
+    gate, arrival = f.assumptions["gate_id"].value, f.destination == "SFO"
+    runway = "10R-28L"
+    route = planning._paths(snap, runway if arrival else gate, gate if arrival else runway)[0]
+    slot = max(snap.sim_time_utc + timedelta(minutes=5), f.scheduled_gate_arrival_utc - timedelta(minutes=4))
+    assignment = planning._assignment(snap, f, runway, route, slot)
+    plan = seal_plan(Plan(scenario_id=snap.scenario_id, base_state_version=0, instruction_version=0,
+                          assignments=[assignment], expires_at_utc=utcnow() + timedelta(minutes=5)))
+    failing = [c.constraint_id for c in validate_plan(snap, plan) if c.status != "PASS"]
+    assert failing == []
+
+
+def test_disruption_instructions_accepted_by_engine(scenarios):
+    pytest.importorskip("simpy")
+    from backend.engine.scenarios import initial_snapshot
+    from backend.engine.validation import instruction_issues
+
+    snap = initial_snapshot(scenarios["full"])
+    fixtures = sorted((SLICES[-1] / "disruptions").glob("*.json"))
+    assert len(fixtures) == 3
+    for path in fixtures:
+        for ev in json.loads(path.read_text(encoding="utf-8"))["events"]:
+            assert instruction_issues(snap, Instruction.model_validate(ev["instruction"])) == [], path.name
 
 
 def test_evaluation_inputs_identical_across_policies():

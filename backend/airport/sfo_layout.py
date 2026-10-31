@@ -147,7 +147,7 @@ def build_gates(gate_count: int, heavy_count: int) -> list[dict]:
         "boarding_area": area,
         "boarding_area_source_type": "SOURCED",
         "apron_node": f"APRON_{area}",
-        "max_wake_category": "LARGE",
+        "max_wake_category": "MEDIUM",
         "source_type": "SYNTHETIC",
     } for area in areas for n in range(1, per_area[area] + 1)]
     order = sorted(gates, key=lambda g: (HEAVY_AREA_PREFERENCE.index(g["boarding_area"]), g["gate_id"]))
@@ -267,3 +267,51 @@ def is_connected(layout: dict) -> bool:
                 seen.add(nxt)
                 stack.append(nxt)
     return seen == set(nodes)
+
+
+def split_segment(seg: dict, max_piece_m: float) -> list[tuple[str, str, str, float]]:
+    """Split a segment into equal pieces of at most max_piece_m, in order from_node -> to_node.
+
+    The engine sizes a taxi interval as (segments x slowest segment), so uniform pieces keep
+    that estimate close to the route's real length. Single pieces keep the segment ID.
+    """
+    n = max(1, math.ceil(seg["length_m"] / max_piece_m))
+    if n == 1:
+        return [(seg["segment_id"], seg["from_node"], seg["to_node"], seg["length_m"])]
+    nodes = [seg["from_node"], *[f"{seg['segment_id']}~{k}" for k in range(1, n)], seg["to_node"]]
+    return [(f"{seg['segment_id']}#{k + 1}", nodes[k], nodes[k + 1], seg["length_m"] / n) for k in range(n)]
+
+
+def to_resources(layout: dict, *, taxi_speed_mps: float, max_piece_m: float,
+                 min_traversal_s: int = 30) -> list[dict]:
+    """Convert the layout to Member 1 contract Resource dicts (RUNWAY, TAXIWAY, GATE).
+
+    The engine routes over TAXIWAY edges whose endpoints are runway and gate resource IDs,
+    so each runway is a node joined to the hold points at both of its ends, and each gate
+    is a node joined to its boarding area apron. Runway direction is not fixed here.
+    Segments longer than max_piece_m are split into equal pieces (see split_segment).
+    """
+    deps: dict[str, set[str]] = {r["runway_id"]: set() for r in layout["runways"]}
+    for rel in layout["runway_relationships"]:
+        a, b = rel["runways"]
+        deps[a].add(b)
+        deps[b].add(a)
+    resources = [{"resource_id": r["runway_id"], "kind": "RUNWAY", "capacity": 1,
+                  "dependent_runway_ids": sorted(deps[r["runway_id"]])} for r in layout["runways"]]
+
+    def edge(rid, a, b, length_m):
+        return {"resource_id": rid, "kind": "TAXIWAY", "capacity": 1, "node_from": a, "node_to": b,
+                "bidirectional": True,
+                "minimum_traversal_seconds": max(min_traversal_s, round(length_m / taxi_speed_mps))}
+
+    for r in layout["runways"]:
+        for end, hold in r["end_nodes"].items():
+            resources.append(edge(f"RWYLINK:{r['runway_id']}@{end}", r["runway_id"], hold, 0))
+    for seg in layout["taxiway_segments"]:
+        resources += [edge(rid, a, b, length) for rid, a, b, length in split_segment(seg, max_piece_m)]
+    for g in layout["gates"]:
+        resources.append(edge(f"STAND:{g['gate_id']}", g["apron_node"], g["gate_id"], 0))
+        resources.append({"resource_id": g["gate_id"], "kind": "GATE", "capacity": 1,
+                          "compatible_categories": ["MEDIUM", "HEAVY"] if g["max_wake_category"] == "HEAVY"
+                          else ["MEDIUM"]})
+    return resources

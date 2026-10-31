@@ -104,7 +104,6 @@ def test_timezone_override():
 
 
 def test_every_airport_has_a_zone():
-    import csv as _csv
     states = {"AK", "AL", "AR", "AS", "AZ", "CA", "CO", "CT", "DE", "FL", "GA", "GU", "HI", "IA", "ID", "IL",
               "IN", "KS", "KY", "LA", "MA", "MD", "ME", "MI", "MN", "MO", "MS", "MT", "NC", "ND", "NE", "NH",
               "NJ", "NM", "NV", "NY", "OH", "OK", "OR", "PA", "PR", "RI", "SC", "SD", "TN", "TX", "UT", "VA",

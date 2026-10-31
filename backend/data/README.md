@@ -4,10 +4,15 @@ Owns `backend/data/`, `backend/airport/`, `data/processed/`, `data/layout/`. Bra
 
 ## Setup
 
+The pipeline imports Member 1's `backend.contracts` (Pydantic) and, for engine checks, `backend.engine`
+(SimPy). Use the root `uv` environment plus pandas and tzdata:
+
 ```sh
-python -m venv .venv
-.venv/Scripts/python -m pip install -r backend/data/requirements.txt   # Windows
+uv sync --frozen
+alias m2='uv run --frozen --with pandas==3.1.0 --with tzdata==2026.6'
 ```
+
+Without uv: `pip install -r backend/data/requirements.txt pydantic simpy`.
 
 ### Raw data (not in git)
 
@@ -31,29 +36,52 @@ same folder. Without it, October is excluded from day selection and reported in 
 
 ```sh
 export SIM_RAW_DATA_DIR=/path/to/kaggle/folder
-python -m backend.data.build            # needs raw data, about 2 minutes
-python -m backend.data.scenario         # processed files only
-python -m backend.data.disruptions
-python -m backend.data.contract_check
-python -m backend.data.evaluate --fixture runway-10R-28L-closure --policy baseline=scheduled
-python -m backend.data.supabase_import  # dry run; --apply needs SUPABASE_DB_URL
-python -m pytest backend/data/tests
+m2 python -m backend.data.build            # needs raw data, about 25 s
+m2 python -m backend.data.scenario         # processed files only; validates with backend.contracts
+m2 python -m backend.data.disruptions
+m2 python -m backend.data.contract_check   # Member 1 models + engine-required assumptions
+m2 python -m backend.data.evaluate --fixture runway-10R-28L-closure --variant dev \
+      --policy baseline=engine-baseline --policy sched=scheduled
+m2 python -m backend.data.supabase_import  # dry run; --apply needs SUPABASE_DB_URL
+m2 pytest tests backend/data/tests
 ```
 
-## Outputs (`data/processed/sfo_2015-12-21/`)
+To serve the historical scenarios from Member 1's API, set `SCENARIO_DIR=data/processed/scenarios`.
+
+## Outputs
 
 | File | Content |
 |---|---|
-| `../source_manifest.json` | Checksums, headers, row counts, units, links, selection parameters |
+| `data/processed/scenarios/sfo-2015-12-21-2000-full.json` | Contract v1 Scenario, 218 flights (point `SCENARIO_DIR` here) |
+| `data/processed/scenarios/sfo-2015-12-21-2000-dev.json` | Contract v1 Scenario, 30-flight development fixture |
+| `data/processed/source_manifest.json` | Checksums, headers, row counts, units, links, selection parameters |
+| `data/processed/supabase_rows/*.jsonl` | Importer dry-run rows for `airports`, `scenarios`, `scenario_flights` |
+
+Under `data/processed/sfo_2015-12-21/`:
+
+| File | Content |
+|---|---|
 | `traffic_slice.json` | All 218 SFO legs in the 4 h horizon, normalized, with source values and flags |
 | `context_legs.json` | SFO legs 12 h before / 6 h after, used only for initial occupancy and rotations |
 | `dev_fixture.json` | 30-flight development fixture (contiguous core-window run) |
 | `qualifying_row.json` | Traced qualifying row: raw source line plus normalized leg |
 | `quality_report.json` | Dataset and slice flag counts, airport file issues, coverage limits |
-| `scenario_full.json`, `scenario_dev.json` | Scenario objects (contract field names) |
 | `expected_facts.json` | Counts the integration tests check |
-| `disruptions/*.json` | Runway closure, taxiway blockage, tug failure as Instruction events |
-| `supabase_rows/*.jsonl` | Importer dry-run rows for `airports`, `scenarios`, `scenario_flights` |
+| `disruptions/*.json` | `RUNWAY_UNAVAILABLE`, `TAXIWAY_BLOCKED`, `EQUIPMENT_FAILURE` contract Instructions plus expected facts |
+| `evaluations/*.json` | Evaluation runner reports |
+
+### Where Member 2 data sits in the contract
+
+* Flight `assumptions` carry the engine-required `wake_category` (`MEDIUM`/`HEAVY`), `gate_id`, `crew_id`,
+  `equipment_id` and arrival `latest_safe_arrival_utc`, plus rotation links, the original local HHMM values
+  and normalization flags. Each has `source_type`, `unit` and `explanation`.
+* `infrastructure.resources`: 4 runways (all mutually dependent, see below), taxiway pieces whose endpoints
+  are runway and gate IDs, 133 gates, 162 crews, the pushback tug pool.
+* `initial_occupancy`: one GATE `Reservation` per aircraft already on gate, with flight_id `OCCUPANT:<leg>`.
+* `rules_config`: Member 1 defaults, unchanged.
+* `source_manifest.member2`: window and buffers, every assumption parameter, gate sizing, occupancy provenance,
+  synthetic connections, layout reference and node positions, data quality, and `historical_outcomes`
+  (cancellations, diversions, delay minutes) kept for replay and calibration only.
 
 `data/layout/sfo_layout.json` is the airport graph; `data/layout/source/` holds the FAA diagram PDF.
 
@@ -85,14 +113,17 @@ flight_id `afa4e42188b1:5663452`.
 | Airport time zones | SOURCED zone rules, curated assignment awaiting review | `timezones.py` |
 | Runways, lengths, headings, crossings, taxiway and boarding-area names | SOURCED | FAA AL-375, cycle 2611, effective 2026-10-29 to 2026-11-26 |
 | Parallel spacing, coordinates, taxiway topology, segment lengths | SYNTHETIC | schematic |
-| Gate IDs, gate count (102), HEAVY-capable gates (44) | SYNTHETIC | peak scheduled demand x 1.15 |
-| Initial gate occupancy (49 aircraft) | HISTORICAL tail sequence; gate assignment SYNTHETIC | `scenario.py` |
+| Gate IDs, gate count (133), HEAVY-capable gates (53) | SYNTHETIC | peak scheduled demand + 30 min buffer, x 1.15 |
+| Gate per flight | SYNTHETIC | interval colouring; an aircraft keeps one gate from arrival to its next departure |
+| Initial gate occupancy (44 reservations) | HISTORICAL tail sequence; gate assignment SYNTHETIC | `scenario.py` |
 | Aircraft rotations | HISTORICAL | same airline + tail, next SFO movement |
 | Wake category | SYNTHETIC | stage length >= 2000 mi is HEAVY; type not in source |
 | Holding fuel, latest safe landing | SYNTHETIC | seeded 10 to 60 min per arrival |
-| Taxi-in 8 min, taxi-out 12 min, turnaround 45/75 min | SYNTHETIC | `assumptions.py` |
-| Crews (one per rotation, duty 90 to 360 min) | SYNTHETIC | seeded |
-| Pushback tugs (6, 10 min each) | SYNTHETIC | single equipment resource |
+| Taxi-in 8 min, taxi-out 12 min (wheels-on/off estimates) | SYNTHETIC | `assumptions.py` |
+| Taxi segment traversal (10 m/s, pieces of at most 400 m, minimum 30 s) | SYNTHETIC | `assumptions.py` |
+| Crews (one per rotation, work limit 90 to 360 min, available for the horizon + 60 min) | SYNTHETIC | seeded |
+| Pushback tugs (12) | SYNTHETIC | single equipment resource |
+| Separation, runway occupancy, turnaround, search limits | SYNTHETIC | Member 1 `RulesConfig` defaults |
 | Passenger connections (68) | SYNTHETIC | not in source |
 | Disruption times and durations | SYNTHETIC | not derived from delay minutes |
 
@@ -108,13 +139,27 @@ Seed: `20151221`.
   arrival and 1 wheels-on are similarly inconsistent. All are flagged, none dropped.
 * The 2026 layout is paired with 2015 traffic.
 * Historically cancelled flights (35 in the slice) are included as scheduled demand. Their outcome is kept
-  only under `flight.historical`, which is for replay and calibration, not decisions.
+  only under `source_manifest.member2.historical_outcomes`, for replay and calibration, not decisions.
+  Actual gate and wheels times fill the contract's optional Flight fields.
+
+## Engine integration results
+
+Both scenarios pass `backend.contracts.Scenario`, the engine loads them through `ScenarioRepository`,
+every disruption instruction passes `instruction_issues`, and a single flight placed by the engine passes
+every hard check. Member 1's FCFS baseline still returns `NO_FEASIBLE_PLAN_FOUND` for the dev scenario:
+
+* AL-375 shows both 01/19 runways crossing both 10/28 runways, and the close parallels are dependent, so all
+  four runways are mutually dependent. With the default 120 to 180 s wake pairs this is roughly single-runway
+  capacity (about 30 movements per hour) against 64 scheduled per hour. Queued arrivals eventually pass
+  their synthetic `latest_safe_arrival_utc`.
+* The engine's search budget is 100 placements for the whole plan, and every flight tries up to
+  4 runways x 4 routes per 120 s step, so a 30-flight plan with any queueing exhausts it.
 
 ## Pending with other members
 
-* **Member 1:** publish `backend.contracts` models; `contract_check` then switches to them automatically.
-  Contract change request for the optional Flight fields `operation`, `segment`, `qualifying_source_row`,
-  `quality_flags`, `historical`, and Scenario `data_quality`. Confirm the Supabase column mapping in
-  `supabase_import.TABLES`. Separation and runway occupancy values go into `rules_config.member1_rules`.
-* **Member 1 / 3:** implement `run(scenario, events, seed)` policies for `evaluate.py`.
+* **Member 1:** decide whether crossing runways should share wake separation or only an intersection
+  clearance, and whether the 100-placement budget should apply per flight; both currently prevent a plan.
+  `EQUIPMENT_FAILURE` blocks the whole tug pool; a partial outage needs a capacity parameter.
+  Fold `pandas` and `tzdata` into the root lockfile.
+* **Member 3:** supply an agent `run(scenario, events, seed)` policy for `evaluate.py`.
 * **Member 4:** `sfo_layout.json` gives schematic x/y in metres for the Konva view; positions are not surveyed.

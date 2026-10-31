@@ -1076,11 +1076,43 @@
       "source_type": "SYNTHETIC"
     },
     {
+      "gate_id": "SIM-A16",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A17",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A18",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A19",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
       "gate_id": "SIM-B01",
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1088,7 +1120,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1096,7 +1128,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1104,7 +1136,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1112,7 +1144,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1120,7 +1152,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1128,7 +1160,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1136,7 +1168,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1144,7 +1176,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1152,7 +1184,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1160,7 +1192,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1168,7 +1200,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1176,7 +1208,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1184,7 +1216,7 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1192,7 +1224,39 @@
       "boarding_area": "B",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_B",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B16",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B17",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B18",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B19",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1200,7 +1264,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1208,7 +1272,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1216,7 +1280,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1224,7 +1288,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1232,7 +1296,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1240,7 +1304,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1248,7 +1312,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1256,7 +1320,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1264,7 +1328,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1272,7 +1336,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1280,7 +1344,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1288,7 +1352,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1296,7 +1360,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1304,7 +1368,7 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1312,7 +1376,39 @@
       "boarding_area": "C",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_C",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C16",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C17",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C18",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C19",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1320,7 +1416,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1328,7 +1424,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1336,7 +1432,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1344,7 +1440,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1352,7 +1448,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1360,7 +1456,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1368,7 +1464,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1376,7 +1472,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1384,7 +1480,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1392,7 +1488,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1400,7 +1496,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1408,7 +1504,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1416,7 +1512,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1424,7 +1520,7 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1432,7 +1528,39 @@
       "boarding_area": "D",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_D",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D16",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D17",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D18",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D19",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1440,7 +1568,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "HEAVY",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1448,7 +1576,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1456,7 +1584,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1464,7 +1592,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1472,7 +1600,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1480,7 +1608,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1488,7 +1616,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1496,7 +1624,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1504,7 +1632,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1512,7 +1640,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1520,7 +1648,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1528,7 +1656,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1536,7 +1664,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1544,7 +1672,47 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "LARGE",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E15",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E16",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E17",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E18",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E19",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "MEDIUM",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1660,6 +1828,46 @@
       "source_type": "SYNTHETIC"
     },
     {
+      "gate_id": "SIM-F15",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F16",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F17",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F18",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F19",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "MEDIUM",
+      "source_type": "SYNTHETIC"
+    },
+    {
       "gate_id": "SIM-G01",
       "boarding_area": "G",
       "boarding_area_source_type": "SOURCED",
@@ -1765,6 +1973,46 @@
     },
     {
       "gate_id": "SIM-G14",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G15",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G16",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G17",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G18",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G19",
       "boarding_area": "G",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_G",

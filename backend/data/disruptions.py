@@ -21,9 +21,10 @@ from . import config
 
 
 def instruction(scenario_id: str, n: int, kind: str, resource_id: str, start, end, parameters: dict) -> dict:
+    """Contract Instruction. instruction_version and entered_by are server-owned, so they stay at defaults."""
     return {
         "instruction_id": f"{scenario_id}:fixture-{n}",
-        "instruction_version": 1,
+        "instruction_version": 0,
         "scenario_id": scenario_id,
         "base_state_version": 0,
         "kind": kind,
@@ -32,20 +33,25 @@ def instruction(scenario_id: str, n: int, kind: str, resource_id: str, start, en
         "ends_at_utc": A.iso(end),
         "flight_id": None,
         "parameters": parameters,
-        "entered_by": "fixture:member2",
+        "entered_by": "",
     }
 
 
 def build(slice_dir: Path) -> list[dict]:
-    scenario = json.loads((slice_dir / "scenario_full.json").read_text(encoding="utf-8"))
+    facts = json.loads((slice_dir / "expected_facts.json").read_text(encoding="utf-8"))
+    scenario = json.loads((config.REPO_ROOT / facts["scenario_files"][0]).read_text(encoding="utf-8"))
     sid = scenario["scenario_id"]
-    layout = scenario["infrastructure"]["layout"]
-    t = A.parse(scenario["rules_config"]["core_window"]["start_utc"])
-    flights = [f for f in scenario["flights"]]
+    layout = json.loads((config.REPO_ROOT / "data" / "layout" / "sfo_layout.json").read_text(encoding="utf-8"))
+    taxi_ids = {r["resource_id"] for r in scenario["infrastructure"]["resources"] if r["kind"] == "TAXIWAY"}
+    t = A.parse(scenario["source_manifest"]["member2"]["core_window"]["start_utc"])
+    flights = scenario["flights"]
+
+    def is_arrival(f):
+        return f["destination"] == config.AIRPORT_IATA
 
     def movements_between(start, end):
         return sorted(f["flight_id"] for f in flights
-                      if start <= A.parse(f["scheduled_gate_arrival_utc"] if f["operation"] == "ARRIVAL"
+                      if start <= A.parse(f["scheduled_gate_arrival_utc"] if is_arrival(f)
                                           else f["scheduled_gate_departure_utc"]) < end)
 
     fixtures = []
@@ -56,7 +62,7 @@ def build(slice_dir: Path) -> list[dict]:
         "fixture_id": "runway-10R-28L-closure",
         "disruption": "RUNWAY_UNAVAILABLE",
         "events": [{"at_utc": A.iso(s), "instruction": instruction(
-            sid, 1, "RUNWAY_CLOSURE", "10R-28L", s, e, {"reason": "SIMULATED"})}],
+            sid, 1, "RUNWAY_UNAVAILABLE", "10R-28L", s, e, {"reason": "SIMULATED"})}],
         "expected": {
             "closed_runway": "10R-28L",
             "runways_remaining": [r["runway_id"] for r in layout["runways"] if r["runway_id"] != "10R-28L"],
@@ -64,8 +70,10 @@ def build(slice_dir: Path) -> list[dict]:
         },
     })
 
-    # 2. Taxiway B blocked between B@2400 and B@2900 for 60 minutes.
+    # 2. Taxiway B blocked between B@2400 and B@2900 for 60 minutes. The contract resource is
+    # the first piece of the split segment; blocking any piece blocks the whole segment.
     seg = "B:B@2400-B@2900"
+    resource = next(r for r in (seg, f"{seg}#1") if r in taxi_ids)
     s, e = t + timedelta(minutes=15), t + timedelta(minutes=75)
     before = sfo_layout.shortest_path(layout, "APRON_A", "HOLD_28L")
     after = sfo_layout.shortest_path(layout, "APRON_A", "HOLD_28L", blocked={seg})
@@ -73,25 +81,24 @@ def build(slice_dir: Path) -> list[dict]:
         "fixture_id": "taxiway-B-blockage",
         "disruption": "TAXIWAY_BLOCKED",
         "events": [{"at_utc": A.iso(s), "instruction": instruction(
-            sid, 2, "TAXIWAY_BLOCKAGE", seg, s, e, {"reason": "SIMULATED"})}],
+            sid, 2, "TAXIWAY_BLOCKED", resource, s, e, {"reason": "SIMULATED", "layout_segment": seg})}],
         "expected": {
-            "blocked_segment": seg,
+            "blocked_segment": seg, "blocked_resource_id": resource,
             "route_APRON_A_to_HOLD_28L_m": {"unblocked": before[0], "blocked": after[0] if after else None},
             "alternate_route_exists": after is not None,
             "alternate_route": after[1] if after else None,
         },
     })
 
-    # 3. Pushback tugs reduced from 6 to 3 for 60 minutes at the start of the core window.
-    s, e = t, t + timedelta(minutes=60)
-    deps = [f for f in flights if f["operation"] == "DEPARTURE"
-            and s <= A.parse(f["scheduled_gate_departure_utc"]) < e]
+    # 3. Pushback tug pool unavailable for 30 minutes at the start of the core window. The engine
+    # treats EQUIPMENT_FAILURE as the whole resource being unavailable.
+    s, e = t, t + timedelta(minutes=30)
+    deps = [f for f in flights if not is_arrival(f) and s <= A.parse(f["scheduled_gate_departure_utc"]) < e]
     fixtures.append({
         "fixture_id": "pushback-tug-failure",
         "disruption": "GROUND_EQUIPMENT_FAILURE",
         "events": [{"at_utc": A.iso(s), "instruction": instruction(
-            sid, 3, "EQUIPMENT_OUTAGE", "EQ-PUSHBACK-TUGS", s, e,
-            {"reason": "SIMULATED", "available_capacity": 3, "normal_capacity": 6})}],
+            sid, 3, "EQUIPMENT_FAILURE", A.EQUIPMENT_ID, s, e, {"reason": "SIMULATED"})}],
         "expected": {"scheduled_departures_in_outage": len(deps)},
     })
 

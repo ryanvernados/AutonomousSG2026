@@ -16,10 +16,10 @@ import collections
 import csv
 import hashlib
 import json
-
-import pandas as pd
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+import pandas as pd
 
 from . import config, timezones
 from .normalize import iso, normalize_row, qualifies
@@ -184,15 +184,15 @@ def select_window(day: str, items: list) -> tuple[datetime, dict]:
 
 def pick_dev_fixture(core: list[dict]) -> list[dict]:
     """Contiguous run of DEV_FIXTURE_SIZE operating legs with the most qualifying rows."""
-    legs = [l for l in core if not l["cancelled"]]
+    legs = [leg for leg in core if not leg["cancelled"]]
     size = min(config.DEV_FIXTURE_SIZE, len(legs))
     best, best_key = None, None
     for i in range(len(legs) - size + 1):
         run = legs[i:i + size]
-        ops = {l["operation"] for l in run}
+        ops = {leg["operation"] for leg in run}
         if ops != {"ARRIVAL", "DEPARTURE"}:
             continue
-        key = (-sum(1 for l in run if l["qualifying"]), i)
+        key = (-sum(1 for leg in run if leg["qualifying"]), i)
         if best_key is None or key < best_key:
             best, best_key = run, key
     return best or legs[:size]
@@ -259,12 +259,12 @@ def main(argv: list[str] | None = None) -> None:
             "airline_name": airlines.get(leg["airline"]),
         })
         legs.append(leg)
-    legs.sort(key=lambda l: (l["sfo_scheduled_movement_utc"], l["flight_id"]))
+    legs.sort(key=lambda leg: (leg["sfo_scheduled_movement_utc"], leg["flight_id"]))
 
     slug = f"sfo_{day}"
-    core = [l for l in legs if l["in_core_window"]]
+    core = [leg for leg in legs if leg["in_core_window"]]
     dev = pick_dev_fixture(core)
-    traced = next((l for l in dev if l["qualifying"]), None) or next(l for l in core if l["qualifying"])
+    traced = next((leg for leg in dev if leg["qualifying"]), None) or next(leg for leg in core if leg["qualifying"])
     row_no = int(traced["source_row_id"].split(":")[1])
 
     manifest = {
@@ -313,7 +313,7 @@ def main(argv: list[str] | None = None) -> None:
             "operation": op, "sfo_scheduled_movement_utc": when, "cancelled": cancelled,
             "distance_mi": float(row["DISTANCE"]) if row["DISTANCE"] else None,
         })
-    context.sort(key=lambda l: (l["sfo_scheduled_movement_utc"], l["flight_id"]))
+    context.sort(key=lambda leg: (leg["sfo_scheduled_movement_utc"], leg["flight_id"]))
     write_json(out / slug / "context_legs.json", {
         **common,
         "purpose": "SFO legs outside the slice, used only to derive initial gate occupancy and aircraft rotations",
@@ -332,8 +332,8 @@ def main(argv: list[str] | None = None) -> None:
         "normalized": traced,
     })
 
-    seg = collections.Counter(l["segment"] for l in legs)
-    slice_flags = collections.Counter(f for l in legs for f in l["quality_flags"])
+    seg = collections.Counter(leg["segment"] for leg in legs)
+    slice_flags = collections.Counter(f for leg in legs for f in leg["quality_flags"])
     report = {
         "source_flights_sha256": flights_sha,
         "dataset": {
@@ -353,11 +353,11 @@ def main(argv: list[str] | None = None) -> None:
             **window,
             "flights": len(legs),
             "by_segment": dict(seg),
-            "arrivals": sum(1 for l in legs if l["operation"] == "ARRIVAL"),
-            "departures": sum(1 for l in legs if l["operation"] == "DEPARTURE"),
-            "cancelled": sum(1 for l in legs if l["cancelled"]),
-            "diverted": sum(1 for l in legs if l["diverted"]),
-            "qualifying_rows": sum(1 for l in legs if l["qualifying"]),
+            "arrivals": sum(1 for leg in legs if leg["operation"] == "ARRIVAL"),
+            "departures": sum(1 for leg in legs if leg["operation"] == "DEPARTURE"),
+            "cancelled": sum(1 for leg in legs if leg["cancelled"]),
+            "diverted": sum(1 for leg in legs if leg["diverted"]),
+            "qualifying_rows": sum(1 for leg in legs if leg["qualifying"]),
             "flag_counts": dict(slice_flags.most_common()),
             "dev_fixture_flights": len(dev),
         },

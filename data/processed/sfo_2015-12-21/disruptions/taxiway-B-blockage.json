@@ -6,23 +6,25 @@
       "at_utc": "2015-12-22T04:15:00Z",
       "instruction": {
         "instruction_id": "sfo-2015-12-21-2000-full:fixture-2",
-        "instruction_version": 1,
+        "instruction_version": 0,
         "scenario_id": "sfo-2015-12-21-2000-full",
         "base_state_version": 0,
-        "kind": "TAXIWAY_BLOCKAGE",
-        "resource_id": "B:B@2400-B@2900",
+        "kind": "TAXIWAY_BLOCKED",
+        "resource_id": "B:B@2400-B@2900#1",
         "starts_at_utc": "2015-12-22T04:15:00Z",
         "ends_at_utc": "2015-12-22T05:15:00Z",
         "flight_id": null,
         "parameters": {
-          "reason": "SIMULATED"
+          "reason": "SIMULATED",
+          "layout_segment": "B:B@2400-B@2900"
         },
-        "entered_by": "fixture:member2"
+        "entered_by": ""
       }
     }
   ],
   "expected": {
     "blocked_segment": "B:B@2400-B@2900",
+    "blocked_resource_id": "B:B@2400-B@2900#1",
     "route_APRON_A_to_HOLD_28L_m": {
       "unblocked": 1589.0,
       "blocked": 3149.0
