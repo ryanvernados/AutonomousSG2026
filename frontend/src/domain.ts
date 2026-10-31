@@ -1,4 +1,4 @@
-import type { Negotiation, Snapshot, Connection } from "./api/types";
+import type { Flight, Negotiation, Snapshot, Connection } from "./api/types";
 export const time = (iso: string) =>
   new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Los_Angeles",
@@ -24,6 +24,14 @@ export const zone = (iso: string) =>
   })
     .formatToParts(new Date(iso))
     .find((p) => p.type === "timeZoneName")!.value;
+// Canonical sessions start with no published plan; derive direction from the flight leg.
+export const operationOf = (f: Flight): "ARRIVAL" | "DEPARTURE" =>
+  f.plan?.operation ??
+  (f.destination === "SFO" ? "ARRIVAL" : "DEPARTURE");
+export const scheduledTime = (f: Flight) =>
+  operationOf(f) === "ARRIVAL"
+    ? f.scheduled_gate_arrival_utc
+    : f.scheduled_gate_departure_utc;
 export const instructionLabel = {
   RUNWAY_CLOSURE: "Runway closure",
   TAXIWAY_BLOCKAGE: "Taxiway blockage",
