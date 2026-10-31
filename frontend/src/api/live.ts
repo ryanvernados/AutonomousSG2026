@@ -9,6 +9,12 @@ import type {
   ScenarioSummary,
   Snapshot,
 } from "./types";
+import {
+  toCanonicalInstruction,
+  toUiDraft,
+  toUiScenario,
+  toUiSnapshot,
+} from "./canonical";
 export function createAuth() {
   const url = import.meta.env.VITE_SUPABASE_URL,
     key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -45,8 +51,15 @@ export function parseSse(buffer: string): {
   }
   return { frames, remaining: buffer };
 }
+// Talks Member 1's canonical v1 API and maps responses to the UI view model (canonical.ts).
 export class LiveClient implements AirportClient {
   readonly mode = "live" as const;
+  // The REST snapshot carries no event cursor; track the highest sequence seen on the stream.
+  private lastEventSeq = 0;
+  private identity = new Map<
+    string,
+    { scenarioId: string; stateVersion: number }
+  >();
   constructor(
     private token: () => Promise<string>,
     private base = import.meta.env.VITE_API_BASE_URL ||
@@ -71,32 +84,78 @@ export class LiveClient implements AirportClient {
     if (response.status === 204) return undefined as T;
     return (await response.json()) as T;
   }
-  scenarios() {
-    return this.request<ScenarioSummary[]>("/scenarios");
+  private remember(id: string, snapshot: Snapshot) {
+    this.identity.set(id, {
+      scenarioId: snapshot.scenario_id,
+      stateVersion: snapshot.state_version,
+    });
+    return snapshot;
   }
-  createSession(scenarioId: string) {
-    return this.request<{ session_id: string; snapshot: Snapshot }>(
-      "/sessions",
-      { scenario_id: scenarioId },
+  private async current(id: string) {
+    if (!this.identity.has(id)) await this.snapshot(id);
+    return this.identity.get(id)!;
+  }
+  async scenarios() {
+    const list = await this.request<Record<string, unknown>[]>("/scenarios");
+    return list.map(toUiScenario);
+  }
+  async createSession(scenarioId: string) {
+    // Session creation is a command: fresh command_id and initial base_state_version 0.
+    const result = await this.request<{
+      session_id: string;
+      snapshot: Record<string, unknown>;
+    }>("/sessions", {
+      command_id: crypto.randomUUID(),
+      base_state_version: 0,
+      scenario_id: scenarioId,
+    });
+    const snapshot = toUiSnapshot(
+      { snapshot: result.snapshot, proposals: [], negotiations: [] },
+      this.lastEventSeq,
     );
+    return {
+      session_id: result.session_id,
+      snapshot: this.remember(result.session_id, snapshot),
+    };
   }
-  snapshot(id: string) {
-    return this.request<Snapshot>(
+  async snapshot(id: string): Promise<Snapshot> {
+    const response = await this.request<Record<string, unknown>>(
       `/sessions/${encodeURIComponent(id)}/snapshot`,
     );
+    return this.remember(id, toUiSnapshot(response, this.lastEventSeq));
   }
-  preview(id: string, draft: InstructionDraft) {
-    return this.request<Preview>(
+  async preview(id: string, draft: InstructionDraft): Promise<Preview> {
+    const { scenarioId, stateVersion } = await this.current(id);
+    const result = await this.request<{
+      instruction: Record<string, unknown>;
+      issues: string[];
+    }>(
       `/sessions/${encodeURIComponent(id)}/instructions/preview`,
-      draft,
+      toCanonicalInstruction(draft, scenarioId, stateVersion),
     );
+    return {
+      instruction: toUiDraft(result.instruction),
+      issues: result.issues,
+    } as Preview;
   }
   async command(
     id: string,
     path: string,
     c: Command & Record<string, unknown>,
   ) {
-    await this.request(`/sessions/${encodeURIComponent(id)}/${path}`, c);
+    let body: Record<string, unknown> = c;
+    if (path === "instructions" && c.instruction) {
+      const { scenarioId } = await this.current(id);
+      body = {
+        ...c,
+        instruction: toCanonicalInstruction(
+          c.instruction as InstructionDraft,
+          scenarioId,
+          c.base_state_version,
+        ),
+      };
+    }
+    await this.request(`/sessions/${encodeURIComponent(id)}/${path}`, body);
   }
   subscribe(
     id: string,
@@ -158,6 +217,7 @@ export class LiveClient implements AirportClient {
               throw new Error("Invalid event sequence");
             if (e.event_seq <= cursor) continue;
             cursor = e.event_seq;
+            this.lastEventSeq = Math.max(this.lastEventSeq, cursor);
             event(e);
           }
         }

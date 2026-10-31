@@ -7,6 +7,7 @@ import type {
   Preview,
 } from "../api/types";
 import { dateTime, instructionLabel } from "../domain";
+import type { LiveSnapshot } from "../api/canonical";
 export default function Instructions({
   snapshot,
   client,
@@ -21,7 +22,21 @@ export default function Instructions({
   onClose: () => void;
 }) {
   const [kind, setKind] = useState<InstructionDraft["kind"]>("RUNWAY_CLOSURE");
-  const [resource, setResource] = useState("28R");
+  // LIVE snapshots carry resource IDs discovered from the scenario; mock keeps its fixture set.
+  const catalog = (snapshot as LiveSnapshot).resource_catalog;
+  const resourcesFor = (k: InstructionDraft["kind"]) =>
+    k === "RUNWAY_CLOSURE"
+      ? catalog?.runways.length
+        ? catalog.runways
+        : ["28R", "28L"]
+      : k === "TAXIWAY_BLOCKAGE"
+        ? catalog?.taxiways.length
+          ? catalog.taxiways
+          : ["A", "B", "C"]
+        : catalog?.equipment.length
+          ? catalog.equipment
+          : ["TUG-1"];
+  const [resource, setResource] = useState(resourcesFor("RUNWAY_CLOSURE")[0]);
   const [flight, setFlight] = useState(snapshot.flights[0]?.flight_id ?? "");
   const [offset, setOffset] = useState(0);
   const [duration, setDuration] = useState(20);
@@ -32,12 +47,7 @@ export default function Instructions({
   useEffect(() => {
     document.getElementById("instruction-kind")?.focus();
   }, []);
-  const resources =
-    kind === "RUNWAY_CLOSURE"
-      ? ["28R", "28L"]
-      : kind === "TAXIWAY_BLOCKAGE"
-        ? ["A", "B", "C"]
-        : ["TUG-1"];
+  const resources = resourcesFor(kind);
   const start = new Date(
     Date.parse(snapshot.sim_time_utc) + offset * 60000,
   ).toISOString();
@@ -95,13 +105,7 @@ export default function Instructions({
           onChange={(e) => {
             const k = e.target.value as typeof kind;
             setKind(k);
-            setResource(
-              k === "RUNWAY_CLOSURE"
-                ? "28R"
-                : k === "TAXIWAY_BLOCKAGE"
-                  ? "A"
-                  : "TUG-1",
-            );
+            setResource(resourcesFor(k)[0]);
             dirty();
           }}
         >

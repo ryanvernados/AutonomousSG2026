@@ -147,9 +147,11 @@ export default function ProposalReview({
                     <tr key={a.flight_id}>
                       <th>{f ? f.airline + f.flight_number : a.flight_id}</th>
                       <td>
-                        {f ? time(f.plan.runway_time_utc) : "—"}
+                        {f?.plan ? time(f.plan.runway_time_utc) : "Unscheduled"}
                         <small>
-                          {f?.plan.runway_id} · {f?.plan.gate_id}
+                          {f?.plan
+                            ? `${f.plan.runway_id} · ${f.plan.gate_id}`
+                            : "no published slot"}
                         </small>
                       </td>
                       <td className="proposed-time">
@@ -159,7 +161,7 @@ export default function ProposalReview({
                         </small>
                       </td>
                       <td>
-                        {f
+                        {f?.plan
                           ? Math.round(
                               (Date.parse(a.runway_time_utc) -
                                 Date.parse(f.plan.runway_time_utc)) /
@@ -190,7 +192,7 @@ export default function ProposalReview({
                   ·{" "}
                   {snapshot.flights
                     .find((f) => f.flight_id === a.flight_id)
-                    ?.plan.taxi_path_ids.join(" → ")}{" "}
+                    ?.plan?.taxi_path_ids.join(" → ") ?? "unscheduled"}{" "}
                   → <b>{a.taxi_path_ids.join(" → ")}</b>
                   <br />
                   Gate {a.gate_id} ·{" "}

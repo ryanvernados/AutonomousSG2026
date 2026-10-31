@@ -23,7 +23,13 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react";
-import { auth, client, isLive, configurationError } from "./api/client";
+import {
+  auth,
+  client,
+  demoToken,
+  isLive,
+  configurationError,
+} from "./api/client";
 import type {
   AuditEvent,
   Connection,
@@ -31,7 +37,14 @@ import type {
   Snapshot,
   ScenarioSummary,
 } from "./api/types";
-import { dateTime, instructionLabel, time, zone } from "./domain";
+import {
+  dateTime,
+  instructionLabel,
+  operationOf,
+  scheduledTime,
+  time,
+  zone,
+} from "./domain";
 import AirportMap from "./components/AirportMap";
 import Instructions from "./components/Instructions";
 import ProposalReview from "./components/ProposalReview";
@@ -106,7 +119,7 @@ function Login({ onReady }: { onReady: () => void }) {
   );
 }
 export default function App() {
-  const [signedIn, setSignedIn] = useState(!isLive);
+  const [signedIn, setSignedIn] = useState(!isLive || Boolean(demoToken));
   useEffect(() => {
     if (!auth) return;
     void auth.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
@@ -362,7 +375,7 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
   const flight = visible.flights.find((f) => f.flight_id === selected);
   const flights = visible.flights.filter(
     (f) =>
-      (filter === "ALL" || f.plan.operation === filter) &&
+      (filter === "ALL" || operationOf(f) === filter) &&
       `${f.airline}${f.flight_number} ${f.origin} ${f.destination}`
         .toLowerCase()
         .includes(search.toLowerCase()),
@@ -943,21 +956,30 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
                             </td>
                             <td>
                               <span className="movement">
-                                {f.plan.operation === "ARRIVAL" ? (
+                                {operationOf(f) === "ARRIVAL" ? (
                                   <ArrowDownLeft size={15} />
                                 ) : (
                                   <ArrowUpRight size={15} />
                                 )}{" "}
-                                {f.plan.operation === "ARRIVAL"
+                                {operationOf(f) === "ARRIVAL"
                                   ? "Arrival"
                                   : "Departure"}
                               </span>
                             </td>
                             <td>
-                              {time(f.plan.runway_time_utc)}{" "}
-                              <small>RWY {f.plan.runway_id}</small>
+                              {f.plan ? (
+                                <>
+                                  {time(f.plan.runway_time_utc)}{" "}
+                                  <small>RWY {f.plan.runway_id}</small>
+                                </>
+                              ) : (
+                                <>
+                                  {time(scheduledTime(f))}{" "}
+                                  <small>UNSCHEDULED</small>
+                                </>
+                              )}
                             </td>
-                            <td>{f.plan.gate_id ?? "—"}</td>
+                            <td>{f.plan?.gate_id ?? "—"}</td>
                             <td>
                               <span className="flight-state">
                                 {f.state.replaceAll("_", " ")}

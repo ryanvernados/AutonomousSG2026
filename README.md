@@ -227,13 +227,33 @@ Implementation references: [FastAPI bearer auth](https://fastapi.tiangolo.com/tu
 [Supabase database functions](https://supabase.com/docs/guides/database/functions), and
 [SimPy Environment](https://simpy.readthedocs.io/en/stable/api_reference/simpy.core.html).
 
+## Run the integrated system
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\start-integrated.ps1
+```
+
+Opens the Member 1 API with Member 3's coordinator injected (http://127.0.0.1:8000/docs) and the
+Member 4 UI in live mode (http://127.0.0.1:5173), serving Member 1's synthetic scenario and Member 2's
+SFO 2015-12-21 scenarios. It uses `AUTH_MODE=demo` with local SQLite and agents in MOCK model mode
+(`-ModelMode live` for real model calls); settings are passed as environment variables, so `.env` is
+not changed. Verify with:
+
+```powershell
+$env:DEMO_TOKEN='local-integration-token'; uv run python -m backend.coordination.walkthrough
+cd frontend; $env:LIVE_E2E='1'; node scripts/test-e2e.mjs e2e/live-integration.spec.ts
+```
+
+The bridge between the coordinator and the platform is `backend/coordination/platform_adapter.py`;
+the UI maps the canonical API in `frontend/src/api/canonical.ts`. The SFO historical scenarios load
+and negotiate, but the engine returns `NO_FEASIBLE_PLAN_FOUND` for them (all four runways are mutually
+dependent, and search is limited to 100 placements per plan; see backend/data/README.md).
+
 ## Members 3 and 4: agents and controller UI
 
 The React controller (`frontend/`) and the agent coordinator (`backend/coordination/`,
-`backend/agents/`) currently run as separate **mock demos**. They are not yet wired to the Member 1
-API; see [docs/integration-compatibility-review.md](docs/integration-compatibility-review.md) for the
-remaining adapter work. Member 2's data pipeline is documented in
-[backend/data/README.md](backend/data/README.md).
+`backend/agents/`) can also run as standalone **mock demos**, as below. Member 2's data pipeline is
+documented in [backend/data/README.md](backend/data/README.md).
 
 ### Run on Windows
 

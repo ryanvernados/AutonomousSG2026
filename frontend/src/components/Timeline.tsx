@@ -1,10 +1,13 @@
 import type { Snapshot } from "../api/types";
-import { time } from "../domain";
+import { scheduledTime, time } from "../domain";
+import type { LiveSnapshot } from "../api/canonical";
 export default function Timeline({ snapshot }: { snapshot: Snapshot }) {
   const first =
     Math.min(
       Date.parse(snapshot.sim_time_utc) + 8 * 60000,
-      ...snapshot.flights.map((f) => Date.parse(f.plan.runway_time_utc)),
+      ...snapshot.flights.map((f) =>
+        Date.parse(f.plan?.runway_time_utc ?? scheduledTime(f)),
+      ),
     ) -
     8 * 60000;
   const span = 120 * 60000;
@@ -13,6 +16,21 @@ export default function Timeline({ snapshot }: { snapshot: Snapshot }) {
     snapshot.pending_negotiation?.status === "AWAITING_AUTHORIZATION"
       ? snapshot.pending_negotiation.plan
       : null;
+  // LIVE: rows come from the scenario's runways and the gates in use; mock keeps its fixture rows.
+  const catalog = (snapshot as LiveSnapshot).resource_catalog;
+  const runways = catalog?.runways ?? ["28R", "28L"];
+  const gatesInUse = [
+    ...new Set([
+      ...snapshot.resource_reservations
+        .map((r) => r.resource_id)
+        .filter((id) => id.startsWith("SIM-") || /^G\d/.test(id)),
+      ...(p?.assignments.map((a) => a.gate_id ?? "").filter(Boolean) ?? []),
+    ]),
+  ].sort();
+  const rows = catalog
+    ? [...runways, ...gatesInUse].slice(0, 16)
+    : ["28R", "28L", "G1", "G2", "G3", "G4", "G5", "G6"];
+  const isGate = (id: string) => !runways.includes(id);
   return (
     <section className="panel timeline-panel">
       <div className="panel-heading">
@@ -37,11 +55,11 @@ export default function Timeline({ snapshot }: { snapshot: Snapshot }) {
               ))}
             </div>
           </div>
-          {["28R", "28L", "G1", "G2", "G3", "G4", "G5", "G6"].map((id) => (
+          {rows.map((id) => (
             <div className="timeline-row" key={id}>
               <strong>
                 {id}
-                <small>{id.startsWith("G") ? "GATE" : "RUNWAY"}</small>
+                <small>{isGate(id) ? "GATE" : "RUNWAY"}</small>
               </strong>
               <div className="timeline-track">
                 {[0, 25, 50, 75, 100].map((x) => (
@@ -52,7 +70,7 @@ export default function Timeline({ snapshot }: { snapshot: Snapshot }) {
                   .map((r, i) => (
                     <span
                       key={i}
-                      className={`reservation ${id.startsWith("G") ? "gate-reservation" : ""}`}
+                      className={`reservation ${isGate(id) ? "gate-reservation" : ""}`}
                       style={{
                         left: `${Math.max(0, pct(r.starts_at_utc))}%`,
                         width: `${Math.max(0.8, Math.min(100, pct(r.ends_at_utc)) - Math.max(0, pct(r.starts_at_utc)))}%`,

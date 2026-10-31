@@ -241,16 +241,16 @@ export default function AirportMap({
               );
             })}
             {snapshot.flights
-              .filter((f) => f.state !== "DEPARTED")
+              .filter((f) => f.state !== "DEPARTED" && f.plan)
               .slice(0, 12)
               .map((f, i) => {
-                const start = Date.parse(f.plan.taxi_start_utc),
-                  end = Date.parse(f.plan.taxi_end_utc),
+                const start = Date.parse(f.plan!.taxi_start_utc),
+                  end = Date.parse(f.plan!.taxi_end_utc),
                   progress = Math.max(
                     0,
                     Math.min(1, (now - start) / (end - start)),
                   );
-                const inbound = f.plan.operation === "ARRIVAL";
+                const inbound = f.plan!.operation === "ARRIVAL";
                 const x = inbound
                   ? 650 - i * 16 - progress * 460
                   : 110 + progress * 480;
