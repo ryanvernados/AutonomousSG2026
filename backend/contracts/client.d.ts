@@ -392,12 +392,14 @@ export interface components {
              * Action
              * @enum {string}
              */
-            action: "PAUSE" | "RESUME" | "STEP" | "RESET";
+            action: "PAUSE" | "RESUME" | "STEP" | "RESET" | "SPEED";
             /**
              * Seconds
              * @default 60
              */
             seconds: number;
+            /** Speed */
+            speed?: number | null;
         };
         /** CommandResult */
         CommandResult: {
@@ -957,6 +959,11 @@ export interface components {
              * @enum {string}
              */
             clock_status: "PAUSED" | "RUNNING";
+            /**
+             * Clock Speed
+             * @default 1
+             */
+            clock_speed: number;
             infrastructure?: components["schemas"]["Infrastructure"] | null;
             rules_config?: components["schemas"]["RulesConfig"] | null;
             /** Start Utc */

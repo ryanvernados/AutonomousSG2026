@@ -1,3 +1,4 @@
+import type { LiveSnapshot } from "./canonical";
 import type {
   AirportClient,
   AuditEvent,
@@ -82,7 +83,7 @@ export class MockClient implements AirportClient {
     const timer = setInterval(() => {
       if (!this.connected) return;
       if (this.state.clock_running) {
-        this.advance(10);
+        this.advance((this.state as LiveSnapshot).clock_speed ?? 10);
         this.emit("CLOCK_ADVANCED");
       } else event(null);
     }, 1000);
@@ -194,6 +195,12 @@ export class MockClient implements AirportClient {
           if (!Number.isFinite(seconds) || seconds <= 0 || seconds > 600)
             throw new Error("Step must be 1–600 seconds.");
           this.advance(seconds);
+        } else if (c.action === "SPEED") {
+          const speed = Number(c.speed);
+          if (!Number.isInteger(speed) || speed < 1 || speed > 600)
+            throw new Error("Speed must be 1–600.");
+          (this.state as LiveSnapshot).clock_speed = speed;
+          this.state.state_version++;
         } else {
           this.state.clock_running = c.action === "RESUME";
           this.invalidate();

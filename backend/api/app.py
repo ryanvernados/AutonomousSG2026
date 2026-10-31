@@ -77,7 +77,8 @@ def create_app(settings=None, store=None, coordinator=None):
                 if not config.database_url:
                     raise RuntimeError("Configure DATABASE_URL for direct Postgres persistence")
                 persistence = PostgresStore(config.database_url)
-        app.state.service = PlatformService(persistence, ScenarioRepository(config.scenario_dir), coordinator)
+        app.state.service = PlatformService(persistence, ScenarioRepository(config.scenario_dir), coordinator,
+                                            default_clock_speed=config.sim_speed)
         await asyncio.to_thread(app.state.service.recover)
 
         async def run_clock():

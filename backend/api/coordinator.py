@@ -13,6 +13,14 @@ class CoordinationOutcome(Model):
     reason: str | None = None
 
 
+class CoordinationRejected(ValueError):
+    """Coordinator output refused by the platform; ``code`` becomes the negotiation reason suffix."""
+
+    def __init__(self, code: str, detail: str = ""):
+        super().__init__(f"{code}: {detail}" if detail else code)
+        self.code = code
+
+
 class Coordinator(Protocol):
     async def coordinate(self, snapshot: Snapshot, affected_ids: list[str],
                          negotiation_id: str) -> CoordinationOutcome:

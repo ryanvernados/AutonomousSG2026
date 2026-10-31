@@ -39,6 +39,9 @@ export type LiveSnapshot = Snapshot & {
   resource_catalog?: ResourceCatalog;
   // Member 2 drawing geometry (source_manifest.member2.layout.map); absent for synthetic fixtures.
   layout_map?: LayoutMap;
+  // Simulated seconds per wall-clock second while running (canonical v1 extension).
+  clock_speed?: number;
+  airport_iata?: string;
 };
 
 const z = (v: unknown) => (typeof v === "string" && v.endsWith("+00:00") ? v.replace("+00:00", "Z") : v);
@@ -192,6 +195,8 @@ export function toUiSnapshot(response: Json, lastEventSeq: number): LiveSnapshot
     active_instructions: (s.active_instructions ?? []).map(toUiInstruction),
     data_quality: dataQuality(s),
     clock_running: s.clock_status === "RUNNING",
+    clock_speed: s.clock_speed ?? 1,
+    airport_iata: s.airport_iata,
     pending_negotiation: latest ? toUiNegotiation(latest, response.proposals ?? []) : null,
     last_event_seq: lastEventSeq,
     resource_catalog: catalog(s.infrastructure),

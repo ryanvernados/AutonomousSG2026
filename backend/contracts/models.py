@@ -257,6 +257,8 @@ class Snapshot(Model):
     data_quality: dict[str, Any]
     instruction_version: int = 0
     clock_status: Literal["PAUSED", "RUNNING"] = "PAUSED"
+    # Simulated seconds per wall-clock second while RUNNING (1 = real time). Optional v1 extension.
+    clock_speed: int = Field(default=1, ge=1, le=600)
     # Optional v1 extensions. Backend-generated snapshots always include this context.
     # Omitted context makes engine validation UNKNOWN rather than silently inventing inputs.
     infrastructure: Infrastructure | None = None
@@ -341,8 +343,10 @@ class CreateSession(Command):
 
 
 class ClockCommand(Command):
-    action: Literal["PAUSE", "RESUME", "STEP", "RESET"]
+    action: Literal["PAUSE", "RESUME", "STEP", "RESET", "SPEED"]
     seconds: int = Field(default=60, gt=0, le=7200)
+    # SPEED sets it (running or paused); RESUME may set it too. Simulated seconds per wall second.
+    speed: int | None = Field(default=None, ge=1, le=600)
 
 
 class InstructionCommand(Command):

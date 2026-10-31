@@ -106,3 +106,58 @@ class ResponsesAdapter:
         safe_usage = {key: usage[key] for key in ("input_tokens", "output_tokens", "total_tokens")
                       if type(usage.get(key)) is int}
         return ModelResponse(payload, data.get("model", self.model), safe_usage)
+
+
+class ClaudeAdapter:
+    """Anthropic Messages adapter: one structured-output call per agent per round.
+
+    The reply is constrained to REPLY_SCHEMA and still validated by the coordinator.
+    SDK retries are off so a round never hides extra turns; refusals and truncated
+    replies become protocol errors. Credentials and provider errors stay out of the trace.
+    """
+    mode = "LIVE"
+    FALLBACK_BETA = "server-side-fallback-2026-07-01"
+
+    def __init__(self, client, *, model: str, effort: str = "low"):
+        self.client, self.model, self.effort = client, model, effort
+
+    @classmethod
+    def from_env(cls):
+        import anthropic
+
+        if not os.environ.get("ANTHROPIC_API_KEY"):
+            raise ValueError("Set ANTHROPIC_API_KEY for LIVE mode with Claude")
+        return cls(anthropic.AsyncAnthropic(max_retries=0),
+                   model=os.environ.get("AIRPORT_MODEL") or "claude-opus-5-5",
+                   effort=os.environ.get("AIRPORT_MODEL_EFFORT", "low"))
+
+    async def generate(self, request: Json, timeout_seconds: float) -> ModelResponse:
+        try:
+            response = await self.client.with_options(timeout=timeout_seconds).beta.messages.create(
+                model=self.model, max_tokens=16000,
+                system=request["instructions"],
+                messages=[{"role": "user", "content": json.dumps(
+                    {k: v for k, v in request.items() if k != "instructions"}, allow_nan=False)}],
+                output_config={"effort": self.effort,
+                               "format": {"type": "json_schema", "schema": REPLY_SCHEMA}},
+                # On a safety decline the API re-runs the call on a fallback model in the same request.
+                betas=[self.FALLBACK_BETA], fallbacks="default",
+            )
+        except asyncio.CancelledError:
+            raise
+        except Exception as exc:
+            # Provider exceptions can contain headers/URLs/body; never persist str(exc).
+            raise ProtocolError("MODEL_TRANSPORT_ERROR") from exc
+        if response.stop_reason == "refusal":
+            raise ProtocolError("MODEL_REFUSAL")
+        if response.stop_reason != "end_turn":
+            raise ProtocolError("MODEL_INCOMPLETE")
+        texts = [b.text for b in response.content if b.type == "text"]
+        if len(texts) != 1 or len(texts[0]) > 100000:
+            raise ProtocolError("INVALID_MESSAGE")
+        try:
+            payload = json.loads(texts[0])
+        except (ValueError, TypeError) as exc:
+            raise ProtocolError("INVALID_MESSAGE") from exc
+        usage = {"input_tokens": response.usage.input_tokens, "output_tokens": response.usage.output_tokens}
+        return ModelResponse(payload, response.model, usage)

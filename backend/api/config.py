@@ -1,5 +1,6 @@
 from typing import Literal
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,3 +16,5 @@ class Settings(BaseSettings):
     supabase_secret_key: str = ""
     scenario_dir: str = "fixtures"
     cors_origins: list[str] = ["http://localhost:5173"]
+    # Default clock speed for new sessions (simulated s per wall s; 1 = real time). UI can change it.
+    sim_speed: int = Field(default=1, ge=1, le=600)

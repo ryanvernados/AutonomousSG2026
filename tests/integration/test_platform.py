@@ -198,6 +198,20 @@ def test_coordinator_exact_ballots_and_veto(service, session, veto, wrong_hash, 
     assert next(iter(service.store.get(session).negotiations.values())).model_mode == "MOCK"
 
 
+class VetoReasonCoordinator:
+    async def coordinate(self, snapshot, affected_ids, negotiation_id):
+        return CoordinationOutcome(plan=None, messages=[], model_mode="MOCK", model_calls=4, rounds=2,
+                                   reason="AGENT_VETO")
+
+
+def test_coordinator_reason_kept_in_fallback_label(service, session):
+    service.coordinator = VetoReasonCoordinator()
+    plan = propose(service, session)
+    record = next(iter(service.store.get(session).negotiations.values()))
+    assert plan.source == "FALLBACK"
+    assert record.reason == "INVALID_OR_FAILED_COORDINATION:AGENT_VETO"
+
+
 def test_api_async_flow_and_export(client):
     response = client.post("/api/v1/sessions", json={"scenario_id": "sfo-synthetic-v1", "command_id": "create",
                                                    "base_state_version": 0})
@@ -331,3 +345,19 @@ def test_retry_does_not_start_duplicate_model_job(store):
                 break
             time.sleep(0.005)
         assert coordinator.cancelled
+
+
+def test_clock_speed_scales_running_ticks(service, session):
+    version = service.get_snapshot(session).state_version
+    service.clock(session, ClockCommand(command_id=uid(), base_state_version=version, action="RESUME", speed=10),
+                  DEMO_USER)
+    before = service.get_snapshot(session)
+    service.tick()
+    after = service.get_snapshot(session)
+    assert after.clock_speed == 10 and (after.sim_time_utc - before.sim_time_utc).total_seconds() == 10
+    service.clock(session, ClockCommand(command_id=uid(), base_state_version=after.state_version, action="SPEED",
+                                        speed=60), DEMO_USER)
+    service.tick()
+    assert (service.get_snapshot(session).sim_time_utc - after.sim_time_utc).total_seconds() == 60
+    assert service.get_snapshot(session).clock_status == "RUNNING"
+

@@ -4,7 +4,7 @@ import json
 import threading
 import time
 
-from backend.api.coordinator import CoordinationOutcome
+from backend.api.coordinator import CoordinationOutcome, CoordinationRejected
 from backend.api.errors import PlatformError
 from backend.contracts import (
     AuditEvent,
@@ -31,8 +31,9 @@ def fingerprint(action, command, actor_id):
 
 
 class PlatformService:
-    def __init__(self, store, scenarios, coordinator=None):
+    def __init__(self, store, scenarios, coordinator=None, default_clock_speed=1):
         self.store, self.scenarios, self.coordinator = store, scenarios, coordinator
+        self.default_clock_speed = default_clock_speed
         self.lock = threading.RLock()
 
     def require_role(self, project_id, actor_id, write=False):
@@ -68,7 +69,7 @@ class PlatformService:
                 return cached
             if command.base_state_version != 0:
                 raise PlatformError(409, "STALE_STATE", "New sessions start at version 0", 0)
-            snap = initial_snapshot(scenario)
+            snap = initial_snapshot(scenario).model_copy(update={"clock_speed": self.default_clock_speed})
             doc = SessionDocument(project_id=scenario.project_id, snapshot=snap, initial_snapshot=snap)
             event = self.event(doc, actor_id, "SESSION_CREATED", command.command_id,
                                {"seed": scenario.seed, "source_manifest": scenario.source_manifest})
@@ -114,12 +115,17 @@ class PlatformService:
                 # Reset is explicit and audited; keeps restrictions and advances monotonically.
                 snap = doc.initial_snapshot.model_copy(update={"state_version": s.state_version + 1,
                     "active_instructions": s.active_instructions, "instruction_version": s.instruction_version,
-                    "mode": s.mode})
+                    "mode": s.mode, "clock_speed": s.clock_speed})
+            elif command.action == "SPEED":
+                if command.speed is None:
+                    raise PlatformError(422, "SPEED_REQUIRED", "SPEED needs speed (1-600)", s.state_version)
+                snap = s.model_copy(update={"clock_speed": command.speed, "state_version": s.state_version + 1})
             else:
                 snap = s.model_copy(update={"clock_status": "RUNNING" if command.action == "RESUME" else "PAUSED",
+                                            "clock_speed": command.speed or s.clock_speed,
                                             "state_version": s.state_version + 1})
             updated = self.invalidate(doc).model_copy(update={"snapshot": snap})
-            return updated, "CLOCK_" + command.action, {"seconds": command.seconds}, {}
+            return updated, "CLOCK_" + command.action, {"seconds": command.seconds, "speed": snap.clock_speed}, {}
         return self._execute(session_id, command, actor_id, "clock", mutate)
 
     def preview(self, session_id, instruction, actor_id):
@@ -190,34 +196,37 @@ class PlatformService:
         return self._execute(session_id, command, actor_id, "negotiate", mutate)
 
     def _validate_outcome(self, snapshot, record, outcome):
-        if not isinstance(outcome, CoordinationOutcome) or not outcome.plan or outcome.reason:
-            raise ValueError("No agreed plan or invalid coordinator output")
+        if not isinstance(outcome, CoordinationOutcome):
+            raise CoordinationRejected("INVALID_COORDINATOR_OUTPUT")
+        if outcome.reason or not outcome.plan:
+            # Keep the coordinator's own reason (e.g. AGENT_VETO) for the controller and audit trail.
+            raise CoordinationRejected(outcome.reason or "NO_AGREED_PLAN")
         p = outcome.plan
         if p.source != "CONSENSUS" or p.expires_at_utc <= utcnow():
-            raise ValueError("Consensus identity or validity missing")
+            raise CoordinationRejected("CONSENSUS_IDENTITY_OR_VALIDITY_MISSING")
         if outcome.rounds != 2 or not feasible(validate_plan(snapshot, p)):
-            raise ValueError("Two rounds and passing deterministic checks required")
+            raise CoordinationRejected("TWO_ROUNDS_AND_PASSING_CHECKS_REQUIRED")
         assigned_ids = {a.flight_id for a in p.assignments}
         required_assignments = {f.flight_id for f in snapshot.flights
                                 if f.flight_id in record.affected_ids and f.plan is None}
         if not required_assignments <= assigned_ids:
-            raise ValueError("Recovery plan omits unscheduled affected flights")
+            raise CoordinationRejected("PLAN_OMITS_AFFECTED_FLIGHTS")
         required = {"ATC", "GROUND"} | {"PILOT:" + f for f in record.affected_ids}
         # Exactly one offer and one ballot per participant; no hidden correction turns.
         if len(outcome.messages) != len(required) * 2:
-            raise ValueError("Missing or extra messages")
+            raise CoordinationRejected("MISSING_OR_EXTRA_MESSAGES")
         for round_no, kind in ((1, "OFFER"), (2, "ACCEPT")):
             messages = [m for m in outcome.messages if m.round == round_no]
             if len(messages) != len(required) or {m.sender_id for m in messages} != required:
-                raise ValueError("Missing participant or duplicate response")
+                raise CoordinationRejected("MISSING_PARTICIPANT_OR_DUPLICATE")
             for m in messages:
                 role = "PILOT" if m.sender_id.startswith("PILOT:") else m.sender_id
                 if m.type != kind or m.role != role or m.negotiation_id != record.negotiation_id or (
                     m.base_state_version != snapshot.state_version or
                     m.instruction_version != snapshot.instruction_version):
-                    raise ValueError("Invalid message identity, version, role or ballot")
+                    raise CoordinationRejected("INVALID_MESSAGE_IDENTITY")
                 if round_no == 2 and (m.plan_hash != p.plan_hash or m.proposal_id != p.proposal_id):
-                    raise ValueError("Ballot references a different immutable plan")
+                    raise CoordinationRejected("BALLOT_PLAN_MISMATCH")
 
     async def negotiate(self, session_id, negotiation_id, actor_id):
         doc = await asyncio.to_thread(self.store.get, session_id)
@@ -240,7 +249,10 @@ class PlatformService:
             except asyncio.CancelledError:
                 raise
             except Exception as exc:
-                reason = "INVALID_OR_FAILED_COORDINATION:" + type(exc).__name__
+                # CoordinationRejected and Member 3's ProtocolError both carry a reason code.
+                code = getattr(exc, "code", None)
+                reason = "INVALID_OR_FAILED_COORDINATION:" + (code if isinstance(code, str) and code
+                                                              else type(exc).__name__)
         if not isinstance(outcome, CoordinationOutcome):
             outcome = None
         if reason == "CONSENSUS":
@@ -331,11 +343,12 @@ class PlatformService:
         return Snapshot.model_validate(result["snapshot"])
 
     def tick(self, seconds=1):
+        """Advance every running clock by ``seconds`` of wall time at the session's own speed."""
         with self.lock:
             for doc in self.store.all_documents():
                 if doc.snapshot.clock_status != "RUNNING":
                     continue
-                snap = advance_clock(doc.snapshot, seconds)
+                snap = advance_clock(doc.snapshot, seconds * doc.snapshot.clock_speed)
                 updated = self.invalidate(doc).model_copy(update={"snapshot": snap})
                 event = self.event(updated, "SYSTEM", "CLOCK_TICK", uid())
                 self.store.commit(updated, doc.revision, [event], "SYSTEM", uid(), "tick", {}, internal=True)

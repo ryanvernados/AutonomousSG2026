@@ -1821,7 +1821,8 @@
               "PAUSE",
               "RESUME",
               "STEP",
-              "RESET"
+              "RESET",
+              "SPEED"
             ],
             "title": "Action"
           },
@@ -1831,6 +1832,19 @@
             "exclusiveMinimum": 0.0,
             "title": "Seconds",
             "default": 60
+          },
+          "speed": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 600.0,
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speed"
           }
         },
         "additionalProperties": false,
@@ -3185,6 +3199,13 @@
             ],
             "title": "Clock Status",
             "default": "PAUSED"
+          },
+          "clock_speed": {
+            "type": "integer",
+            "maximum": 600.0,
+            "minimum": 1.0,
+            "title": "Clock Speed",
+            "default": 1
           },
           "infrastructure": {
             "anyOf": [

@@ -568,6 +568,25 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
                   <Play size={17} />
                 )}
               </button>
+              <label className="speed-select">
+                <span>Speed</span>
+                <select
+                  aria-label="Simulation speed"
+                  disabled={locked}
+                  value={(snapshot as LiveSnapshot).clock_speed ?? 1}
+                  onChange={(e) =>
+                    act("clock", { action: "SPEED", speed: Number(e.target.value) })
+                  }
+                >
+                  {[...new Set([1, 5, 10, 30, 60, 120, (snapshot as LiveSnapshot).clock_speed ?? 1])]
+                    .sort((a, b) => a - b)
+                    .map((v) => (
+                      <option key={v} value={v}>
+                        {v === 1 ? "1× real time" : `${v}× (1 s = ${v >= 60 ? `${v / 60} min` : `${v} s`})`}
+                      </option>
+                    ))}
+                </select>
+              </label>
               <button
                 className="button small"
                 disabled={locked || snapshot.clock_running}

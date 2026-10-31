@@ -26,13 +26,15 @@ def main(argv=None) -> int:
     parser.add_argument("--scenario", default="sfo-synthetic-v1")
     parser.add_argument("--runway", default=None, help="Runway to restrict (default: first runway)")
     parser.add_argument("--approve", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--wait", type=float, default=90,
+                        help="Seconds to wait for the negotiation (the 218-flight scenario takes minutes)")
     args = parser.parse_args(argv)
     token = os.environ.get("DEMO_TOKEN")
     if not token:
         raise SystemExit("Set DEMO_TOKEN to the backend's demo token.")
     summary = {"scenario_id": args.scenario}
     with httpx.Client(base_url=args.url + "/api/v1", headers={"Authorization": "Bearer " + token},
-                      timeout=30) as client:
+                      timeout=max(30.0, args.wait)) as client:
         def post(path, body, expect=(200, 201, 202)):
             r = client.post(path, json={"command_id": str(uuid.uuid4()), **body})
             if r.status_code not in expect:
@@ -60,7 +62,7 @@ def main(argv=None) -> int:
         started = post(f"/sessions/{sid}/negotiations",
                        {"base_state_version": confirmed["state_version"], "affected_ids": []})
         nid = started["negotiation_id"]
-        deadline = time.monotonic() + 90
+        deadline = time.monotonic() + args.wait
         while True:
             n = client.get(f"/sessions/{sid}/negotiations/{nid}").json()
             if n["negotiation"]["status"] != "RUNNING" or time.monotonic() > deadline:

@@ -45,5 +45,23 @@ class PlatformAdapterTest(unittest.TestCase):
                     validate(None, snapshot, record, outcome)
 
 
+class RunInProcessTest(unittest.TestCase):
+    def test_cancelled_work_does_not_outlive_its_negotiation(self):
+        import multiprocessing
+        import time
+
+        from backend.coordination.platform_adapter import run_in_process
+
+        self.assertEqual(asyncio.run(run_in_process(sum, [1, 2, 3])), 6)
+        started = time.monotonic()
+        with self.assertRaises(TimeoutError):
+            asyncio.run(asyncio.wait_for(run_in_process(time.sleep, 60), timeout=2))
+        self.assertLess(time.monotonic() - started, 30)
+        deadline = time.monotonic() + 10
+        while multiprocessing.active_children() and time.monotonic() < deadline:
+            time.sleep(0.1)
+        self.assertEqual(multiprocessing.active_children(), [])
+
+
 if __name__ == "__main__":
     unittest.main()

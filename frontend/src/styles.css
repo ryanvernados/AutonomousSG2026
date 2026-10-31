@@ -1931,3 +1931,138 @@ footer span:first-child {
   outline: 2px solid #2e8b57;
   outline-offset: -2px;
 }
+.check-problems {
+  margin-top: 10px;
+}
+.check-problems p,
+p.check-failed {
+  color: #b7783d;
+}
+.ground-table small {
+  display: block;
+  color: #8a9a86;
+  font-weight: 400;
+  margin-top: 2px;
+}
+.ground-detail {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #dfe6da;
+  border-radius: 6px;
+  background: #f8faf6;
+  font-size: 12px;
+}
+.milestones {
+  list-style: none;
+  margin: 8px 0 4px;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.milestones li {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 8px;
+  align-items: baseline;
+}
+.milestones li span {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.milestones li small {
+  color: #9c7c40;
+}
+.milestones li.passed {
+  color: #9aa98a;
+}
+.milestones li.passed small {
+  color: #9aa98a;
+}
+.map-flight-card {
+  position: absolute;
+  top: 44px;
+  left: 18px;
+  z-index: 1;
+  max-width: min(300px, calc(100% - 36px));
+  padding: 10px 12px;
+  background: #ffffffeb;
+  border: 1px solid #d5ded1;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #2c3a33;
+}
+.map-flight-card strong {
+  display: block;
+  font-size: 12px;
+}
+.map-flight-card .eta {
+  color: #9c7c40;
+  font-weight: 600;
+}
+.speed-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #6f826d;
+}
+.speed-select select {
+  font: inherit;
+  padding: 4px 6px;
+  border: 1px solid #d5ded1;
+  border-radius: 5px;
+  background: #fff;
+  color: #2c3a33;
+}
+.map-inbound {
+  position: absolute;
+  top: 44px;
+  right: 18px;
+  z-index: 1;
+  min-width: 190px;
+  padding: 8px 10px;
+  background: #ffffffeb;
+  border: 1px solid #d5ded1;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #2c3a33;
+}
+.map-inbound strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2f6f9f;
+}
+.map-inbound button {
+  display: grid;
+  grid-template-columns: 1.3fr 0.8fr 0.7fr 1fr;
+  gap: 6px;
+  width: 100%;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.map-inbound button.selected {
+  color: #2e8b57;
+  font-weight: 600;
+}
+.map-inbound .eta {
+  color: #9c7c40;
+  text-align: right;
+}
+.map-inbound small {
+  color: #8a9a86;
+}
+@media (max-width: 800px) {
+  .map-inbound {
+    display: none;
+  }
+}

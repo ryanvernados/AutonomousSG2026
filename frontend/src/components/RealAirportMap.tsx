@@ -1,9 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Stage, Layer, Line, Rect, Text, Group, Circle, RegularPolygon } from "react-konva";
+import { Stage, Layer, Line, Rect, Text, Group, Circle } from "react-konva";
+import type { LiveSnapshot } from "../api/canonical";
 import type { Snapshot } from "../api/types";
+import { time } from "../domain";
 import {
-  aircraftAt,
+  aircraftPositions,
+  countdown,
+  etaTag,
+  inboundQueue,
+  nextMilestone,
   occupiedGates,
+  parkedAircraft,
+  routeNames,
+  runwayDesignator,
   pathPoints,
   type LayoutMap,
   type Phase,
@@ -12,6 +21,11 @@ import {
 
 // Map of the scenario's own layout (Member 2 geometry): runways, the taxiway network the engine
 // reserves, simulated gates, and aircraft positioned from authorized assignments.
+const PUSH_WARNING_MS = 5 * 60_000; // flag a gate this long before its departure pushes back
+// Top-down airliner silhouette, nose up (-y), about 18 px long at scale 1.
+const PLANE = [0, -9, 1.4, -4, 8, 0.5, 8, 2.2, 1.4, 0.6, 1, 5.5, 3.6, 7.6, 3.6, 8.8, 0, 7.8, -3.6, 8.8, -3.6, 7.6,
+  -1, 5.5, -1.4, 0.6, -8, 2.2, -8, 0.5, -1.4, -4];
+const PARKED_COLOR = "#8d9a8c";
 const PHASE_COLOR: Record<Phase, string> = {
   APPROACH: "#2f6f9f",
   LANDING: "#2f6f9f",
@@ -42,6 +56,8 @@ export default function RealAirportMap({
   useEffect(() => {
     received.current = Date.now();
   }, [snapshot.sim_time_utc]);
+  // Simulated ms per wall ms: the session's clock speed (1 = real time).
+  const rate = (snapshot as LiveSnapshot).clock_speed ?? 1;
   useEffect(() => {
     const observer = new ResizeObserver((e) => setWidth(e[0].contentRect.width));
     if (wrap.current) observer.observe(wrap.current);
@@ -57,10 +73,10 @@ export default function RealAirportMap({
     frame = requestAnimationFrame(update);
     return () => cancelAnimationFrame(frame);
   }, [snapshot.clock_running]);
-  // The backend clock advances in real time; interpolate at most a second between updates.
+  // The backend clock ticks once per second; interpolate at most one tick between updates.
   const now =
     Date.parse(snapshot.sim_time_utc) +
-    (snapshot.clock_running ? Math.min(1000, Math.max(0, tick - received.current)) : 0);
+    (snapshot.clock_running ? Math.min(1000, Math.max(0, tick - received.current)) * rate : 0);
 
   const bounds = useMemo(() => {
     const pts: Point[] = [
@@ -86,22 +102,32 @@ export default function RealAirportMap({
     );
   const gateIds = useMemo(() => new Set(Object.keys(map.gates)), [map]);
   const occupied = occupiedGates(snapshot, gateIds, now);
-  const aircraft = snapshot.flights.flatMap((f) => {
-    if (!f.plan) return [];
-    const pos = aircraftAt(map, f.plan, now);
-    return pos ? [{ flight: f, ...pos }] : [];
-  });
+  const aircraft = aircraftPositions(snapshot, map, now);
+  const parked = parkedAircraft(snapshot, map, now, aircraft);
+  const inbound = inboundQueue(snapshot, map, now);
   const selectedFlight = snapshot.flights.find((f) => f.flight_id === selected);
   const route = selectedFlight?.plan ? pathPoints(map, selectedFlight.plan) : [];
+  const selectedPos = aircraft.find((a) => a.flight.flight_id === selected);
+  const selectedNext = selectedFlight?.plan ? nextMilestone(selectedFlight.plan, now, map) : undefined;
+  // Departures about to leave their gate, so the controller sees where the next pushbacks are.
+  const pushingSoon = snapshot.flights.flatMap((f) => {
+    const a = f.plan;
+    if (a?.operation !== "DEPARTURE" || !a.gate_id || !map.gates[a.gate_id]) return [];
+    const push = Date.parse(a.taxi_start_utc);
+    return push > now && push - now <= PUSH_WARNING_MS ? [{ flight: f, gate: map.gates[a.gate_id], push }] : [];
+  });
   const flat = (pts: Point[]) => pts.flatMap((p) => px(p));
   const gateSize = Math.max(4, 22 * s);
+  const planeScale = Math.max(0.7, Math.min(2.4, gateSize / 9));
 
   return (
     <div className="map-shell" ref={wrap}>
       <div className="map-caption">
         <span className="map-live-dot" /> SFO SURFACE · FAA AL-375 RUNWAYS · SCHEMATIC TAXIWAYS AND SIMULATED GATES
         <span className="map-caption-right">
-          {aircraft.length} moving / at gate · {occupied.size} gates occupied
+          {aircraft.filter((a) => a.phase !== "AT_GATE").length} moving ·{" "}
+          {aircraft.length - aircraft.filter((a) => a.phase !== "AT_GATE").length + parked.length} parked ·{" "}
+          {inbound.length} inbound
         </span>
       </div>
       <Stage width={width} height={height} aria-label="SFO airport surface map"
@@ -152,18 +178,64 @@ export default function RealAirportMap({
             );
           })}
           {route.length > 1 && <Line points={flat(route)} stroke="#2e8b57" strokeWidth={3} dash={[6, 4]} />}
+          {route.length > 1 && selectedFlight?.plan && (() => {
+            const departure = selectedFlight.plan.operation === "DEPARTURE";
+            const [sx, sy] = px(route[0]), [ex, ey] = px(route[route.length - 1]);
+            const rwy = runwayDesignator(map, selectedFlight.plan);
+            const gate = selectedFlight.plan.gate_id ?? "stand";
+            return (
+              <>
+                <Circle x={sx} y={sy} radius={5} fill="#2e8b57" />
+                <Text x={sx + 7} y={sy + 4} text={departure ? `OFF GATE ${gate}` : `VACATE ${selectedFlight.plan.runway_id}`}
+                  fontSize={10} fontStyle="bold" fill="#2e8b57" />
+                <Rect x={ex - 5} y={ey - 5} width={10} height={10} fill="#2e8b57" />
+                <Text x={ex + 7} y={ey - 14} text={departure ? `HOLD SHORT ${rwy}` : `GATE ${gate}`}
+                  fontSize={10} fontStyle="bold" fill="#2e8b57" />
+              </>
+            );
+          })()}
+          {pushingSoon.map(({ flight, gate, push }) => {
+            const [x, y] = px(gate);
+            return (
+              <Group key={flight.flight_id}>
+                <Circle x={x} y={y} radius={gateSize} stroke="#c0702c" strokeWidth={2} />
+                <Text x={x + gateSize + 2} y={y - 5} fontSize={9} fontStyle="bold" fill="#c0702c"
+                  text={`PUSH ${Math.max(1, Math.ceil((push - now) / 60000))}m`} />
+              </Group>
+            );
+          })}
         </Layer>
         <Layer>
-          {aircraft.map(({ flight, at, phase }) => {
+          {parked.map(({ gate, at, flight, awaitingPlan }) => {
+            const [x, y] = px(at);
+            const isSelected = !!flight && flight.flight_id === selected;
+            return (
+              <Group key={"parked:" + gate} x={x} y={y}
+                onClick={() => flight && onSelect(flight.flight_id)} onTap={() => flight && onSelect(flight.flight_id)}>
+                {isSelected && <Circle radius={11} stroke="#2e8b57" strokeWidth={2} />}
+                <Line points={PLANE} closed scaleX={planeScale * 0.8} scaleY={planeScale * 0.8}
+                  fill={awaitingPlan ? "#b9a37a" : PARKED_COLOR} opacity={0.9} />
+                {flight && (isSelected || zoom >= 2) && (
+                  <Text x={8} y={-6} fontSize={10} fill="#4d5c50"
+                    text={`${flight.airline}${flight.flight_number}${awaitingPlan ? " · awaiting plan" : ""}`} />
+                )}
+              </Group>
+            );
+          })}
+          {aircraft.map(({ flight, at, phase, ahead }) => {
             const [x, y] = px(at);
             const isSelected = flight.flight_id === selected;
-            const label = `${flight.airline}${flight.flight_number}`;
+            const [ax, ay] = ahead ? px(ahead) : [x, y - 1];
+            const heading = (Math.atan2(ax - x, -(ay - y)) * 180) / Math.PI;
+            const eta = phase === "AT_GATE" || !flight.plan ? "" : etaTag(flight.plan, now, map);
+            const label = `${flight.airline}${flight.flight_number}${eta ? " · " + eta : ""}`;
             return (
               <Group key={flight.flight_id} x={x} y={y} onClick={() => onSelect(flight.flight_id)}
                 onTap={() => onSelect(flight.flight_id)}>
                 {isSelected && <Circle radius={11} stroke="#2e8b57" strokeWidth={2} />}
-                <RegularPolygon sides={3} radius={phase === "AT_GATE" ? 5 : 7} fill={PHASE_COLOR[phase]}
-                  rotation={flight.destination === "SFO" ? 180 : 0} />
+                <Line points={PLANE} closed rotation={heading} fill={PHASE_COLOR[phase]}
+                  stroke="#ffffff" strokeWidth={0.6}
+                  scaleX={planeScale * (phase === "AT_GATE" ? 0.8 : 1)} scaleY={planeScale * (phase === "AT_GATE" ? 0.8 : 1)} />
                 {(isSelected || phase !== "AT_GATE" || zoom >= 2) && (
                   <Text x={8} y={-6} text={label} fontSize={10} fill="#1f2d26" />
                 )}
@@ -172,14 +244,70 @@ export default function RealAirportMap({
           })}
         </Layer>
       </Stage>
+      {inbound.length > 0 && (
+        <div className="map-inbound" aria-label="Inbound arrivals">
+          <strong>Inbound</strong>
+          {inbound.slice(0, 6).map((i) => (
+            <button key={i.flight.flight_id} type="button" onClick={() => onSelect(i.flight.flight_id)}
+              className={i.flight.flight_id === selected ? "selected" : ""}>
+              <span>
+                {i.flight.airline}
+                {i.flight.flight_number}
+              </span>
+              <span>{i.flight.origin}</span>
+              <span>{i.awaitingPlan ? "sched" : i.runway}</span>
+              <span className="eta">{countdown(i.eta, now).replace("in ", "")}</span>
+            </button>
+          ))}
+          {inbound.length > 6 && <small>+{inbound.length - 6} more in 45 min</small>}
+        </div>
+      )}
+      {selectedFlight?.plan && (
+        <div className="map-flight-card" aria-live="polite">
+          <strong>
+            {selectedFlight.airline}
+            {selectedFlight.flight_number} · {selectedFlight.origin} → {selectedFlight.destination}
+          </strong>
+          {selectedFlight.plan.operation === "DEPARTURE" ? (
+            <>
+              Gate {selectedFlight.plan.gate_id ?? "—"} · pushback {time(selectedFlight.plan.taxi_start_utc)}
+              <br />
+              Taxi {routeNames(selectedFlight.plan).join(" → ") || "direct"} → hold short{" "}
+              {runwayDesignator(map, selectedFlight.plan)} {time(selectedFlight.plan.taxi_end_utc)}
+              <br />
+              Takeoff {runwayDesignator(map, selectedFlight.plan)} {time(selectedFlight.plan.runway_time_utc)}
+            </>
+          ) : (
+            <>
+              Land {runwayDesignator(map, selectedFlight.plan)} {time(selectedFlight.plan.runway_time_utc)}
+              <br />
+              Taxi {routeNames(selectedFlight.plan).join(" → ") || "direct"} → gate{" "}
+              {selectedFlight.plan.gate_id ?? "—"} {time(selectedFlight.plan.taxi_end_utc)}
+            </>
+          )}
+          <br />
+          {selectedPos ? `Now: ${selectedPos.phase.replace("_", " ").toLowerCase()} · ` : "Not on the surface · "}
+          {selectedNext ? (
+            <span className="eta">
+              {selectedNext.label} {countdown(selectedNext.at, now)}
+            </span>
+          ) : (
+            "movement complete"
+          )}
+        </div>
+      )}
       <div className="map-controls">
         <button aria-label="Zoom out" onClick={() => setZoom((z) => Math.max(1, z / 1.5))}>−</button>
         <button aria-label="Zoom in" onClick={() => setZoom((z) => Math.min(8, z * 1.5))}>+</button>
         <button aria-label="Fit map" onClick={() => { setZoom(1); setOffset([0, 0]); }}>Fit</button>
       </div>
       <div className="map-legend">
-        <span>▲ Arrival</span> <span style={{ color: PHASE_COLOR.TAXI_OUT }}>▲ Departure</span>
-        <span>■ Gate occupied</span> <span>┅ Selected route</span> <span style={{ color: "#c2412d" }}>■ Closed</span>
+        <span style={{ color: PHASE_COLOR.TAXI_IN }}>✈ Arrival</span>{" "}
+        <span style={{ color: PHASE_COLOR.TAXI_OUT }}>✈ Departure</span>{" "}
+        <span style={{ color: PHASE_COLOR.AT_GATE }}>✈ At gate</span>{" "}
+        <span style={{ color: PARKED_COLOR }}>✈ Parked</span>
+        <span>■ Gate occupied</span> <span style={{ color: PHASE_COLOR.TAXI_OUT }}>◯ Pushback ≤5 min</span>
+        <span>┅ Selected route</span> <span style={{ color: "#c2412d" }}>■ Closed</span>
       </div>
     </div>
   );

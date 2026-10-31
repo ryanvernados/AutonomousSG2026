@@ -6,8 +6,28 @@ import {
   Users,
   AlertTriangle,
 } from "lucide-react";
-import type { Snapshot, Connection } from "../api/types";
+import type { Snapshot, Connection, CheckResult } from "../api/types";
 import { approvalBlock, time, dateTime } from "../domain";
+
+const CHECK_DETAIL_LIMIT = 200;
+
+function checkGroups(checks: CheckResult[]) {
+  const groups = new Map<string, CheckResult[]>();
+  for (const c of checks) {
+    const list = groups.get(c.domain);
+    if (list) list.push(c);
+    else groups.set(c.domain, [c]);
+  }
+  return [...groups]
+    .map(([domain, list]) => ({
+      domain,
+      checks: list,
+      passed: list.filter((c) => c.status === "PASS").length,
+      failed: list.filter((c) => c.status !== "PASS"),
+    }))
+    .sort((a, b) => b.failed.length - a.failed.length || a.domain.localeCompare(b.domain));
+}
+
 export default function ProposalReview({
   snapshot,
   connection,
@@ -215,23 +235,66 @@ export default function ProposalReview({
                 Missing checks. Authorization blocked.
               </p>
             )}
+            {/* SFO plans carry thousands of checks: summarize per domain, always show problems. */}
             <div className="checks-grid">
-              {n!.checks.map((c) => (
+              {checkGroups(n!.checks).map((g) => (
                 <div
-                  key={c.constraint_id}
-                  className={`check ${c.status !== "PASS" ? "check-failed" : ""}`}
-                  title={c.explanation}
+                  key={g.domain}
+                  className={`check ${g.failed.length ? "check-failed" : ""}`}
                 >
-                  {c.status === "PASS" ? (
-                    <Check size={13} />
-                  ) : (
+                  {g.failed.length ? (
                     <AlertTriangle size={13} />
+                  ) : (
+                    <Check size={13} />
                   )}
-                  <span>{c.domain}</span>
-                  <small>{c.status}</small>
+                  <span>{g.domain}</span>
+                  <small>
+                    {g.passed}/{g.checks.length}
+                  </small>
                 </div>
               ))}
             </div>
+            {n!.checks.some((c) => c.status !== "PASS") && (
+              <div className="detail-scroll check-problems">
+                {n!.checks
+                  .filter((c) => c.status !== "PASS")
+                  .slice(0, CHECK_DETAIL_LIMIT)
+                  .map((c) => (
+                    <p key={c.constraint_id} className="check-failed">
+                      <strong>
+                        {c.status} · {c.severity} · {c.domain}
+                      </strong>
+                      <br />
+                      {c.explanation}
+                    </p>
+                  ))}
+              </div>
+            )}
+            <details>
+              <summary>All checks by domain</summary>
+              {checkGroups(n!.checks).map((g) => (
+                <details key={g.domain}>
+                  <summary>
+                    {g.domain} · {g.passed}/{g.checks.length} pass
+                  </summary>
+                  <div className="detail-scroll">
+                    {g.checks.slice(0, CHECK_DETAIL_LIMIT).map((c) => (
+                      <p
+                        key={c.constraint_id}
+                        className={c.status !== "PASS" ? "check-failed" : ""}
+                      >
+                        <strong>{c.status}</strong> · {c.explanation}
+                      </p>
+                    ))}
+                    {g.checks.length > CHECK_DETAIL_LIMIT && (
+                      <p className="fine-print">
+                        {g.checks.length - CHECK_DETAIL_LIMIT} more not shown.
+                      </p>
+                    )}
+                  </div>
+                </details>
+              ))}
+            </details>
             <p className="fine-print">
               {n!.model_mode === "MOCK"
                 ? "Scripted check results for UI testing; no operational validation."

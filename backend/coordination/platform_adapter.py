@@ -17,13 +17,16 @@ result back:
 Authorized windows: agents may only narrow windows the engine authorizes. The engine has
 no window concept, so the adapter derives them from the engine's own deterministic
 candidate for the frozen snapshot: ATC gets that runway per flight, pilots the horizon and
-their declared latest safe arrival, ground the gate over the horizon. Engine search is
-synchronous, so it runs in a worker thread to keep the API event loop responsive.
+their declared latest safe arrival, ground the gate over the horizon. The engine search is
+CPU-bound, so it runs in a child process: it neither holds the API's GIL nor outlives a
+cancelled or timed-out negotiation (the process is terminated before the platform's fallback).
 """
 from __future__ import annotations
 
 import asyncio
+import multiprocessing
 import os
+from concurrent.futures import ProcessPoolExecutor
 from datetime import timedelta
 
 from backend.agents.adapters import MockAdapter, ModelAdapter
@@ -39,6 +42,19 @@ from .trace import MemoryPersistence
 OBJECTIVE = {"weights": {"score": 1.0}, "source_type": "SYNTHETIC",
              "explanation": "Impact.score already applies Member 1's fixed objective weights"}
 GROUND_WINDOW_MARGIN = timedelta(hours=6)
+
+
+async def run_in_process(fn, *args):
+    """Run picklable CPU-bound engine work in a fresh child process, terminated on cancellation."""
+    executor = ProcessPoolExecutor(max_workers=1, mp_context=multiprocessing.get_context("spawn"))
+    try:
+        return await asyncio.get_running_loop().run_in_executor(executor, fn, *args)
+    finally:
+        # shutdown() cannot stop a running task; terminate the worker so a cancelled search ends now.
+        for proc in list((getattr(executor, "_processes", None) or {}).values()):
+            if proc.is_alive():
+                proc.terminate()
+        executor.shutdown(wait=False, cancel_futures=True)
 
 
 def iso(dt) -> str:
@@ -83,7 +99,7 @@ class PlatformEngine:
         # and the candidate batch, so the negotiation pays for the engine search only once.
         async with self._search_lock:
             if self._search is None:
-                self._search = await asyncio.to_thread(search_candidates, self.snapshot, None, 100)
+                self._search = await run_in_process(search_candidates, self.snapshot, None, 100)
         return self._search
 
     async def _preview_plan(self) -> Plan | None:
@@ -169,6 +185,12 @@ class PlatformCoordinator:
         if mode == "mock":
             return cls(MockAdapter(os.environ.get("AIRPORT_MOCK_BEHAVIOR", "consensus")))
         if mode == "live":
+            # Claude when ANTHROPIC_API_KEY is set (or AIRPORT_MODEL_PROVIDER=anthropic), else OpenAI.
+            provider = os.environ.get("AIRPORT_MODEL_PROVIDER") or (
+                "anthropic" if os.environ.get("ANTHROPIC_API_KEY") else "openai")
+            if provider == "anthropic":
+                from backend.agents.adapters import ClaudeAdapter
+                return cls(ClaudeAdapter.from_env())
             import httpx
 
             from backend.agents.adapters import ResponsesAdapter

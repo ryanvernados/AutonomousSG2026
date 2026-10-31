@@ -1,6 +1,18 @@
 import { describe, expect, it } from "vitest";
-import type { Assignment } from "../api/types";
-import { aircraftAt, pathPoints, routeNames, type LayoutMap } from "./movement";
+import type { Assignment, Snapshot } from "../api/types";
+import {
+  aircraftAt,
+  aircraftPositions,
+  countdown,
+  etaTag,
+  milestones,
+  nextMilestone,
+  pathPoints,
+  routeNames,
+  runwayDesignator,
+  taxiMetres,
+  type LayoutMap,
+} from "./movement";
 
 const map: LayoutMap = {
   runways: [{ runway_id: "10R-28L", ends: { "10R": [0, 0], "28L": [1000, 0] } }],
@@ -56,5 +68,30 @@ describe("aircraft movement from authorized assignments", () => {
 
   it("names the taxiways without runway links, ramps or stands", () => {
     expect(routeNames(departure)).toEqual(["B"]);
+  });
+
+  it("keeps an arrived aircraft at its gate until the same tail departs", () => {
+    const turn = { ...departure, gate_start_utc: t(50), gate_end_utc: t(60), taxi_start_utc: t(60),
+      taxi_end_utc: t(65), runway_time_utc: t(70) } as unknown as Assignment;
+    const snapshot = { flights: [
+      { flight_id: "F1", tail_number: "N1", plan: arrival },
+      { flight_id: "F2", tail_number: "N1", plan: turn },
+    ] } as unknown as Snapshot;
+    const ids = (m: number) => aircraftPositions(snapshot, map, Date.parse(t(m))).map((p) => [p.flight.flight_id, p.phase]);
+    expect(ids(40)).toEqual([["F1", "AT_GATE"]]); // past the arrival's own gate_end
+    expect(ids(55)).toEqual([["F2", "AT_GATE"]]); // handed over, never drawn twice
+    expect(at(arrival, 40)).toBeNull(); // unchanged without a known next leg
+  });
+
+  it("gives each movement a timeline, runway in use and ETA", () => {
+    expect(runwayDesignator(map, departure)).toBe("28L"); // rolls from the 28L threshold
+    expect(runwayDesignator(map, arrival)).toBe("10R"); // lands from the far end toward 28L
+    expect(milestones(departure, map).map((m) => m.label)).toEqual([
+      "At gate G1", "Pushback from G1", "Hold short 28L", "Takeoff 28L"]);
+    expect(nextMilestone(departure, Date.parse(t(10)), map)?.key).toBe("PUSHBACK");
+    expect(countdown(Date.parse(t(20)), Date.parse(t(15.5)))).toBe("in 4m 30s");
+    expect(etaTag(departure, Date.parse(t(22)), map)).toBe("28L 8m");
+    expect(etaTag(arrival, Date.parse(t(12)), map)).toBe("gate G1 3m");
+    expect(Math.round(taxiMetres(map, arrival))).toBe(800);
   });
 });

@@ -8,10 +8,29 @@
 # OPENAI_API_KEY in this shell). Opens two windows: API on :8000 and UI on :5173.
 param(
     [ValidateSet('mock', 'live')][string]$ModelMode = 'mock',
-    [string]$DemoToken = 'local-integration-token'
+    [string]$DemoToken = 'local-integration-token',
+    # Simulated seconds per real second while the clock runs (1 = real time; 30 plays 2 h in 4 min).
+    [ValidateRange(1, 600)][int]$SimSpeed = 30
 )
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
+
+# A server left over from an earlier run (e.g. the API-only backend.api.app, which has no agents)
+# would answer on these ports instead of the integrated stack. Stop it if it belongs to this repo.
+foreach ($port in 8000, 5173) {
+    $owners = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
+        Select-Object -ExpandProperty OwningProcess -Unique
+    foreach ($owner in $owners) {
+        $proc = Get-CimInstance Win32_Process -Filter "ProcessId = $owner"
+        if ($proc.CommandLine -match 'uvicorn|vite|node' -and
+            ($proc.CommandLine -like "*$root*" -or $proc.CommandLine -match 'backend\.(api|coordination)')) {
+            Write-Host "Stopping old server on port $port (PID $owner): $($proc.CommandLine)"
+            Stop-Process -Id $owner -Force
+        } else {
+            throw "Port $port is used by another program (PID $owner): $($proc.CommandLine). Stop it and retry."
+        }
+    }
+}
 $run = Join-Path $env:LOCALAPPDATA 'Temp\airport-run'
 $scenarios = Join-Path $run 'scenarios'
 New-Item -ItemType Directory -Force $scenarios | Out-Null
@@ -28,6 +47,7 @@ $uiScript = Join-Path $run 'run-ui.ps1'
 `$env:SQLITE_PATH = '$run\airport.sqlite3'
 `$env:SCENARIO_DIR = '$scenarios'
 `$env:AIRPORT_MODEL_MODE = '$ModelMode'
+`$env:SIM_SPEED = '$SimSpeed'
 `$env:CORS_ORIGINS = '["http://127.0.0.1:5173","http://localhost:5173"]'
 Set-Location '$root'
 uv sync --frozen
@@ -58,5 +78,5 @@ if (Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyCont
     Write-Warning 'UI did not start within 5 minutes; check the "Airport UI :5173" window.'
 }
 Write-Host "API:  http://127.0.0.1:8000/docs  (Authorize with token: $DemoToken)"
-Write-Host 'UI:   http://127.0.0.1:5173'
+Write-Host "UI:   http://127.0.0.1:5173  (clock runs at ${SimSpeed}x when resumed; -SimSpeed to change)"
 Write-Host ("Walkthrough: `$env:DEMO_TOKEN='$DemoToken'; uv run python -m backend.coordination.walkthrough")
