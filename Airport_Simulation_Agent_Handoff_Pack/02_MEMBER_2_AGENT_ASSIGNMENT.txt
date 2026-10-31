@@ -1,0 +1,34 @@
+ASSIGNMENT 2
+Member 2 historical data and airport model
+
+First read 00_READ_FIRST_COMMON_SPECIFICATION.txt. Treat it as the shared integration contract.
+
+Mission: make the real traffic and airport assumptions reproducible. Own backend/data, backend/airport, data/processed and data/layout. Your coding agent receives the common specification plus this packet.
+
+Prepare data in this order
+
+- Inspect the downloaded Kaggle flights, airlines and airports files. Record checksums, headers, units, row counts and source links. Keep raw files outside version control if large; provide a local data path setting and clear acquisition instructions.
+
+- Normalize airport identifiers and timestamps. Resolve any mixed numeric airport IDs through a sourced lookup rather than discarding them silently. Handle nulls, cancellations, diversions, overnight legs, local time zones and 2400. Preserve source rows and quality flags.
+
+- Find an SFO airport day containing WEATHER_DELAY > 15 or LATE_AIRCRAFT_DELAY > 20. Include both arrivals and departures in the selected window plus occupancy and recovery buffers. Export a 20 to 40 flight development fixture and the full selected traffic slice.
+
+- Source an airport layout and record its effective date. Encode runway relationships and a connected taxiway graph. Use sourced gate details or a declared simulated subset. Model initial occupancy so the scenario does not start with every gate artificially empty.
+
+- Generate explicit operational assumptions for aircraft category, fuel, gates, crews, equipment and connections. Include units, provenance and consistent values; a tail number alone does not establish aircraft type or passenger connections.
+
+- Create disruption fixtures and an evaluation runner using identical initial state, seed and events. Add a repeatable importer for the selected traffic slice using Member 1 Supabase schema; keep raw processing in pandas. Export provenance, quality flags and expected scenario facts.
+
+Handoff and completion criteria
+
+- Deliver versioned Scenario JSON, airport graph, source manifest, ingestion command, quality report and edge case fixtures. Each file validates against Member 1 models.
+
+- Show one traceable qualifying row and all required parameters passed through the scenario to the agents. Explain coverage limits, unresolved records and each simulated field.
+
+- Use historical actuals for replay or calibration. Do not preassign experiment outcomes from historical actual arrival times or count the same delay twice.
+
+Instruction to your coding agent
+
+Implement Member 2 with pandas and the canonical scenario and Supabase contracts. Do not create competing schemas, routes or agent logic. Build reproducible inputs and an importer with row provenance and effective dates. Treat delay categories as minutes, not closure timestamps; label newer layouts paired with 2015 traffic. Finish with commands, fixtures, checksums, import validation, unresolved issues and sources.
+
+Dependency: use Member 1 fixture schema initially. No verified airport day, row count or operational parameter may be invented to fill missing source data.

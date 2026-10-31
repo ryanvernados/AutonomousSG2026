@@ -1,0 +1,316 @@
+COMMON SPECIFICATION
+Airport disruption simulator
+
+Read this file together with your assigned member packet.
+
+Airport simulation team delivery plan
+Challenge 2  |  Four member implementation and integration guide  |  31 October 2026
+
+We will build an airport disruption simulator using 2015 flight records, a sourced SFO layout and declared operational assumptions. Independent ATC, pilot and ground agents will negotiate a recovery schedule across multiple flights. Staff will set instructions, review the agreement and authorize changes inside the simulator.
+
+Assign these four workstreams
+
+Member | Ownership | Primary handoff
+1 | Backend platform and simulation rules | Shared contract, Supabase schema, engine, validator, approval API and fallback
+2 | Flight data and airport model | Reproducible SFO scenario, layout graph, source manifest and evaluation fixtures
+3 | Independent agents and coordination | ATC agent, pilot agents, ground agent, two round protocol and consensus trace
+4 | Controller application | Airport view, timeline, staff instructions, proposal review and human control
+
+First release scope
+
+Use one SFO airport day and a two hour traffic window plus initialization and recovery buffers. Start with a 20 to 40 flight development fixture, then load every covered flight in the selected window. Model arrival and departure queues, runway reservations, a bounded taxiway graph, a declared gate subset, crews and one equipment resource. Display all coverage limits.
+
+Deliver three disruption scenarios: runway unavailability, taxiway blockage and ground equipment failure. Weather may reduce configured capacity, but historical delay minutes do not establish a closure duration or its start time.
+
+How to use this guide
+
+Each member reads the shared architecture, technology stack, Supabase, contract, rules and negotiation sections, then their assigned work packet. Member 1 publishes the shared contract before parallel implementation. Give each coding agent the common specification from the handoff ZIP plus only its assigned packet.
+
+Use React and TypeScript with Vite for the controller app, Supabase for accounts and persistence, and Python FastAPI with SimPy for simulation and agents. SFO is the working airport default. This project demonstrates decision support in a simulation; modelled checks do not establish operational certification.
+
+Shared architecture and repository ownership
+Use React and TypeScript with Vite, React Konva, Supabase, Python FastAPI, Pydantic, SimPy and pandas. Supabase Postgres stores durable application state and audit events. JSON scenario fixtures and JSONL exports support development and replay. Pin dependencies in shared lockfiles; a separate message broker is outside the first release.
+
+Path | Owner | Purpose
+backend/contracts/ | 1 | Canonical models, enums and generated API specification
+backend/engine/ | 1 | State transitions, reservations, validation, baseline and fallback
+backend/api/ | 1 | HTTP routes, command checks and event stream
+backend/persistence/ | 1 | Supabase access, checkpoints and transactional commits
+supabase/migrations/ and seed.sql | 1 | Database schema, access policies and synthetic seeds
+backend/data/ and data/processed/ | 2 | Ingestion, normalization, scenario builder and fixtures
+backend/airport/ and data/layout/ | 2 | Airport graph, infrastructure and provenance
+backend/agents/ | 3 | Separate domain contexts, tools and model adapters
+backend/coordination/ | 3 | Bounded negotiation, ballots and protocol traces
+frontend/ | 4 | Controller interface and generated client types
+tests/integration/ | 1 leads | Shared scenarios contributed by all members
+
+Dependency direction
+
+The engine loads traffic and infrastructure and freezes a scenario snapshot. Independent agents propose a recovery plan. Deterministic validation and human authorization must precede an atomic simulation update. The frontend reads snapshots and events and sends commands through the backend. Agents never mutate live state directly.
+
+Rules for parallel work
+
+- Member 1 owns root configuration and shared contracts. Other members request contract changes with an example request and response; nobody silently changes field names or enums.
+
+- Use branches member1/platform, member2/data, member3/agents and member4/ui. Keep changes inside owned folders. Submit small reviewable changes with a run command and verification evidence.
+
+- Start against shared fixtures and explicit mock adapters. Mark MOCK and LIVE model modes in logs and the UI. A scripted adapter is for development, not evidence of live negotiation.
+
+- Keep LLM keys and Supabase privileged credentials in backend environment variables. Only the Supabase project URL and publishable client key belong in frontend configuration. Commit placeholder environment examples.
+
+Selected technology stack
+React handles the controller workspace, Supabase handles accounts and persistence, and a persistent Python service runs airport operations and independent agents. Keep these responsibilities separate so the simulation remains authoritative and recoverable.
+
+Layer | Choice | Responsibility
+Controller app | React TypeScript Vite | Flight strips, instructions, timeline, proposal review and staff control
+Airport view | React Konva | Interactive 2D runway, taxiway, gate and aircraft schematic
+Accounts and data | Supabase Auth and Postgres | User identity, memberships, scenarios, session state and audit records
+Files | Supabase Storage when needed | Layout assets and imported scenario files; versioned local fixtures remain available
+Backend API | Python FastAPI and Pydantic | Validated commands, permissions, plan checks and agent coordination
+Simulation | SimPy | Clock, queues, reservations and shared airport resources
+Historical preparation | pandas | Clean and normalize the 2015 flight files and export selected scenarios
+Agent execution | Separate backend agent instances | Independent ATC, pilot and ground contexts using a provider adapter
+
+Live updates and animation
+
+Start with one FastAPI server sent event stream for session updates. React interpolates aircraft movement between timestamped simulation states. Do not write animation frames to Postgres. Reconnecting clients reload the authoritative snapshot and resume from the last event sequence.
+
+Add Supabase Realtime Broadcast later if multiple staff screens need shared proposal and approval notifications. Notifications are not the authoritative state or an audit ledger. Avoid duplicating the same live stream through two transports in the first release.
+
+Hosting and execution
+
+Deploy the frontend to static web hosting and FastAPI to a persistent Python service. Use one simulation owner per session. Keep computational work off the API event loop and checkpoint state. Supabase Edge Functions can support short bounded tasks; their CPU and execution limits make them a poor default for the main continuous simulation engine.
+
+First implement the 2D view and typed instructions. Add free text, voice, 3D or a distributed worker system only after the agreed end to end workflow passes.
+
+Supabase persistence and access design
+Member 1 owns Supabase migrations, policies and persistence interfaces. Member 2 owns ingestion into that schema, Member 3 supplies validated agent records, and Member 4 integrates login and read access. All operational mutations continue through FastAPI.
+
+Data group | Initial tables | Purpose
+Membership | projects, project_members | Connect Supabase Auth users to permitted projects and roles
+Scenario inputs | airports, scenarios, scenario_flights | Selected historical traffic, layout references and model provenance
+Session state | simulation_sessions, session_checkpoints | Clock, control mode, versions and recoverable snapshots
+Operational plan | instructions, proposals, reservations | Confirmed restrictions, immutable recovery plans and resource intervals
+Coordination | negotiations, agent_messages, validation_results | Protocol rounds, ballots and deterministic checks
+Authorization and audit | approvals, audit_events | Staff decisions, actors, command IDs and ordered event records
+
+Access boundary
+
+React signs in through Supabase Auth. FastAPI verifies the access token and checks project membership and role for every session command. Use row level security for permitted browser reads. Browser clients cannot directly update reservations, proposals, approvals or audit events. Backend privileged access must also enforce membership explicitly.
+
+The frontend uses a publishable key only. Supabase privileged credentials and LLM keys stay server side. Protect the event stream with an authenticated fetch stream or secure session mechanism; do not put reusable access tokens in URLs. Treat event and JSONL exports as redacted copies of durable audit records.
+
+Atomic approval and restart recovery
+
+Inside one database transaction, compare the expected state version, verify the immutable plan identity and validity, write the approved reservations, advance the version, and append approval and audit records. Member 1 exposes a backend only transaction function. Update in memory state only after durable commit; a failure rolls back all writes.
+
+Checkpoint the clock and engine state so a restart restores the last committed session. Store command IDs uniquely per session for idempotency. Deny browser update and delete access to audit rows. Test access policies with multiple users, including an unauthorized project member.
+
+Data loading
+
+Prepare the full Kaggle CSV locally with pandas, then import the selected airport window and provenance. Keep large raw files outside source control. Migrations define the schema; synthetic seeds support development.
+
+Shared data contract
+Member 1 implements and publishes contract version 1. All members consume the same models; the frontend generates its types from the API specification. The following fields and semantics are required. Additional fields must be optional or introduced through a coordinated version change.
+
+Entity | Required fields
+Scenario | schema_version, scenario_id, airport_iata, timezone, seed, start_utc, end_utc, source_manifest, rules_config, flights, infrastructure, initial_occupancy
+Snapshot | schema_version, scenario_id, state_version, sim_time_utc, mode, flights, resource_reservations, active_instructions, data_quality
+Flight | flight_id, source_row_id, airline, flight_number, tail_number nullable, origin, destination, scheduled_gate_departure_utc, scheduled_gate_arrival_utc, state, plan, assumptions
+Plan | proposal_id, proposal_version, scenario_id, base_state_version, instruction_version, plan_hash, assignments, impact, expires_at_utc
+Assignment | flight_id, operation ARRIVAL or DEPARTURE, runway_id, runway_time_utc, taxi_path_ids, taxi_start_utc, taxi_end_utc, gate_id nullable, gate_start_utc nullable, gate_end_utc nullable, crew_reservations, equipment_reservations
+Check result | constraint_id, domain, severity HARD or SOFT, status PASS or FAIL or UNKNOWN, affected_ids, measured_value nullable, limit_value nullable, unit nullable, explanation
+Instruction | instruction_id, instruction_version, scenario_id, base_state_version, kind, resource_id nullable, starts_at_utc, ends_at_utc nullable, flight_id nullable, parameters, entered_by
+Agent message | message_id, negotiation_id, round, sender_id, role ATC or PILOT or GROUND, type OFFER or ACCEPT or REJECT, base_state_version, instruction_version, proposal_id nullable, plan_hash nullable, payload, reasons
+Audit event | event_id, event_seq, scenario_id, state_version, sim_time_utc, recorded_at_utc, actor_id, event_type, correlation_id, payload
+
+Identifiers and time
+
+Use a flight leg identifier derived from the source file checksum and source row number. Flight number alone is not unique. Normalize to timezone aware UTC timestamps internally; display SFO local time with date and timezone. Parse HHMM including 2400 and overnight arrivals using origin and destination zones and elapsed times. Retain original values and flag unresolved records.
+
+Keep scheduled gate times, actual gate times, wheels on and wheels off distinct. Use the same time base for reservations. Every assumed fuel, aircraft category, connection, gate or crew value carries source_type HISTORICAL, SOURCED or SYNTHETIC and its units.
+
+Increment state_version for operational state changes, not audit writes or negotiation status updates. Hash a canonical serialization of plan content excluding plan_hash itself. Keep the content and versions immutable after ballots are requested.
+
+Backend endpoints and module interfaces
+All routes use /api/v1. Successful mutations return the new state_version and generated event IDs. Every command includes command_id for idempotency and base_state_version for concurrency checking. A retry with the same command_id must not apply the operation twice.
+
+Method and route | Request or result
+GET /scenarios | Available scenario IDs and metadata
+POST /sessions | scenario_id; returns session_id and snapshot
+GET /sessions/{id}/snapshot | Current snapshot and pending proposal metadata
+POST /sessions/{id}/clock | command envelope plus action PAUSE, RESUME, STEP or RESET; STEP includes seconds
+POST /sessions/{id}/instructions/preview | Typed instruction draft; returns normalized instruction and issues without mutation
+POST /sessions/{id}/instructions | Command envelope plus confirmed instruction; applies restriction and invalidates affected proposals
+POST /sessions/{id}/negotiations | Command envelope plus affected IDs; returns negotiation_id, status and eventual proposal or fallback result
+GET /sessions/{id}/negotiations/{nid} | Status, round, structured messages, ballots, checks and impact
+POST /sessions/{id}/proposals/{pid}/decision | Command envelope plus plan_hash and APPROVE or REJECT; never accepts a different plan version
+POST /sessions/{id}/control | Command envelope plus mode MANUAL or ASSISTED
+GET /sessions/{id}/events?after_seq=N | Server sent event stream; use Last Event ID on reconnect
+
+Errors and asynchronous work
+
+Return a consistent error body with code, message, details and current_state_version. Use 422 for invalid input, 409 for stale state or changed plans, and 503 for unavailable dependencies. Negotiation starts asynchronously with 202; the frontend must keep receiving traffic state and status. A command timeout is not an approval.
+
+Python interfaces owned by Member 1
+
+load_scenario(scenario_id) -> Scenario
+get_snapshot(session_id) -> Snapshot
+validate_plan(snapshot, plan) -> list[CheckResult]
+enumerate_candidates(snapshot, constraints, limit=100) -> list[Plan]
+compute_impact(snapshot, plan, baseline_plan) -> Impact
+commit_plan(session_id, plan, actor_id) -> Snapshot
+select_fallback(snapshot, reason) -> FallbackResult
+
+Member 2 supplies Scenario objects and graph data. Member 3 calls engine functions through injected interfaces, never private internals. Member 4 uses only HTTP and event contracts. Candidate generation must report when its search limit prevents an exhaustive result.
+
+Simulation rules and human authority
+Configured constraints
+
+Member 1 implements deterministic validators for runway availability and occupancy, configured wake separation by category pair, intersecting runway conflicts, taxiway connectivity and blockage, segment occupancy, gate compatibility and occupancy intervals, crew working limits, equipment capacity, and each flight fuel or latest safe arrival model. Missing required information returns UNKNOWN and prevents automatic approval.
+
+Infrastructure dependencies matter: intersecting or dependent runways must not be treated as independent capacity. Taxi routes reserve segments over time. Gate occupancy extends through turnaround and departure readiness rather than ending when an aircraft reaches the gate.
+
+Hard constraints cannot be traded for delay reduction. Soft preferences include delay, holding and taxi minutes, connection penalties, turnaround efficiency, permitted overtime cost and waiting fairness. Document all numerical parameters and units as simulation rules unless validated from an appropriate source.
+
+Instruction and proposal lifecycle
+
+- Staff preview and confirm a typed restriction or protected slot. Preview is read only. Confirmation updates instructions and increments the state version.
+
+- Pause the simulation clock for the first release and freeze an immutable snapshot for negotiation. Keep controls usable while model requests run.
+
+- Agents negotiate a plan. Store its exact content hash, base state version and instruction version. Display current operations separately from this proposal.
+
+- Approval rechecks all hard constraints, versions and validity period. Commit every reservation atomically, or commit none. Dependent changes cannot be approved piecemeal without rebuilding and revalidating the plan.
+
+- Reject leaves the published schedule unchanged. Manual mode cancels pending proposals and stops agent replanning; it preserves active restrictions and existing reservations. Manual edits still pass model checks.
+
+Authority and failure states
+
+Use Proposed, Consensus reached, Awaiting authorization, Authorized, Rejected, Stale, Expired and No feasible plan as explicit planning states. Instruction issued, acknowledged and observed are separate execution states when modelled. Agent acceptance never counts as a pilot readback.
+
+ATC, airline and ground responsibilities retain their domain authority. A single Approve in simulator control may authorize the combined demo schedule; document that this is a simulation convenience. Emergency alerts remain visible. A user can suspend automation, but the app must not silently erase a restriction or present a model violation as feasible.
+
+Two round negotiation and deterministic fallback
+The two round limit applies to each disruption or material instruction change. A round is one outbound request and at most one response per participating agent. Parallel agent responses count within the same round. Log rounds, model calls, message count and wall clock time separately.
+
+Participant selection
+
+Use one ATC agent, one ground agent and one pilot agent for each affected flight. Expand the affected set through runway, taxiway, gate, crew and aircraft rotation dependencies before starting. Validate against the entire airport schedule, including flights that did not participate. Distinct domain contexts, histories and calls are required; one prompt impersonating all roles is not acceptable.
+
+Round 1 collect offers
+
+- Send each agent the versioned scenario snapshot, confirmed instructions and its authorized domain view. ATC offers runway slots or sequences. Pilot agents offer acceptable timing or route ranges and fuel limits. Ground offers gate and resource windows.
+
+- Validate structured responses. Missing, malformed or timed out responses end negotiation with a logged failure reason. Do not silently ask extra corrective model turns.
+
+- Build at most 100 candidate recovery plans using engine interfaces. Apply deterministic hard checks before ranking. Rank feasible candidates with the frozen objective configuration. Select one immutable proposal for round 2.
+
+Round 2 collect ballots
+
+- Every participant receives the same plan identity and relevant assignments plus cross domain impacts. Each returns ACCEPT or REJECT tied to the exact plan_hash and versions.
+
+- Declare consensus only if every required participant accepts and deterministic validation passes. Any veto, absent ballot, changed constraint or timeout prevents consensus. Stop; do not start a third negotiation round.
+
+Fallback and termination
+
+Use a configurable wall clock budget, initially 30 seconds per round and 60 seconds total. A transport retry consumes the existing deadline and cannot create another negotiation turn. Provide a deterministic mock mode for offline development and a separate live model mode for the challenge demonstration.
+
+Member 1 supplies a reproducible fallback: generate candidates from configured operational rules without model calls, discard hard violations, then rank by a fixed objective and stable flight ID tie breaker. The baseline uses the same rules and safety constrained first come first served policy. Both respect fuel urgency and hard feasibility.
+
+Label fallback plans FALLBACK, not CONSENSUS, and send them for staff authorization. If the bounded search finds no plan, return NO_FEASIBLE_PLAN_FOUND with the search limits; do not claim that no mathematical solution exists. Preserve valid controls and alert staff. Log inputs, offers, candidate rejection reasons, ballots, approvals and all final actions.
+
+Integration sequence and delivery gates
+Integrate incrementally. Everyone can develop in parallel after the initial contract and fixtures are published. Use the following dependency order rather than waiting for four complete modules.
+
+Gate | Lead and contributions | Evidence needed to proceed
+A Contract freeze | 1 leads; all review | Models, API examples, Supabase migrations and policies, owned folders and synthetic scenario accepted
+B Data to engine | 2 supplies; 1 integrates | Scenario loads, clock advances, resources remain consistent and qualifying source row is traceable
+C Engine to UI | 4 integrates with 1 | Supabase login, authorized commands and event updates work; current and proposed schedules remain distinct
+D Mock negotiation | 3 integrates with 1 and 4 | Two rounds, exact plan ballots, validation, authorization and rejection work without a model service
+E Live agents | 3 leads; all inspect | Independent model contexts negotiate the historical traffic scenario; actual calls and time budgets are logged
+F Evaluation and demo | 2 runs; 1 checks; 4 presents | Baseline comparison, access controls, restart recovery, failure cases and repeatable walkthrough pass
+
+Working agreement
+
+- At kickoff, assign names to Members 1 to 4, choose one integrator and confirm the SFO scope. Publish shared source access, repository URL and local run instructions. Leave exact dates to the team rather than inferring a deadline.
+
+- For each handoff, include a small runnable example, expected output, contract version, tests and outstanding limitations. A screenshot alone is insufficient evidence of backend behavior.
+
+- Member 1 merges contract changes first, data second, coordination third and UI wiring as each endpoint becomes available. Generate frontend types again after every agreed API change.
+
+- When a contract defect blocks another member, send the smallest failing fixture and the expected behavior. Keep ownership with the existing module owner; avoid parallel competing implementations.
+
+- Before final integration, freeze dependency versions and scenario files. Run the full workflow from a clean checkout using documented commands and an environment example.
+
+Standard agent completion report
+
+Every coding agent returns: changed files; implementation summary; install and run commands; tests and results; example input and output; contract changes; assumptions; limitations; and the exact next integration action. Do not mark a task complete while an agreed acceptance check is failing.
+
+Acceptance tests for the integrated application
+These checks are required because the project combines independently built modules, safety related model rules and explicit human authorization. They should verify behavior across module boundaries.
+
+Case | Owner | Expected result
+Historical scenario | 2 | At least one qualifying row is traceable; full selected slice and data coverage are reported
+Time normalization | 2 | Overnight, timezone, 2400 and missing values are handled or explicitly flagged
+Resource conflicts | 1 | Wake, intersection, taxiway, gate, crew and equipment violations are rejected
+Fuel and unknown inputs | 1 and 3 | Unsafe arrival or missing hard constraint data prevents approval
+Independent domains | 3 | Distinct calls and contexts for ATC, ground and affected flight pilots are evidenced
+Consensus success | 3 | Every required agent accepts identical plan_hash and versions within two rounds
+Veto or malformed reply | 3 | Negotiation stops, reason is logged and labelled fallback is considered
+No feasible candidate found | 1 | Search limits are reported; no unsafe plan is committed and staff are alerted
+Approval boundary | 1 and 4 | Negotiation and rejection never publish a proposed schedule
+Stale or expired proposal | 1 and 4 | Changed state or expired validity returns a conflict and disables approval
+Atomicity and retries | 1 | One transaction commits all reservations and audit writes; duplicates are idempotent
+Access and recovery | 1 and 4 | Unauthorized reads and writes fail; backend restart restores committed session state
+Manual mode | 1 and 4 | Pending plan is cancelled; replanning stops; restrictions persist
+Service failure | 1 and 3 | Timeout stays inside budget; no hidden third round; deterministic fallback remains available
+UI disconnect | 4 | Update age and loss of connection are visible; stale approval is blocked
+Baseline comparison | 2 and 1 | Same seed, initial state, traffic, disruption and hard checks are used
+Controller comprehension | 4 | Reviewer identifies changed flights, costs, approval status and manual controls without reading raw protocol
+
+Completion threshold
+
+Pass every applicable hard constraint and authorization test. Include at least one successful live negotiation and all failure paths above. Report any pending controller usability review honestly. Performance targets are measured results; do not fabricate delay savings or assert real world safety from passing simulation checks.
+
+Demonstration evidence
+Suggested demonstration sequence
+
+- Open the selected SFO scenario. Show the airport layout date, dataset coverage, qualifying flight row and synthetic operational assumptions.
+
+- Run the deterministic baseline and save metrics. Reset to the identical starting state and seed for the agent assisted experiment.
+
+- Staff preview and confirm a runway restriction. Show its time window and any protected flight. Start negotiation and display the two round progress.
+
+- Inspect the agreed multi flight plan. Explain one concession, its cross domain effects and the configured check results. Approve in the simulator and advance the clock.
+
+- Repeat a short variant with a protected slot conflict, rejected plan or model timeout. Show the fallback or no candidate result, then demonstrate manual control.
+
+- Compare outcomes and open the trace. State the limits of the traffic coverage, model parameters and synthetic inputs.
+
+Metrics to export
+
+Export per flight and aggregate departure and arrival delay against scheduled gate times, airborne holding minutes, taxi minutes, completed movements in the same fixed horizon, turnaround delay, declared connection penalties, permitted overtime, and maximum waiting time. Include unresolved flights and unfinished tasks so delays are not hidden beyond the evaluation window.
+
+Report hard violations, UNKNOWN checks, consensus rounds, model calls, negotiation duration, fallback count and staff actions. Fuel savings require a documented fuel model; otherwise report holding and taxi time proxies. Use conditional feasible outcomes rather than a single invented efficiency score.
+
+Source register
+2015 Flight Delays and Cancellations. US DOT dataset distributed on Kaggle. Inspect downloaded files and retain checksums. https://www.kaggle.com/datasets/usdot/flight-delays
+
+BTS Reporting Carrier On Time Performance field definitions. Supports interpreting flight and time fields. https://www.transtats.bts.gov/Fields.asp?gnoyr_VQ=FGJ
+
+FAA Airport Diagrams Order 7910 4E. Supports infrastructure sourcing; record the effective date of the actual selected diagram. https://www.faa.gov/documentLibrary/media/Order/FAA_Order_7910.4E.pdf
+
+SFO Runway Constraints Flight Patterns and Operations. Background only; current statements must not be assumed to describe 2015 procedures. https://www.flysfo.com/about/airport-operations/policies-regulations/runway-constraints
+
+FAA Air Traffic Control Decision Support Tool Design and Implementation Handbook. Human interface reference. https://hf.tc.faa.gov/publications/2019-atc-decision-support-tool/full_text.pdf
+
+SimPy documentation. Discrete event implementation reference. https://simpy.readthedocs.io/en/stable/
+
+Supabase React and authentication integration. https://supabase.com/docs/guides/getting-started/quickstarts/reactjs
+
+Supabase Edge Function limits. Supports the persistent service choice for the simulation. https://supabase.com/docs/guides/functions/limits
+
+Supabase Realtime. Optional later support for shared notifications. https://supabase.com/docs/guides/realtime/getting_started
+
+React Konva. Interactive 2D canvas implementation reference. https://konvajs.org/docs/react/index.html
