@@ -1,0 +1,34 @@
+ASSIGNMENT 4
+Member 4 controller application
+
+First read 00_READ_FIRST_COMMON_SPECIFICATION.txt. Treat it as the shared integration contract.
+
+Mission: deliver a usable staff workspace that makes instructions, agent proposals and authorized operations distinguishable. Own frontend. Use the prior interactive sketch as a workflow reference; it contains synthetic flights and scripted responses, not production application logic.
+
+Implement in this order
+
+- Create the React TypeScript Vite app and generated API client. Add Supabase Auth login with publishable client configuration; send authenticated commands to FastAPI. Start with shared mock fixtures behind one client module.
+
+- Build the responsive 2D airport view in React Konva, flight strips and runway and gate timeline. Drive occupancy from backend state and interpolate motion locally. Label simulated positions; the CSV has no radar tracks. Do not persist animation frames.
+
+- Build typed staff instructions for runway closure, taxiway blockage, equipment outage and protected flight slot. Show a read only preview, then require confirmation. Support start and end times with displayed timezone and validation errors.
+
+- Build proposal review with current versus proposed slots, routes and gate assignments; affected flights; sacrifices; configured checks; provenance; agent agreement and fallback status. Expand protocol details on demand instead of showing every raw message by default.
+
+- Implement approve, reject, revise instructions and manual control. Display plan identity and stale state; invalidate approvals when the backend reports change. Keep instruction issued and acknowledged separate from planning approval. Manual actions use validated backend commands.
+
+- Connect the event stream with reconnect handling, visible update age and error states. Add replay and counterfactual comparison views. Test the workflow with a keyboard and on a narrow screen, then seek controller feedback on comprehension and workload.
+
+Handoff and completion criteria
+
+- Deliver frontend source, generated client types, mock adapter, component tests, workflow screenshots and start instructions. Keep model keys out of browser code.
+
+- Verify that negotiating or rejecting does not change the published schedule. Show visible alerts for stale or expired plans, missing checks, disconnection, fallback and manual mode.
+
+- Reviewing a proposal must not hide active restrictions or urgent conflicts. Use text and symbols as well as color; preserve useful operational detail and avoid uncontrolled animation.
+
+Instruction to your coding agent
+
+Implement Member 4 with React TypeScript Vite, React Konva and Supabase Auth. Use shared FastAPI contracts for operational commands and its event stream for live state. Never expose privileged credentials or write approvals directly to Supabase. Keep instructions and authorization explicit. Finish with setup, tests, screenshots, access checks, endpoint gaps and integration notes.
+
+Dependency: develop against a clearly marked mock backend, then switch through configuration to the real API without rewriting UI components.
