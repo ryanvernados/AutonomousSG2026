@@ -140,6 +140,52 @@ def _assignment(snapshot, flight, runway, route, slot, gate_id=None):
 
 
 PLACEMENTS_PER_FLIGHT = 1
+ALTERNATIVE_GATES = 4  # compatible gates tried, in ID order, when the scheduled gate cannot be used
+GATE_HOLD = timedelta(minutes=15)  # delay accepted at the scheduled gate before alternatives are tried
+
+
+def _gate_choices(snapshot, flight, scheduled_gate):
+    """Scheduled gate first, then compatible alternatives (a blocked gate is the usual reason a
+    delayed arrival's turnaround makes a later departure unplaceable)."""
+    category = flight.assumptions.get("wake_category")
+    alternatives = sorted(r.resource_id for r in snapshot.infrastructure.resources
+                          if r.kind == "GATE" and r.resource_id != scheduled_gate
+                          and (category is None or str(category.value) in r.compatible_categories))
+    # Deterministic spread: start the alternatives near the scheduled gate's position.
+    if alternatives:
+        offset = sum(map(ord, scheduled_gate)) % len(alternatives)
+        alternatives = alternatives[offset:] + alternatives[:offset]
+    return [scheduled_gate] + alternatives[:ALTERNATIVE_GATES]
+
+
+def _place(snapshot, flight, options, anchor, last, assignments, baseline, budget, attempted, rejected):
+    """Earliest validated slot for one flight over (runway, route, gate) options, anchor to last.
+
+    Returns (assignment or None, placements attempted so far). Every attempt validates the
+    partial plan's hard checks, so a returned assignment is safe alongside earlier placements.
+    """
+    offset = 0
+    while attempted < budget and anchor + timedelta(seconds=offset) <= last:
+        for runway, route, gate_id in options:
+            if attempted >= budget:
+                break
+            candidate = _assignment(snapshot, flight, runway, route, anchor + timedelta(seconds=offset), gate_id)
+            attempted += 1
+            if not candidate:
+                rejected["flight.missing_assumptions"] += 1
+                continue
+            plan = seal_plan(Plan(scenario_id=snapshot.scenario_id,
+                base_state_version=snapshot.state_version, instruction_version=snapshot.instruction_version,
+                assignments=assignments + [candidate], source="BASELINE" if baseline else "FALLBACK",
+                expires_at_utc=utcnow() + timedelta(seconds=snapshot.rules_config.proposal_validity_seconds)))
+            # Failures only: accepted exactly when no hard check is FAIL or UNKNOWN,
+            # the same decision feasible() makes on the full check list.
+            failed = [c for c in validate_plan(snapshot, plan, include_passes=False) if c.severity == "HARD"]
+            if not failed:
+                return candidate, attempted
+            rejected.update(c.constraint_id for c in failed)
+        offset += snapshot.rules_config.search_step_seconds
+    return None, attempted
 
 
 def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseline=False, requests=None):
@@ -204,43 +250,28 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
             if gate is None:
                 rejected["gate.missing_assumption"] += 1
                 break
-            gate_id = request.gate_id or str(gate.value)
+            # A gate the agents chose is binding; otherwise fall back to compatible alternatives.
+            gate_ids = [request.gate_id] if request.gate_id else _gate_choices(snapshot, flight, str(gate.value))
             usable = [r for r in runways if not request.runway_ids or r in request.runway_ids]
-            options = [(r, path) for r in usable for path in _paths(snapshot,
-                r if arrival else gate_id, gate_id if arrival else r)]
-            if not options:
-                rejected["taxi.no_connected_route"] += 1
-                break
             earliest = snapshot.sim_time_utc + timedelta(minutes=5)
             anchor = max(earliest, request.earliest_utc) if request.earliest_utc else max(
                 earliest, scheduled(flight) + (timedelta(minutes=-4) if arrival else timedelta(minutes=3)))
             last = min(snapshot.end_utc, request.latest_utc) if request.latest_utc else snapshot.end_utc
+            options = {g: [(r, path, g) for r in usable for path in _paths(snapshot,
+                r if arrival else g, g if arrival else r)] for g in gate_ids}
+            # Scheduled gate first for a short delay; beyond that, the earliest slot at any choice.
+            phases = [(options[gate_ids[0]], min(last, anchor + GATE_HOLD))]
+            if len(gate_ids) > 1:
+                phases.append(([o for g in gate_ids for o in options[g]], last))
             chosen = None
-            offset = 0
-            while attempted < budget and anchor + timedelta(seconds=offset) <= last:
-                for runway, route in options:
-                    if attempted >= budget:
-                        break
-                    candidate = _assignment(snapshot, flight, runway, route, anchor + timedelta(seconds=offset),
-                                            gate_id)
-                    attempted += 1
-                    if not candidate:
-                        rejected["flight.missing_assumptions"] += 1
-                        continue
-                    plan = seal_plan(Plan(scenario_id=snapshot.scenario_id,
-                        base_state_version=snapshot.state_version, instruction_version=snapshot.instruction_version,
-                        assignments=assignments + [candidate], source="BASELINE" if baseline else "FALLBACK",
-                        expires_at_utc=utcnow() + timedelta(seconds=snapshot.rules_config.proposal_validity_seconds)))
-                    # Failures only: accepted exactly when no hard check is FAIL or UNKNOWN,
-                    # the same decision feasible() makes on the full check list.
-                    failed = [c for c in validate_plan(snapshot, plan, include_passes=False) if c.severity == "HARD"]
-                    if not failed:
-                        chosen = candidate
-                        break
-                    rejected.update(c.constraint_id for c in failed)
+            for opts, until in phases:
+                if not opts:
+                    rejected["taxi.no_connected_route"] += 1
+                    continue
+                chosen, attempted = _place(snapshot, flight, opts, anchor, until, assignments,
+                                           baseline, budget, attempted, rejected)
                 if chosen:
                     break
-                offset += snapshot.rules_config.search_step_seconds
             if chosen is None:
                 if flight.flight_id in requests:
                     rejected["request.unplaceable:" + flight.flight_id] += 1

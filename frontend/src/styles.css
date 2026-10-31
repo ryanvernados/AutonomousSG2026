@@ -1945,7 +1945,7 @@ p.check-failed {
   margin-top: 2px;
 }
 .ground-detail {
-  margin-top: 12px;
+  margin: 0 14px 16px;
   padding: 10px 12px;
   border: 1px solid #dfe6da;
   border-radius: 6px;
@@ -2102,6 +2102,7 @@ p.check-failed {
 }
 .staff-status {
   margin: 0 0 10px;
+  padding: 0 20px;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -2113,6 +2114,17 @@ p.check-failed {
 .staff-body {
   max-height: 520px;
   overflow: auto;
+  padding: 0 20px 20px;
+}
+.staff-panel .ground-empty {
+  margin: 0;
+  padding: 4px 20px 20px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6f8573;
+}
+.staff-alerts {
+  list-style: disc;
 }
 .staff-block h3 {
   margin: 12px 0 6px;
