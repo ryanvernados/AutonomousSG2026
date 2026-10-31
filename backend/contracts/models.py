@@ -64,7 +64,11 @@ class Resource(Model):
     node_from: str | None = None
     node_to: str | None = None
     bidirectional: bool = True
+    # Same-runway rules (occupancy and wake pairs) apply to dependent runways, e.g. close parallels.
     dependent_runway_ids: list[str] = Field(default_factory=list)
+    # Optional v1 extension: crossing runways share an intersection. Occupancy may not overlap;
+    # wake pairs do not apply unless the runways are also listed as dependent.
+    intersecting_runway_ids: list[str] = Field(default_factory=list)
     compatible_categories: list[str] = Field(default_factory=list)
     available_from_utc: AwareDatetime | None = None
     available_until_utc: AwareDatetime | None = None

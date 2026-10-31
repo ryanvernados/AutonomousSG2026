@@ -4,7 +4,7 @@ import pytest
 from pydantic import ValidationError
 
 from backend.contracts import Instruction, Reservation, Scenario, plan_hash, seal_plan
-from backend.engine import advance_clock, feasible, validate_plan
+from backend.engine import advance_clock, feasible, planning, validate_plan
 from backend.engine.planning import baseline_plan, compute_impact, search_candidates, select_fallback
 
 
@@ -34,6 +34,25 @@ def test_wake_and_dependent_runway_conflicts(snapshot, plan):
     modified = change_assignment(plan, 1, runway_id="28R",
                                  runway_time_utc=first.runway_time_utc + timedelta(seconds=20))
     assert {"runway.wake", "runway.intersection"} <= failures(snapshot, modified)
+
+
+def test_intersecting_runways_block_overlap_without_wake_pairs(snapshot, plan):
+    # Crossing runways: occupancy may not overlap, but category wake pairs do not apply.
+    resources = [r.model_copy(update={"dependent_runway_ids": [], "intersecting_runway_ids": [
+        "28R" if r.resource_id == "28L" else "28L"]}) if r.kind == "RUNWAY" else r
+        for r in snapshot.infrastructure.resources]
+    crossing = snapshot.model_copy(update={"infrastructure": snapshot.infrastructure.model_copy(
+        update={"resources": resources})})
+    first = plan.assignments[0]
+    overlapping = change_assignment(plan, 1, runway_id="28R",
+                                    runway_time_utc=first.runway_time_utc + timedelta(seconds=20))
+    found = failures(crossing, overlapping)
+    assert "runway.intersection" in found and "runway.wake" not in found
+    clear = change_assignment(plan, 1, runway_id="28R",
+                              runway_time_utc=first.runway_time_utc + timedelta(seconds=70))
+    assert not {"runway.intersection", "runway.wake"} & failures(crossing, clear)
+    # The same 70 s gap on dependent runways still violates the 120 s wake pair.
+    assert "runway.wake" in failures(snapshot, clear)
 
 
 @pytest.mark.parametrize("kind,resource", [("RUNWAY_UNAVAILABLE", "28L"),
@@ -115,7 +134,13 @@ def test_unknown_and_unsafe_fuel_blocks_approval(snapshot, plan, value, status):
     assert not feasible(checks)
 
 
-def test_bounded_search_and_closed_airport(snapshot):
+def test_bounded_search_and_closed_airport(snapshot, monkeypatch):
+    # limit caps complete candidate plans; placement work has its own reported budget.
+    plans, metadata = search_candidates(snapshot, limit=1)
+    assert len(plans) <= 1 and metadata["limit"] == 1 and not metadata["exhaustive"]
+    assert metadata["placement_budget"] == len(snapshot.flights)
+    # Exhausting the placement budget stops the search, reports it, and returns no partial plan.
+    monkeypatch.setattr(planning, "PLACEMENTS_PER_FLIGHT", 0.5)
     plans, metadata = search_candidates(snapshot, limit=1)
     assert not plans and metadata["limit_reached"] and not metadata["exhaustive"]
     instructions = [Instruction(scenario_id=snapshot.scenario_id, base_state_version=0,

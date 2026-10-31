@@ -2893,6 +2893,13 @@
             "type": "array",
             "title": "Dependent Runway Ids"
           },
+          "intersecting_runway_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Intersecting Runway Ids"
+          },
           "compatible_categories": {
             "items": {
               "type": "string"

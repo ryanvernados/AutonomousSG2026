@@ -803,6 +803,8 @@ export interface components {
             bidirectional: boolean;
             /** Dependent Runway Ids */
             dependent_runway_ids?: string[];
+            /** Intersecting Runway Ids */
+            intersecting_runway_ids?: string[];
             /** Compatible Categories */
             compatible_categories?: string[];
             /** Available From Utc */

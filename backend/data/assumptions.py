@@ -28,9 +28,11 @@ PARAMETERS = {
                     "basis": "Unimpeded taxi-in used to estimate scheduled wheels-on from scheduled gate arrival"},
     "taxi_out_min": {"value": 12, "unit": "minutes", "source_type": "SYNTHETIC",
                      "basis": "Unimpeded taxi-out used to estimate scheduled wheels-off from scheduled gate departure"},
-    "holding_fuel_available_min": {"value": [10, 60], "unit": "minutes", "source_type": "SYNTHETIC",
+    "holding_fuel_available_min": {"value": [30, 60], "unit": "minutes", "source_type": "SYNTHETIC",
                                    "basis": "Uniform seeded draw per arrival: airborne holding available beyond the estimated "
-                                            "scheduled landing before final reserve. Not a fuel load."},
+                                            "scheduled landing before final reserve. Not a fuel load. The 30 min floor "
+                                            "is a typical contingency plus holding allowance; a 10 min floor made the "
+                                            "historical slice unsequenceable"},
     "gate_dwell_cap_min": {"value": 240, "unit": "minutes", "source_type": "SYNTHETIC",
                            "basis": "Aircraft that arrived earlier than this before scenario start with no departure "
                                     "in the scenario are assumed towed off-gate"},

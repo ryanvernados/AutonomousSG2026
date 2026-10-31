@@ -113,12 +113,12 @@ flight_id `afa4e42188b1:5663452`.
 | Airport time zones | SOURCED zone rules, curated assignment awaiting review | `timezones.py` |
 | Runways, lengths, headings, crossings, taxiway and boarding-area names | SOURCED | FAA AL-375, cycle 2611, effective 2026-10-29 to 2026-11-26 |
 | Parallel spacing, coordinates, taxiway topology, segment lengths | SYNTHETIC | schematic |
-| Gate IDs, gate count (133), HEAVY-capable gates (53) | SYNTHETIC | peak scheduled demand + 30 min buffer, x 1.15 |
+| Gate IDs, gate count (133), HEAVY-capable gates (58) | SYNTHETIC | peak scheduled demand + 30 min buffer, x 1.15; a gate fits the largest category of every leg using it |
 | Gate per flight | SYNTHETIC | interval colouring; an aircraft keeps one gate from arrival to its next departure |
 | Initial gate occupancy (44 reservations) | HISTORICAL tail sequence; gate assignment SYNTHETIC | `scenario.py` |
 | Aircraft rotations | HISTORICAL | same airline + tail, next SFO movement |
 | Wake category | SYNTHETIC | stage length >= 2000 mi is HEAVY; type not in source |
-| Holding fuel, latest safe landing | SYNTHETIC | seeded 10 to 60 min per arrival |
+| Holding fuel, latest safe landing | SYNTHETIC | seeded 30 to 60 min per arrival (a 10 min floor made the slice unsequenceable) |
 | Taxi-in 8 min, taxi-out 12 min (wheels-on/off estimates) | SYNTHETIC | `assumptions.py` |
 | Taxi segment traversal (10 m/s, pieces of at most 400 m, minimum 30 s) | SYNTHETIC | `assumptions.py` |
 | Crews (one per rotation, work limit 90 to 360 min, available for the horizon + 60 min) | SYNTHETIC | seeded |
@@ -145,15 +145,23 @@ Seed: `20151221`.
 ## Engine integration results
 
 Both scenarios pass `backend.contracts.Scenario`, the engine loads them through `ScenarioRepository`,
-every disruption instruction passes `instruction_issues`, and a single flight placed by the engine passes
-every hard check. Member 1's FCFS baseline still returns `NO_FEASIBLE_PLAN_FOUND` for the dev scenario:
+every disruption instruction passes `instruction_issues`, and the dev scenario plans end to end: the FCFS
+baseline and the fallback place all 30 flights with every hard check passing, and the integrated server
+reaches two-round agent consensus (32 agents) on it.
 
-* AL-375 shows both 01/19 runways crossing both 10/28 runways, and the close parallels are dependent, so all
-  four runways are mutually dependent. With the default 120 to 180 s wake pairs this is roughly single-runway
-  capacity (about 30 movements per hour) against 64 scheduled per hour. Queued arrivals eventually pass
-  their synthetic `latest_safe_arrival_utc`.
-* The engine's search budget is 100 placements for the whole plan, and every flight tries up to
-  4 runways x 4 routes per 120 s step, so a 30-flight plan with any queueing exhausts it.
+That needed four changes, found by tracing the engine's rejection reasons:
+
+* Runway relationships: crossing runways are `intersecting_runway_ids` (occupancy may not overlap, no wake
+  pairs); only the close parallels are `dependent_runway_ids` (occupancy and wake pairs). Treating crossings
+  as wake-dependent left roughly single-runway capacity.
+* Gate size: a gate now fits the largest category of every leg in the stay (HEAVY departures were given
+  MEDIUM-only gates).
+* Holding fuel floor 30 min instead of 10.
+* Member 1 engine: the 100 limit caps candidate plans; placement work has its own budget (100 per flight).
+
+The dev scenario starts 20 min before its first flight (04:55Z) instead of at the full buffer start. Each
+scenario carries drawing geometry in `source_manifest.member2.layout.map` (runway ends, every taxiway
+resource, gate positions) for the controller map.
 
 ## Pending with other members
 

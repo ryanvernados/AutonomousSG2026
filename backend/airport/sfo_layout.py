@@ -194,12 +194,14 @@ def build_layout(gate_count: int, heavy_count: int) -> dict:
 
     relationships = [
         {"runways": list(p), "relationship": "INTERSECTING", "source_type": "SOURCED",
-         "rule": "Not independent capacity; occupancy of one blocks the crossing on the other"}
+         "rule": "Not independent capacity: occupancy may not overlap (intersecting_runway_ids); "
+                 "wake pairs do not apply across the crossing"}
         for p in CROSSINGS
     ] + [
         {"runways": list(p), "relationship": "CLOSELY_SPACED_PARALLEL", "source_type": "SOURCED",
          "spacing_m": SYNTHETIC_PARALLEL_SPACING_M, "spacing_source_type": "SYNTHETIC",
-         "rule": "Treated as dependent capacity; separation values belong to Member 1 rules_config"}
+         "rule": "Dependent capacity (dependent_runway_ids): occupancy and wake pairs from Member 1 "
+                 "rules_config apply"}
         for p in CLOSE_PARALLELS
     ]
 
@@ -291,13 +293,17 @@ def to_resources(layout: dict, *, taxi_speed_mps: float, max_piece_m: float,
     is a node joined to its boarding area apron. Runway direction is not fixed here.
     Segments longer than max_piece_m are split into equal pieces (see split_segment).
     """
-    deps: dict[str, set[str]] = {r["runway_id"]: set() for r in layout["runways"]}
-    for rel in layout["runway_relationships"]:
-        a, b = rel["runways"]
-        deps[a].add(b)
-        deps[b].add(a)
+    # Close parallels share wake separation (dependent); crossing runways share an intersection,
+    # so the engine keeps their occupancy apart without applying wake pairs.
+    field = {"CLOSELY_SPACED_PARALLEL": "dependent_runway_ids", "INTERSECTING": "intersecting_runway_ids"}
+    rel: dict[str, dict[str, set[str]]] = {r["runway_id"]: {f: set() for f in field.values()}
+                                           for r in layout["runways"]}
+    for item in layout["runway_relationships"]:
+        a, b = item["runways"]
+        rel[a][field[item["relationship"]]].add(b)
+        rel[b][field[item["relationship"]]].add(a)
     resources = [{"resource_id": r["runway_id"], "kind": "RUNWAY", "capacity": 1,
-                  "dependent_runway_ids": sorted(deps[r["runway_id"]])} for r in layout["runways"]]
+                  **{f: sorted(ids) for f, ids in rel[r["runway_id"]].items()}} for r in layout["runways"]]
 
     def edge(rid, a, b, length_m):
         return {"resource_id": rid, "kind": "TAXIWAY", "capacity": 1, "node_from": a, "node_to": b,
@@ -315,3 +321,59 @@ def to_resources(layout: dict, *, taxi_speed_mps: float, max_piece_m: float,
                           "compatible_categories": ["MEDIUM", "HEAVY"] if g["max_wake_category"] == "HEAVY"
                           else ["MEDIUM"]})
     return resources
+
+
+GATE_COLUMNS = 4
+GATE_SPACING_M = 45
+
+
+def gate_positions(layout: dict) -> dict[str, list[int]]:
+    """Schematic gate positions (SYNTHETIC): a grid on each boarding area's apron, away from the field."""
+    nodes = {n["node_id"]: (n["x"], n["y"]) for n in layout["taxiway_nodes"]}
+    by_area: dict[str, list[str]] = collections.defaultdict(list)
+    for g in layout["gates"]:
+        by_area[g["boarding_area"]].append(g["gate_id"])
+    out = {}
+    for area, gates in by_area.items():
+        ax, ay = nodes[f"APRON_{area}"]
+        for i, gate in enumerate(gates):
+            col, row = i % GATE_COLUMNS, i // GATE_COLUMNS
+            out[gate] = [round(ax + (col - (GATE_COLUMNS - 1) / 2) * GATE_SPACING_M),
+                         round(ay - 60 - row * GATE_SPACING_M)]
+    return out
+
+
+def map_geometry(layout: dict, *, max_piece_m: float) -> dict:
+    """Drawing geometry keyed by the contract resource IDs the engine reserves.
+
+    Every TAXIWAY resource from to_resources (pieces, runway links, stands) gets a two-point
+    polyline, so a UI can draw an assigned taxi path exactly as planned. Coordinates use the
+    layout's schematic frame (metres, SYNTHETIC).
+    """
+    nodes = {n["node_id"]: (n["x"], n["y"]) for n in layout["taxiway_nodes"]}
+    gates = gate_positions(layout)
+    runways, segments = [], {}
+    for r in layout["runways"]:
+        a, b = r["schematic"]["from"], r["schematic"]["to"]
+        ends = dict(zip(r["ends"], (a, b)))
+        runways.append({"runway_id": r["runway_id"], "ends": ends})
+        for end, hold in r["end_nodes"].items():
+            segments[f"RWYLINK:{r['runway_id']}@{end}"] = [list(ends[end]), list(nodes[hold])]
+    for seg in layout["taxiway_segments"]:
+        (x0, y0), (x1, y1) = nodes[seg["from_node"]], nodes[seg["to_node"]]
+        pieces = split_segment(seg, max_piece_m)
+        n = len(pieces)
+        for k, (rid, *_rest) in enumerate(pieces):
+            segments[rid] = [[round(x0 + (x1 - x0) * k / n), round(y0 + (y1 - y0) * k / n)],
+                             [round(x0 + (x1 - x0) * (k + 1) / n), round(y0 + (y1 - y0) * (k + 1) / n)]]
+    for g in layout["gates"]:
+        segments[f"STAND:{g['gate_id']}"] = [list(nodes[g["apron_node"]]), gates[g["gate_id"]]]
+    labels = []
+    for seg in layout["taxiway_segments"]:
+        if seg["kind"] in ("TAXIWAY", "RUNWAY_CROSSING") and seg["taxiway"] != "A-B":
+            (x0, y0), (x1, y1) = nodes[seg["from_node"]], nodes[seg["to_node"]]
+            labels.append({"text": seg["taxiway"], "at": [round((x0 + x1) / 2), round((y0 + y1) / 2)]})
+    return {"frame": layout["coordinate_frame"], "runways": runways, "segments": segments,
+            "gates": gates, "taxiway_labels": labels,
+            "boarding_areas": {g["boarding_area"]: list(nodes[g["apron_node"]]) for g in layout["gates"]},
+            "source_type": "SYNTHETIC", "source_note": "Schematic positions; runway set and names SOURCED from AL-375"}

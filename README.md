@@ -245,9 +245,10 @@ cd frontend; $env:LIVE_E2E='1'; node scripts/test-e2e.mjs e2e/live-integration.s
 ```
 
 The bridge between the coordinator and the platform is `backend/coordination/platform_adapter.py`;
-the UI maps the canonical API in `frontend/src/api/canonical.ts`. The SFO historical scenarios load
-and negotiate, but the engine returns `NO_FEASIBLE_PLAN_FOUND` for them (all four runways are mutually
-dependent, and search is limited to 100 placements per plan; see backend/data/README.md).
+the UI maps the canonical API in `frontend/src/api/canonical.ts`. Pick `sfo-2015-12-21-2000-dev` for the
+historical SFO evening: the map draws the FAA runways, taxiways and simulated gates, and after approval
+the Ground control panel lists each flight's gate, taxi route and runway slot. Use **+10 min** / **+1 min**
+to move the clock (Resume runs in real time).
 
 ## Members 3 and 4: agents and controller UI
 

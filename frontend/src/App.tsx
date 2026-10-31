@@ -46,6 +46,8 @@ import {
   zone,
 } from "./domain";
 import AirportMap from "./components/AirportMap";
+import GroundMovements from "./components/GroundMovements";
+import type { LiveSnapshot } from "./api/canonical";
 import Instructions from "./components/Instructions";
 import ProposalReview from "./components/ProposalReview";
 import Timeline from "./components/Timeline";
@@ -574,6 +576,13 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
                 <SkipForward size={14} /> +1 min
               </button>
               <button
+                className="button small"
+                disabled={locked || snapshot.clock_running}
+                onClick={() => act("clock", { action: "STEP", seconds: 600 })}
+              >
+                <SkipForward size={14} /> +10 min
+              </button>
+              <button
                 className="icon-button"
                 aria-label="Reset simulation"
                 disabled={locked}
@@ -892,6 +901,12 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
                     <span>State v{visible.state_version}</span>
                   </div>
                 </section>
+                <GroundMovements
+                  snapshot={visible}
+                  map={(visible as LiveSnapshot).layout_map}
+                  selected={selected}
+                  onSelect={setSelected}
+                />
                 <Timeline snapshot={visible} />
                 <section className="panel flights-panel">
                   <div className="panel-heading">
