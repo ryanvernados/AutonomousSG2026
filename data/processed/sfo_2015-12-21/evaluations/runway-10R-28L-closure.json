@@ -1,0 +1,3538 @@
+{
+  "fixture_id": "runway-10R-28L-closure",
+  "scenario_id": "sfo-2015-12-21-2000-full",
+  "seed": 20151221,
+  "input_sha256": "dbd2f9c87b93d14b8c0897c1b2ce2ebc4e705ba586a8240247a676a7e86c7772",
+  "runs": {
+    "a": {
+      "policy": "scheduled",
+      "metrics": {
+        "arrival_delay": {
+          "flights": 130,
+          "total_delay_min": 0.0,
+          "max_delay_min": 0.0
+        },
+        "departure_delay": {
+          "flights": 88,
+          "total_delay_min": 0.0,
+          "max_delay_min": 0.0
+        },
+        "max_delay_min": 0.0,
+        "holding_min_total": 0,
+        "completed_movements": 218,
+        "unresolved_flights": [],
+        "per_flight": [
+          {
+            "flight_id": "afa4e42188b1:5662804",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663874",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663876",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663877",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663931",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662314",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663989",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663996",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663997",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663007",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664027",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5660523",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662796",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663140",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664138",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662187",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662368",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663082",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664200",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662921",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661516",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662377",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664256",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662448",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663010",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661082",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664286",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664312",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663168",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663231",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664415",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662652",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663126",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5660943",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663086",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661408",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661899",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663738",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664580",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664584",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661031",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662596",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5657909",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661213",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664789",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664791",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664794",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664832",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662704",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664852",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5657773",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664854",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662944",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663469",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663567",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663657",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663727",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662938",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664932",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664937",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663446",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664942",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661411",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663242",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665004",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662746",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5658161",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665034",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665067",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663780",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662038",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662369",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665144",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662819",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663571",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665170",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665177",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665194",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665195",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661583",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662729",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663022",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663698",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664047",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664091",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665270",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665347",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665348",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662826",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5658657",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5658820",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663664",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664578",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665369",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662336",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661922",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662543",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662211",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663992",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663069",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664005",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665425",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665426",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665429",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663343",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5658935",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663535",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663619",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665488",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665489",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662827",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664327",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662338",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5658838",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665553",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665582",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665601",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663496",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665658",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665666",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662911",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663198",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663452",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664444",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664515",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665682",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665683",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663772",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665031",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665705",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665711",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662853",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664012",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664539",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665742",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663447",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664732",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665745",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664162",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664771",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665793",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665801",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664472",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5659510",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663033",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663608",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665333",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665834",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663090",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664672",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665247",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665867",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664933",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665880",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665895",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665912",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663515",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665277",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665938",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665967",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665032",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661246",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665210",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665409",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663091",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663453",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664577",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665104",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666038",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664892",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665257",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666100",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666107",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664405",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5660152",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665428",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666163",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663426",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666259",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664645",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664269",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665486",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665427",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666370",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664886",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663725",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665733",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666385",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666390",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666413",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665081",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666415",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666416",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665355",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666417",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666421",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666424",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665668",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664039",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666438",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666454",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665758",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665853",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666458",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666459",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666460",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666461",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666480",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666483",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663861",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664691",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665547",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666486",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664309",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664634",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666494",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666500",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666510",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          }
+        ]
+      }
+    },
+    "b": {
+      "policy": "scheduled",
+      "metrics": {
+        "arrival_delay": {
+          "flights": 130,
+          "total_delay_min": 0.0,
+          "max_delay_min": 0.0
+        },
+        "departure_delay": {
+          "flights": 88,
+          "total_delay_min": 0.0,
+          "max_delay_min": 0.0
+        },
+        "max_delay_min": 0.0,
+        "holding_min_total": 0,
+        "completed_movements": 218,
+        "unresolved_flights": [],
+        "per_flight": [
+          {
+            "flight_id": "afa4e42188b1:5662804",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663874",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663876",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663877",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663931",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662314",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663989",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663996",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663997",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663007",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664027",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5660523",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662796",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663140",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664138",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662187",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662368",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663082",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664200",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662921",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661516",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662377",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664256",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662448",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663010",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661082",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664286",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664312",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663168",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663231",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664415",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662652",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663126",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5660943",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663086",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661408",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661899",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663738",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664580",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664584",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661031",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662596",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5657909",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661213",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664789",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664791",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664794",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664832",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662704",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664852",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5657773",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664854",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662944",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663469",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663567",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663657",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663727",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662938",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664932",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664937",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663446",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664942",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661411",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663242",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665004",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662746",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5658161",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665034",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665067",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663780",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662038",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662369",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665144",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662819",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663571",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665170",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665177",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665194",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665195",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661583",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662729",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663022",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663698",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664047",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664091",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665270",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665347",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665348",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662826",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5658657",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5658820",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663664",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664578",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665369",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662336",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661922",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662543",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662211",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663992",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663069",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664005",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665425",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665426",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665429",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663343",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5658935",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663535",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663619",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665488",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665489",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662827",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664327",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662338",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5658838",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665553",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665582",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665601",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663496",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665658",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665666",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662911",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663198",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663452",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664444",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664515",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665682",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665683",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663772",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665031",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665705",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665711",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5662853",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664012",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664539",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665742",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663447",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664732",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665745",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664162",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664771",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665793",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665801",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664472",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5659510",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663033",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663608",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665333",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665834",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663090",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664672",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665247",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665867",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664933",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665880",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665895",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665912",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663515",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665277",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665938",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665967",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665032",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5661246",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665210",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665409",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663091",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663453",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664577",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665104",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666038",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664892",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665257",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666100",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666107",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664405",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5660152",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665428",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666163",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663426",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666259",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664645",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664269",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665486",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665427",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666370",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664886",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663725",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665733",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666385",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666390",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666413",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665081",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666415",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666416",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665355",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666417",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666421",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666424",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665668",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664039",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666438",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666454",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665758",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665853",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666458",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666459",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666460",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666461",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666480",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666483",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5663861",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664691",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5665547",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666486",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664309",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5664634",
+            "operation": "ARRIVAL",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666494",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666500",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          },
+          {
+            "flight_id": "afa4e42188b1:5666510",
+            "operation": "DEPARTURE",
+            "delay_min": 0.0,
+            "holding_min": 0,
+            "taxi_min": null,
+            "completed": true
+          }
+        ]
+      }
+    }
+  }
+}

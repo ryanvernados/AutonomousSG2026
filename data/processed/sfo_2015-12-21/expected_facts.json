@@ -1,0 +1,30 @@
+{
+  "scenario_ids": [
+    "sfo-2015-12-21-2000-full",
+    "sfo-2015-12-21-2000-dev"
+  ],
+  "local_date": "2015-12-21",
+  "window": [
+    "2015-12-22T04:00:00Z",
+    "2015-12-22T06:00:00Z"
+  ],
+  "horizon": [
+    "2015-12-22T03:00:00Z",
+    "2015-12-22T07:00:00Z"
+  ],
+  "flights_full": 218,
+  "flights_dev": 30,
+  "arrivals_full": 130,
+  "departures_full": 88,
+  "historically_cancelled_full": 35,
+  "qualifying_rows_full": 77,
+  "traced_qualifying_flight_id": "afa4e42188b1:5663452",
+  "initial_occupancy": 49,
+  "initial_occupancy_unassigned": 0,
+  "simulated_gates": 102,
+  "heavy_capable_gates": 44,
+  "synthetic_connections": 68,
+  "crews": 162,
+  "taxiway_graph_connected": true,
+  "seed": 20151221
+}

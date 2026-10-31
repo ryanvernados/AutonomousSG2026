@@ -1,0 +1,1782 @@
+{
+  "layout_id": "sfo-al375-2611",
+  "airport_iata": "SFO",
+  "source": {
+    "document": "FAA Airport Diagram AL-375 (FAA), San Francisco Intl (SFO)",
+    "publisher": "FAA Aeronautical Information Services, d-TPP",
+    "cycle": "2611",
+    "amendment": "26302",
+    "effective_from": "2026-10-29",
+    "effective_to": "2026-11-26",
+    "url": "https://aeronav.faa.gov/d-tpp/2611/00375AD.PDF",
+    "local_copy": "data/layout/source/sfo_00375AD_2611.pdf",
+    "magnetic_variation": "14 deg E (diagram annotation, January 2015, annual change 0.1 deg W)",
+    "traffic_pairing_note": "Layout effective 2026 paired with 2015 traffic. Differences between the 2015 and 2026 airfield are not modelled."
+  },
+  "coordinate_frame": {
+    "units": "metres",
+    "x_axis": "magnetic 104 deg (runway 10 direction)",
+    "y_axis": "magnetic 014 deg (runway 01 direction)",
+    "source_type": "SYNTHETIC",
+    "note": "Schematic positions for display and taxi distance; not surveyed coordinates"
+  },
+  "runways": [
+    {
+      "runway_id": "10L-28R",
+      "ends": [
+        "10L",
+        "28R"
+      ],
+      "length_ft": 11870,
+      "width_ft": 200,
+      "magnetic_headings_deg": [
+        104,
+        284
+      ],
+      "length_m": 3618,
+      "source_type": "SOURCED",
+      "end_nodes": {
+        "10L": "HOLD_10L",
+        "28R": "HOLD_28R"
+      },
+      "schematic": {
+        "from": [
+          0,
+          0
+        ],
+        "to": [
+          3618,
+          0
+        ],
+        "source_type": "SYNTHETIC"
+      }
+    },
+    {
+      "runway_id": "10R-28L",
+      "ends": [
+        "10R",
+        "28L"
+      ],
+      "length_ft": 11381,
+      "width_ft": 200,
+      "magnetic_headings_deg": [
+        104,
+        284
+      ],
+      "length_m": 3469,
+      "source_type": "SOURCED",
+      "end_nodes": {
+        "10R": "HOLD_10R",
+        "28L": "HOLD_28L"
+      },
+      "schematic": {
+        "from": [
+          150,
+          -230
+        ],
+        "to": [
+          3619,
+          -230
+        ],
+        "source_type": "SYNTHETIC"
+      }
+    },
+    {
+      "runway_id": "01R-19L",
+      "ends": [
+        "01R",
+        "19L"
+      ],
+      "length_ft": 8650,
+      "width_ft": 200,
+      "magnetic_headings_deg": [
+        14,
+        194
+      ],
+      "length_m": 2637,
+      "source_type": "SOURCED",
+      "end_nodes": {
+        "01R": "HOLD_01R",
+        "19L": "HOLD_19L"
+      },
+      "schematic": {
+        "from": [
+          2730,
+          -1500
+        ],
+        "to": [
+          2730,
+          1137
+        ],
+        "source_type": "SYNTHETIC"
+      }
+    },
+    {
+      "runway_id": "01L-19R",
+      "ends": [
+        "01L",
+        "19R"
+      ],
+      "length_ft": 7650,
+      "width_ft": 200,
+      "magnetic_headings_deg": [
+        14,
+        194
+      ],
+      "length_m": 2332,
+      "source_type": "SOURCED",
+      "end_nodes": {
+        "01L": "HOLD_01L",
+        "19R": "HOLD_19R"
+      },
+      "schematic": {
+        "from": [
+          2500,
+          -1300
+        ],
+        "to": [
+          2500,
+          1032
+        ],
+        "source_type": "SYNTHETIC"
+      }
+    }
+  ],
+  "runway_relationships": [
+    {
+      "runways": [
+        "10L-28R",
+        "01R-19L"
+      ],
+      "relationship": "INTERSECTING",
+      "source_type": "SOURCED",
+      "rule": "Not independent capacity; occupancy of one blocks the crossing on the other"
+    },
+    {
+      "runways": [
+        "10L-28R",
+        "01L-19R"
+      ],
+      "relationship": "INTERSECTING",
+      "source_type": "SOURCED",
+      "rule": "Not independent capacity; occupancy of one blocks the crossing on the other"
+    },
+    {
+      "runways": [
+        "10R-28L",
+        "01R-19L"
+      ],
+      "relationship": "INTERSECTING",
+      "source_type": "SOURCED",
+      "rule": "Not independent capacity; occupancy of one blocks the crossing on the other"
+    },
+    {
+      "runways": [
+        "10R-28L",
+        "01L-19R"
+      ],
+      "relationship": "INTERSECTING",
+      "source_type": "SOURCED",
+      "rule": "Not independent capacity; occupancy of one blocks the crossing on the other"
+    },
+    {
+      "runways": [
+        "10L-28R",
+        "10R-28L"
+      ],
+      "relationship": "CLOSELY_SPACED_PARALLEL",
+      "source_type": "SOURCED",
+      "spacing_m": 230,
+      "spacing_source_type": "SYNTHETIC",
+      "rule": "Treated as dependent capacity; separation values belong to Member 1 rules_config"
+    },
+    {
+      "runways": [
+        "01R-19L",
+        "01L-19R"
+      ],
+      "relationship": "CLOSELY_SPACED_PARALLEL",
+      "source_type": "SOURCED",
+      "spacing_m": 230,
+      "spacing_source_type": "SYNTHETIC",
+      "rule": "Treated as dependent capacity; separation values belong to Member 1 rules_config"
+    }
+  ],
+  "arrival_exit_nodes": {
+    "28L": "HOLD_10R",
+    "28R": "HOLD_10L",
+    "10L": "HOLD_28R",
+    "10R": "HOLD_28L",
+    "19L": "HOLD_01R",
+    "19R": "HOLD_01L",
+    "01L": "HOLD_19R",
+    "01R": "HOLD_19L"
+  },
+  "hot_spots": [
+    {
+      "hot_spot_id": "HS1",
+      "source_type": "SOURCED"
+    },
+    {
+      "hot_spot_id": "HS2",
+      "source_type": "SOURCED"
+    },
+    {
+      "hot_spot_id": "HS3",
+      "source_type": "SOURCED"
+    },
+    {
+      "hot_spot_id": "HS4",
+      "source_type": "SOURCED"
+    }
+  ],
+  "taxiway_nodes": [
+    {
+      "node_id": "A@1500",
+      "x": 1500,
+      "y": -420
+    },
+    {
+      "node_id": "A@2100",
+      "x": 2100,
+      "y": -420
+    },
+    {
+      "node_id": "A@2400",
+      "x": 2400,
+      "y": -420
+    },
+    {
+      "node_id": "A@300",
+      "x": 300,
+      "y": -420
+    },
+    {
+      "node_id": "A@900",
+      "x": 900,
+      "y": -420
+    },
+    {
+      "node_id": "APRON_A",
+      "x": 2400,
+      "y": -700
+    },
+    {
+      "node_id": "APRON_B",
+      "x": 2220,
+      "y": -700
+    },
+    {
+      "node_id": "APRON_C",
+      "x": 1980,
+      "y": -700
+    },
+    {
+      "node_id": "APRON_D",
+      "x": 1620,
+      "y": -700
+    },
+    {
+      "node_id": "APRON_E",
+      "x": 1380,
+      "y": -700
+    },
+    {
+      "node_id": "APRON_F",
+      "x": 900,
+      "y": -700
+    },
+    {
+      "node_id": "APRON_G",
+      "x": 300,
+      "y": -700
+    },
+    {
+      "node_id": "B@1500",
+      "x": 1500,
+      "y": -330
+    },
+    {
+      "node_id": "B@2100",
+      "x": 2100,
+      "y": -330
+    },
+    {
+      "node_id": "B@2400",
+      "x": 2400,
+      "y": -330
+    },
+    {
+      "node_id": "B@2900",
+      "x": 2900,
+      "y": -330
+    },
+    {
+      "node_id": "B@300",
+      "x": 300,
+      "y": -330
+    },
+    {
+      "node_id": "B@3500",
+      "x": 3500,
+      "y": -330
+    },
+    {
+      "node_id": "B@900",
+      "x": 900,
+      "y": -330
+    },
+    {
+      "node_id": "C@1500",
+      "x": 1500,
+      "y": 150
+    },
+    {
+      "node_id": "C@200",
+      "x": 200,
+      "y": 150
+    },
+    {
+      "node_id": "C@2100",
+      "x": 2100,
+      "y": 150
+    },
+    {
+      "node_id": "C@2400",
+      "x": 2400,
+      "y": 150
+    },
+    {
+      "node_id": "C@2900",
+      "x": 2900,
+      "y": 150
+    },
+    {
+      "node_id": "C@3500",
+      "x": 3500,
+      "y": 150
+    },
+    {
+      "node_id": "HOLD_01L",
+      "x": 2450,
+      "y": -1350
+    },
+    {
+      "node_id": "HOLD_01R",
+      "x": 2780,
+      "y": -1500
+    },
+    {
+      "node_id": "HOLD_10L",
+      "x": 0,
+      "y": 150
+    },
+    {
+      "node_id": "HOLD_10R",
+      "x": 150,
+      "y": -330
+    },
+    {
+      "node_id": "HOLD_19L",
+      "x": 2780,
+      "y": 1137
+    },
+    {
+      "node_id": "HOLD_19R",
+      "x": 2450,
+      "y": 1032
+    },
+    {
+      "node_id": "HOLD_28L",
+      "x": 3619,
+      "y": -330
+    },
+    {
+      "node_id": "HOLD_28R",
+      "x": 3618,
+      "y": 150
+    },
+    {
+      "node_id": "L@-1300",
+      "x": 2900,
+      "y": -1300
+    },
+    {
+      "node_id": "L@-330",
+      "x": 2900,
+      "y": -330
+    },
+    {
+      "node_id": "L@150",
+      "x": 2900,
+      "y": 150
+    },
+    {
+      "node_id": "L@900",
+      "x": 2900,
+      "y": 900
+    },
+    {
+      "node_id": "M@01",
+      "x": 2600,
+      "y": -1400
+    }
+  ],
+  "taxiway_segments": [
+    {
+      "segment_id": "B:B@300-B@900",
+      "taxiway": "B",
+      "kind": "TAXIWAY",
+      "from_node": "B@300",
+      "to_node": "B@900",
+      "length_m": 600,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "B:B@900-B@1500",
+      "taxiway": "B",
+      "kind": "TAXIWAY",
+      "from_node": "B@900",
+      "to_node": "B@1500",
+      "length_m": 600,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "B:B@1500-B@2100",
+      "taxiway": "B",
+      "kind": "TAXIWAY",
+      "from_node": "B@1500",
+      "to_node": "B@2100",
+      "length_m": 600,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "B:B@2100-B@2400",
+      "taxiway": "B",
+      "kind": "TAXIWAY",
+      "from_node": "B@2100",
+      "to_node": "B@2400",
+      "length_m": 300,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "B:B@2900-B@3500",
+      "taxiway": "B",
+      "kind": "TAXIWAY",
+      "from_node": "B@2900",
+      "to_node": "B@3500",
+      "length_m": 600,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "B:B@2400-B@2900",
+      "taxiway": "B",
+      "kind": "RUNWAY_CROSSING",
+      "from_node": "B@2400",
+      "to_node": "B@2900",
+      "length_m": 500,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC",
+      "crosses_runways": [
+        "01L-19R",
+        "01R-19L"
+      ]
+    },
+    {
+      "segment_id": "A:A@300-A@900",
+      "taxiway": "A",
+      "kind": "TAXIWAY",
+      "from_node": "A@300",
+      "to_node": "A@900",
+      "length_m": 600,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "A:A@900-A@1500",
+      "taxiway": "A",
+      "kind": "TAXIWAY",
+      "from_node": "A@900",
+      "to_node": "A@1500",
+      "length_m": 600,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "A:A@1500-A@2100",
+      "taxiway": "A",
+      "kind": "TAXIWAY",
+      "from_node": "A@1500",
+      "to_node": "A@2100",
+      "length_m": 600,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "A:A@2100-A@2400",
+      "taxiway": "A",
+      "kind": "TAXIWAY",
+      "from_node": "A@2100",
+      "to_node": "A@2400",
+      "length_m": 300,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "A-B:A@300-B@300",
+      "taxiway": "A-B",
+      "kind": "TAXIWAY",
+      "from_node": "A@300",
+      "to_node": "B@300",
+      "length_m": 90,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "A-B:A@900-B@900",
+      "taxiway": "A-B",
+      "kind": "TAXIWAY",
+      "from_node": "A@900",
+      "to_node": "B@900",
+      "length_m": 90,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "A-B:A@1500-B@1500",
+      "taxiway": "A-B",
+      "kind": "TAXIWAY",
+      "from_node": "A@1500",
+      "to_node": "B@1500",
+      "length_m": 90,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "A-B:A@2100-B@2100",
+      "taxiway": "A-B",
+      "kind": "TAXIWAY",
+      "from_node": "A@2100",
+      "to_node": "B@2100",
+      "length_m": 90,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "A-B:A@2400-B@2400",
+      "taxiway": "A-B",
+      "kind": "TAXIWAY",
+      "from_node": "A@2400",
+      "to_node": "B@2400",
+      "length_m": 90,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "C:C@200-C@1500",
+      "taxiway": "C",
+      "kind": "TAXIWAY",
+      "from_node": "C@200",
+      "to_node": "C@1500",
+      "length_m": 1300,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "C:C@1500-C@2100",
+      "taxiway": "C",
+      "kind": "TAXIWAY",
+      "from_node": "C@1500",
+      "to_node": "C@2100",
+      "length_m": 600,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "C:C@2100-C@2400",
+      "taxiway": "C",
+      "kind": "TAXIWAY",
+      "from_node": "C@2100",
+      "to_node": "C@2400",
+      "length_m": 300,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "C:C@2900-C@3500",
+      "taxiway": "C",
+      "kind": "TAXIWAY",
+      "from_node": "C@2900",
+      "to_node": "C@3500",
+      "length_m": 600,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "C:C@2400-C@2900",
+      "taxiway": "C",
+      "kind": "RUNWAY_CROSSING",
+      "from_node": "C@2400",
+      "to_node": "C@2900",
+      "length_m": 500,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC",
+      "crosses_runways": [
+        "01L-19R",
+        "01R-19L"
+      ]
+    },
+    {
+      "segment_id": "L:L@-1300-L@-330",
+      "taxiway": "L",
+      "kind": "TAXIWAY",
+      "from_node": "L@-1300",
+      "to_node": "L@-330",
+      "length_m": 970,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "L:L@-330-L@150",
+      "taxiway": "L",
+      "kind": "TAXIWAY",
+      "from_node": "L@-330",
+      "to_node": "L@150",
+      "length_m": 480,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "L:L@150-L@900",
+      "taxiway": "L",
+      "kind": "TAXIWAY",
+      "from_node": "L@150",
+      "to_node": "L@900",
+      "length_m": 750,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "L:L@-330-B@2900",
+      "taxiway": "L",
+      "kind": "TAXIWAY",
+      "from_node": "L@-330",
+      "to_node": "B@2900",
+      "length_m": 0,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "L:L@150-C@2900",
+      "taxiway": "L",
+      "kind": "TAXIWAY",
+      "from_node": "L@150",
+      "to_node": "C@2900",
+      "length_m": 0,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "M:M@01-L@-1300",
+      "taxiway": "M",
+      "kind": "TAXIWAY",
+      "from_node": "M@01",
+      "to_node": "L@-1300",
+      "length_m": 316,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "M:M@01-A@2400",
+      "taxiway": "M",
+      "kind": "TAXIWAY",
+      "from_node": "M@01",
+      "to_node": "A@2400",
+      "length_m": 1000,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "Z:C@200-B@300",
+      "taxiway": "Z",
+      "kind": "RUNWAY_CROSSING",
+      "from_node": "C@200",
+      "to_node": "B@300",
+      "length_m": 490,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC",
+      "crosses_runways": [
+        "10L-28R",
+        "10R-28L"
+      ]
+    },
+    {
+      "segment_id": "D:C@1500-B@1500",
+      "taxiway": "D",
+      "kind": "RUNWAY_CROSSING",
+      "from_node": "C@1500",
+      "to_node": "B@1500",
+      "length_m": 480,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC",
+      "crosses_runways": [
+        "10L-28R",
+        "10R-28L"
+      ]
+    },
+    {
+      "segment_id": "E:C@2100-B@2100",
+      "taxiway": "E",
+      "kind": "RUNWAY_CROSSING",
+      "from_node": "C@2100",
+      "to_node": "B@2100",
+      "length_m": 480,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC",
+      "crosses_runways": [
+        "10L-28R",
+        "10R-28L"
+      ]
+    },
+    {
+      "segment_id": "F:C@3500-B@3500",
+      "taxiway": "F",
+      "kind": "RUNWAY_CROSSING",
+      "from_node": "C@3500",
+      "to_node": "B@3500",
+      "length_m": 480,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC",
+      "crosses_runways": [
+        "10L-28R",
+        "10R-28L"
+      ]
+    },
+    {
+      "segment_id": "Z:HOLD_10L-C@200",
+      "taxiway": "Z",
+      "kind": "TAXIWAY",
+      "from_node": "HOLD_10L",
+      "to_node": "C@200",
+      "length_m": 200,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "B:HOLD_10R-B@300",
+      "taxiway": "B",
+      "kind": "TAXIWAY",
+      "from_node": "HOLD_10R",
+      "to_node": "B@300",
+      "length_m": 150,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "C:HOLD_28R-C@3500",
+      "taxiway": "C",
+      "kind": "TAXIWAY",
+      "from_node": "HOLD_28R",
+      "to_node": "C@3500",
+      "length_m": 118,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "F:HOLD_28L-B@3500",
+      "taxiway": "F",
+      "kind": "TAXIWAY",
+      "from_node": "HOLD_28L",
+      "to_node": "B@3500",
+      "length_m": 119,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "M:HOLD_01L-M@01",
+      "taxiway": "M",
+      "kind": "TAXIWAY",
+      "from_node": "HOLD_01L",
+      "to_node": "M@01",
+      "length_m": 158,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "L:HOLD_01R-L@-1300",
+      "taxiway": "L",
+      "kind": "TAXIWAY",
+      "from_node": "HOLD_01R",
+      "to_node": "L@-1300",
+      "length_m": 233,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "L:HOLD_19R-L@900",
+      "taxiway": "L",
+      "kind": "TAXIWAY",
+      "from_node": "HOLD_19R",
+      "to_node": "L@900",
+      "length_m": 469,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "L:HOLD_19L-L@900",
+      "taxiway": "L",
+      "kind": "TAXIWAY",
+      "from_node": "HOLD_19L",
+      "to_node": "L@900",
+      "length_m": 266,
+      "bidirectional": true,
+      "name_source_type": "SOURCED",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "RAMP_A:APRON_A-A@2400",
+      "taxiway": "RAMP_A",
+      "kind": "RAMP",
+      "from_node": "APRON_A",
+      "to_node": "A@2400",
+      "length_m": 280,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "RAMP_B:APRON_B-A@2100",
+      "taxiway": "RAMP_B",
+      "kind": "RAMP",
+      "from_node": "APRON_B",
+      "to_node": "A@2100",
+      "length_m": 305,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "RAMP_C:APRON_C-A@2100",
+      "taxiway": "RAMP_C",
+      "kind": "RAMP",
+      "from_node": "APRON_C",
+      "to_node": "A@2100",
+      "length_m": 305,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "RAMP_D:APRON_D-A@1500",
+      "taxiway": "RAMP_D",
+      "kind": "RAMP",
+      "from_node": "APRON_D",
+      "to_node": "A@1500",
+      "length_m": 305,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "RAMP_E:APRON_E-A@1500",
+      "taxiway": "RAMP_E",
+      "kind": "RAMP",
+      "from_node": "APRON_E",
+      "to_node": "A@1500",
+      "length_m": 305,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "RAMP_F:APRON_F-A@900",
+      "taxiway": "RAMP_F",
+      "kind": "RAMP",
+      "from_node": "APRON_F",
+      "to_node": "A@900",
+      "length_m": 280,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    },
+    {
+      "segment_id": "RAMP_G:APRON_G-A@300",
+      "taxiway": "RAMP_G",
+      "kind": "RAMP",
+      "from_node": "APRON_G",
+      "to_node": "A@300",
+      "length_m": 280,
+      "bidirectional": true,
+      "name_source_type": "SYNTHETIC",
+      "topology_source_type": "SYNTHETIC"
+    }
+  ],
+  "gates": [
+    {
+      "gate_id": "SIM-A01",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A02",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A03",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A04",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A05",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A06",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A07",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A08",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A09",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A10",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A11",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A12",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A13",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A14",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-A15",
+      "boarding_area": "A",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_A",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B01",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B02",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B03",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B04",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B05",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B06",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B07",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B08",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B09",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B10",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B11",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B12",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B13",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B14",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-B15",
+      "boarding_area": "B",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_B",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C01",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C02",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C03",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C04",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C05",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C06",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C07",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C08",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C09",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C10",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C11",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C12",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C13",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C14",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-C15",
+      "boarding_area": "C",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_C",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D01",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D02",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D03",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D04",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D05",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D06",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D07",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D08",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D09",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D10",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D11",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D12",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D13",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D14",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-D15",
+      "boarding_area": "D",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_D",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E01",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E02",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E03",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E04",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E05",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E06",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E07",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E08",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E09",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E10",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E11",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E12",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E13",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-E14",
+      "boarding_area": "E",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_E",
+      "max_wake_category": "LARGE",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F01",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F02",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F03",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F04",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F05",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F06",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F07",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F08",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F09",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F10",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F11",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F12",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F13",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-F14",
+      "boarding_area": "F",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_F",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G01",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G02",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G03",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G04",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G05",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G06",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G07",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G08",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G09",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G10",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G11",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G12",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G13",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    },
+    {
+      "gate_id": "SIM-G14",
+      "boarding_area": "G",
+      "boarding_area_source_type": "SOURCED",
+      "apron_node": "APRON_G",
+      "max_wake_category": "HEAVY",
+      "source_type": "SYNTHETIC"
+    }
+  ],
+  "coverage_limits": [
+    "Taxiway graph is a bounded abstraction of AL-375: main parallels A, B, C, L, the M apron connector and four runway crossings. Many real connectors and holding bays are omitted.",
+    "Gate identifiers and counts are simulated; AL-375 shows boarding areas, not gates.",
+    "Parallel runway spacing and all coordinates are schematic.",
+    "Layout effective 2026-10-29 is paired with 2015 traffic."
+  ],
+  "connected": true
+}

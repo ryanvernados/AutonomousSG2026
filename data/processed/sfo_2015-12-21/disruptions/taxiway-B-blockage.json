@@ -1,0 +1,47 @@
+{
+  "fixture_id": "taxiway-B-blockage",
+  "disruption": "TAXIWAY_BLOCKED",
+  "events": [
+    {
+      "at_utc": "2015-12-22T04:15:00Z",
+      "instruction": {
+        "instruction_id": "sfo-2015-12-21-2000-full:fixture-2",
+        "instruction_version": 1,
+        "scenario_id": "sfo-2015-12-21-2000-full",
+        "base_state_version": 0,
+        "kind": "TAXIWAY_BLOCKAGE",
+        "resource_id": "B:B@2400-B@2900",
+        "starts_at_utc": "2015-12-22T04:15:00Z",
+        "ends_at_utc": "2015-12-22T05:15:00Z",
+        "flight_id": null,
+        "parameters": {
+          "reason": "SIMULATED"
+        },
+        "entered_by": "fixture:member2"
+      }
+    }
+  ],
+  "expected": {
+    "blocked_segment": "B:B@2400-B@2900",
+    "route_APRON_A_to_HOLD_28L_m": {
+      "unblocked": 1589.0,
+      "blocked": 3149.0
+    },
+    "alternate_route_exists": true,
+    "alternate_route": [
+      "RAMP_A:APRON_A-A@2400",
+      "A-B:A@2400-B@2400",
+      "B:B@2100-B@2400",
+      "E:C@2100-B@2100",
+      "C:C@2100-C@2400",
+      "C:C@2400-C@2900",
+      "C:C@2900-C@3500",
+      "F:C@3500-B@3500",
+      "F:HOLD_28L-B@3500"
+    ]
+  },
+  "scenario_id": "sfo-2015-12-21-2000-full",
+  "seed": 20151221,
+  "source_type": "SYNTHETIC",
+  "note": "Timing and duration are declared simulation inputs, not historical events."
+}

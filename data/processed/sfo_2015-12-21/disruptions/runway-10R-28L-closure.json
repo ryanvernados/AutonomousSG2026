@@ -1,0 +1,37 @@
+{
+  "fixture_id": "runway-10R-28L-closure",
+  "disruption": "RUNWAY_UNAVAILABLE",
+  "events": [
+    {
+      "at_utc": "2015-12-22T04:30:00Z",
+      "instruction": {
+        "instruction_id": "sfo-2015-12-21-2000-full:fixture-1",
+        "instruction_version": 1,
+        "scenario_id": "sfo-2015-12-21-2000-full",
+        "base_state_version": 0,
+        "kind": "RUNWAY_CLOSURE",
+        "resource_id": "10R-28L",
+        "starts_at_utc": "2015-12-22T04:30:00Z",
+        "ends_at_utc": "2015-12-22T05:30:00Z",
+        "flight_id": null,
+        "parameters": {
+          "reason": "SIMULATED"
+        },
+        "entered_by": "fixture:member2"
+      }
+    }
+  ],
+  "expected": {
+    "closed_runway": "10R-28L",
+    "runways_remaining": [
+      "10L-28R",
+      "01R-19L",
+      "01L-19R"
+    ],
+    "scheduled_sfo_movements_in_closure": 61
+  },
+  "scenario_id": "sfo-2015-12-21-2000-full",
+  "seed": 20151221,
+  "source_type": "SYNTHETIC",
+  "note": "Timing and duration are declared simulation inputs, not historical events."
+}
