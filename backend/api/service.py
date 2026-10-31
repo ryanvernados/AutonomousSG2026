@@ -77,7 +77,7 @@ class PlatformService:
                                      event_ids=[event.event_id], snapshot=snap).model_dump(mode="json")
             return self.store.commit(doc, None, [event], actor_id, command.command_id, fp, response, creation=True)
 
-    def _execute(self, session_id, command, actor_id, action, mutate):
+    def _execute(self, session_id, command, actor_id, action, mutate, version_checked=True):
         with self.lock:
             doc = self.read(session_id, actor_id)
             self.require_role(doc.project_id, actor_id, write=True)
@@ -85,7 +85,7 @@ class PlatformService:
             cached = self.store.command(session_id, command.command_id, fp)
             if cached is not None:
                 return cached
-            if command.base_state_version != doc.snapshot.state_version:
+            if version_checked and command.base_state_version != doc.snapshot.state_version:
                 raise PlatformError(409, "STALE_STATE", "Reload the authoritative snapshot",
                                     doc.snapshot.state_version)
             updated, event_type, payload, extra = mutate(doc)
@@ -107,6 +107,12 @@ class PlatformService:
     def clock(self, session_id, command, actor_id):
         def mutate(doc):
             s = doc.snapshot
+            # Moving the clock would cancel the agents' frozen-snapshot negotiation; make that explicit.
+            if command.action in ("RESUME", "STEP", "RESET") and any(
+                    n.status == "RUNNING" for n in doc.negotiations.values()):
+                raise PlatformError(409, "NEGOTIATION_RUNNING",
+                                    "Agents are negotiating; wait for the proposal before moving the clock",
+                                    s.state_version)
             if command.action == "STEP":
                 if s.clock_status != "PAUSED":
                     raise PlatformError(409, "CLOCK_RUNNING", "Pause before stepping", s.state_version)
@@ -124,9 +130,14 @@ class PlatformService:
                 snap = s.model_copy(update={"clock_status": "RUNNING" if command.action == "RESUME" else "PAUSED",
                                             "clock_speed": command.speed or s.clock_speed,
                                             "state_version": s.state_version + 1})
-            updated = self.invalidate(doc).model_copy(update={"snapshot": snap})
+            # A speed change keeps the pending proposal; other clock actions change the operational picture.
+            base = doc if command.action == "SPEED" else self.invalidate(doc)
+            updated = base.model_copy(update={"snapshot": snap})
             return updated, "CLOCK_" + command.action, {"seconds": command.seconds, "speed": snap.clock_speed}, {}
-        return self._execute(session_id, command, actor_id, "clock", mutate)
+        # A running clock bumps state_version every tick, so the controller's view is always one tick
+        # behind. Pause, resume and speed don't depend on that view; STEP and RESET stay version-checked.
+        return self._execute(session_id, command, actor_id, "clock", mutate,
+                             version_checked=command.action not in ("PAUSE", "RESUME", "SPEED"))
 
     def preview(self, session_id, instruction, actor_id):
         doc = self.read(session_id, actor_id)

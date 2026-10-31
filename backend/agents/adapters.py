@@ -128,7 +128,7 @@ class ClaudeAdapter:
         if not os.environ.get("ANTHROPIC_API_KEY"):
             raise ValueError("Set ANTHROPIC_API_KEY for LIVE mode with Claude")
         return cls(anthropic.AsyncAnthropic(max_retries=0),
-                   model=os.environ.get("AIRPORT_MODEL") or "claude-opus-5-5",
+                   model=os.environ.get("AIRPORT_MODEL") or "claude-sonnet-5-5",
                    effort=os.environ.get("AIRPORT_MODEL_EFFORT", "low"))
 
     async def generate(self, request: Json, timeout_seconds: float) -> ModelResponse:

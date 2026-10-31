@@ -139,8 +139,13 @@ class PlatformEngine:
         if arrival and fuel:
             windows.append(window("LATEST_SAFE_ARRIVAL", flight_id, None, None,
                                   str(fuel.value).replace("+00:00", "Z")))
+        mine = by_flight.get(flight_id)
         return {"flight_id": flight_id, "operation": "ARRIVAL" if arrival else "DEPARTURE",
                 "authorized_windows": windows,
+                # The engine's own slot for this flight, so the pilot judges the actual proposal
+                # (e.g. whether a runway closure touches it) instead of guessing.
+                "engine_proposed_slot": {"runway_id": mine.runway_id, "runway_time_utc": iso(mine.runway_time_utc),
+                                         "gate_id": mine.gate_id} if mine else None,
                 "assumptions": {k: v.model_dump(mode="json") for k, v in flight.assumptions.items()}}
 
     async def enumerate_candidates(self, snapshot: Json, constraints: list[Json], limit: int = 100) -> Json:

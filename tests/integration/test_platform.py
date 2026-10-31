@@ -361,3 +361,30 @@ def test_clock_speed_scales_running_ticks(service, session):
     assert (service.get_snapshot(session).sim_time_utc - after.sim_time_utc).total_seconds() == 60
     assert service.get_snapshot(session).clock_status == "RUNNING"
 
+
+def test_pause_and_speed_accepted_while_clock_ticks(service, session):
+    version = service.get_snapshot(session).state_version
+    service.clock(session, ClockCommand(command_id=uid(), base_state_version=version, action="RESUME"), DEMO_USER)
+    seen = service.get_snapshot(session).state_version
+    service.tick()  # the UI's view is now one tick behind
+    service.clock(session, ClockCommand(command_id=uid(), base_state_version=seen, action="SPEED", speed=5),
+                  DEMO_USER)
+    service.clock(session, ClockCommand(command_id=uid(), base_state_version=seen, action="PAUSE"), DEMO_USER)
+    snap = service.get_snapshot(session)
+    assert snap.clock_status == "PAUSED" and snap.clock_speed == 5
+    with pytest.raises(PlatformError) as stale:
+        service.clock(session, ClockCommand(command_id=uid(), base_state_version=seen, action="STEP"), DEMO_USER)
+    assert stale.value.status == 409
+
+
+def test_clock_cannot_move_during_negotiation(service, session):
+    result = service.start_negotiation(session, NegotiationCommand(command_id=uid(), base_state_version=
+        service.get_snapshot(session).state_version), DEMO_USER)
+    version = service.get_snapshot(session).state_version
+    for action in ("RESUME", "STEP", "RESET"):
+        with pytest.raises(PlatformError) as blocked:
+            service.clock(session, ClockCommand(command_id=uid(), base_state_version=version, action=action),
+                          DEMO_USER)
+        assert blocked.value.body.code == "NEGOTIATION_RUNNING"
+    assert service.store.get(session).negotiations[result["negotiation_id"]].status == "RUNNING"
+

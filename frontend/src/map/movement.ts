@@ -20,11 +20,13 @@ export type Phase =
   | "HOLDING"
   | "TAKEOFF";
 
-const APPROACH_SECONDS = 150;
-const APPROACH_METRES = 2500;
+const APPROACH_SECONDS = 240;
+/** Final approach and climb-out drawn beyond each threshold; the map frame includes them. */
+export const FINAL_METRES = 1000;
+const APPROACH_METRES = FINAL_METRES;
 const ROLL_SECONDS = 60;
-const CLIMB_SECONDS = 60;
-const CLIMB_METRES = 1500;
+const CLIMB_SECONDS = 45;
+const CLIMB_METRES = FINAL_METRES;
 const HEADING_LOOKAHEAD_MS = 3000;
 
 const dist = (a: Point, b: Point) => Math.hypot(a[0] - b[0], a[1] - b[1]);
@@ -219,6 +221,8 @@ export interface Inbound {
   runway: string;
   eta: number;
   awaitingPlan: boolean;
+  /** Past its scheduled arrival with no authorized slot: airborne in a holding pattern. */
+  holding: boolean;
 }
 
 /** Arrivals not yet on the surface map, within the next ``minutes``: the controller's inbound queue. */
@@ -228,11 +232,13 @@ export function inboundQueue(snapshot: Snapshot, map: LayoutMap | undefined, t: 
     .flatMap((f) => {
       if (f.destination !== airport) return [];
       const eta = f.plan ? ms(f.plan.runway_time_utc) : ms(f.scheduled_gate_arrival_utc);
-      const onMap = f.plan ? eta - APPROACH_SECONDS * 1000 : eta;
+      const holding = !f.plan && eta <= t;
+      const onMap = f.plan ? eta - APPROACH_SECONDS * 1000 : Infinity;
       if (!(onMap > t) || eta - t > minutes * 60000) return [];
-      return [{ flight: f, runway: f.plan ? runwayDesignator(map, f.plan) : "—", eta, awaitingPlan: !f.plan }];
+      return [{ flight: f, runway: f.plan ? runwayDesignator(map, f.plan) : "—", eta, awaitingPlan: !f.plan, holding }];
     })
-    .sort((a, b) => a.eta - b.eta);
+    // Holding aircraft first (longest-holding at the top), then by expected touchdown.
+    .sort((a, b) => Number(b.holding) - Number(a.holding) || a.eta - b.eta);
 }
 
 /** Runway designator in use: departures roll from the entry end, arrivals land from the far end. */
@@ -300,6 +306,17 @@ export function etaTag(a: Assignment, t: number, map?: LayoutMap): string {
   if (!target || target.at <= t) return "";
   const where = a.operation === "DEPARTURE" ? runwayDesignator(map, a) : `gate ${a.gate_id ?? "—"}`;
   return `${where} ${Math.max(1, Math.round((target.at - t) / 60000))}m`;
+}
+
+/** Runways with an aircraft landing or taking off at time t, with who is using them. */
+export function runwayActivity(shown: ShownAircraft[]): Map<string, string> {
+  const active = new Map<string, string>();
+  for (const s of shown) {
+    if ((s.phase === "LANDING" || s.phase === "TAKEOFF") && s.flight.plan)
+      active.set(s.flight.plan.runway_id,
+        `${s.phase === "LANDING" ? "LANDING" : "DEPARTING"} ${s.flight.airline}${s.flight.flight_number}`);
+  }
+  return active;
 }
 
 /** Taxiway names along a path, without runway links, stands or repeated names. */

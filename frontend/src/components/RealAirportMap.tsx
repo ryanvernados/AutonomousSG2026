@@ -7,11 +7,13 @@ import {
   aircraftPositions,
   countdown,
   etaTag,
+  FINAL_METRES,
   inboundQueue,
   nextMilestone,
   occupiedGates,
   parkedAircraft,
   routeNames,
+  runwayActivity,
   runwayDesignator,
   pathPoints,
   type LayoutMap,
@@ -78,16 +80,32 @@ export default function RealAirportMap({
     Date.parse(snapshot.sim_time_utc) +
     (snapshot.clock_running ? Math.min(1000, Math.max(0, tick - received.current)) * rate : 0);
 
+  // Extended centrelines beyond each threshold: where arrivals fly final and departures climb out.
+  const extensions = useMemo(
+    () =>
+      map.runways.flatMap((r) => {
+        const [a, b] = Object.values(r.ends);
+        if (!a || !b) return [];
+        const len = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
+        const ux = (b[0] - a[0]) / len, uy = (b[1] - a[1]) / len;
+        return [
+          [a, [a[0] - ux * FINAL_METRES, a[1] - uy * FINAL_METRES]],
+          [b, [b[0] + ux * FINAL_METRES, b[1] + uy * FINAL_METRES]],
+        ] as [Point, Point][];
+      }),
+    [map],
+  );
   const bounds = useMemo(() => {
     const pts: Point[] = [
       ...map.runways.flatMap((r) => Object.values(r.ends)),
+      ...extensions.map(([, far]) => far),
       ...Object.values(map.segments).flat(),
       ...Object.values(map.gates),
     ];
     const xs = pts.map((p) => p[0]),
       ys = pts.map((p) => p[1]);
     return { minX: Math.min(...xs) - 150, maxX: Math.max(...xs) + 150, minY: Math.min(...ys) - 150, maxY: Math.max(...ys) + 150 };
-  }, [map]);
+  }, [map, extensions]);
   const height = Math.max(320, Math.round(width * 0.62));
   const base = Math.min(width / (bounds.maxX - bounds.minX), height / (bounds.maxY - bounds.minY));
   const s = base * zoom;
@@ -105,6 +123,19 @@ export default function RealAirportMap({
   const aircraft = aircraftPositions(snapshot, map, now);
   const parked = parkedAircraft(snapshot, map, now, aircraft);
   const inbound = inboundQueue(snapshot, map, now);
+  const runwayUse = runwayActivity(aircraft);
+  // Arrivals without an authorized slot orbit holding fixes at the outer ends of the finals.
+  const holdingFixes = extensions.map(([, far]) => far);
+  const holders = inbound.filter((i) => i.holding);
+  const HOLD_RADIUS = 250;
+  const holdingPositions = holders.map((h, i) => {
+    const fix = holdingFixes[i % Math.max(1, holdingFixes.length)] ?? [0, 0];
+    const lap = 4 * 60_000; // one simulated orbit every 4 minutes
+    const angle = ((now % lap) / lap) * 2 * Math.PI + (i * 2 * Math.PI) / Math.max(1, holders.length);
+    const at: Point = [fix[0] + HOLD_RADIUS * Math.cos(angle), fix[1] + HOLD_RADIUS * Math.sin(angle)];
+    const ahead: Point = [fix[0] + HOLD_RADIUS * Math.cos(angle + 0.2), fix[1] + HOLD_RADIUS * Math.sin(angle + 0.2)];
+    return { flight: h.flight, at, ahead, since: h.eta };
+  });
   const selectedFlight = snapshot.flights.find((f) => f.flight_id === selected);
   const route = selectedFlight?.plan ? pathPoints(map, selectedFlight.plan) : [];
   const selectedPos = aircraft.find((a) => a.flight.flight_id === selected);
@@ -142,11 +173,19 @@ export default function RealAirportMap({
               stroke={active(id) ? "#c2412d" : id.startsWith("STAND:") ? "#cfd8cf" : "#b9ae8f"}
               strokeWidth={active(id) ? 4 : id.startsWith("STAND:") ? 1 : Math.max(2, 18 * s)} />
           ))}
+          {extensions.map(([near, far], i) => (
+            <Line key={"final" + i} points={flat([near, far])} stroke="#9fb3c4" strokeWidth={1} dash={[3, 6]} />
+          ))}
           {map.runways.map((r) => {
             const ends = Object.entries(r.ends);
             const closed = active(r.runway_id);
+            const inUse = runwayUse.get(r.runway_id);
             return (
               <Group key={r.runway_id}>
+                {inUse && !closed && (
+                  <Line points={flat(ends.map(([, p]) => p))} stroke="#e7b75f" opacity={0.85}
+                    strokeWidth={Math.max(6, 60 * s) + 8} lineCap="butt" />
+                )}
                 <Line points={flat(ends.map(([, p]) => p))} stroke={closed ? "#c2412d" : "#3d4a44"}
                   strokeWidth={Math.max(6, 60 * s)} lineCap="butt" />
                 <Line points={flat(ends.map(([, p]) => p))} stroke="#f4f1e8" strokeWidth={1} dash={[8, 8]} />
@@ -154,6 +193,10 @@ export default function RealAirportMap({
                   const [x, y] = px(p);
                   return <Text key={end} x={x - 14} y={y - 20} text={end} fontSize={11} fontStyle="bold" fill={closed ? "#c2412d" : "#2c3a33"} />;
                 })}
+                {inUse && !closed && (() => {
+                  const [x, y] = px([(ends[0][1][0] + ends[1][1][0]) / 2, (ends[0][1][1] + ends[1][1][1]) / 2]);
+                  return <Text x={x + 8} y={y - 22} text={inUse} fontSize={11} fontStyle="bold" fill="#9c6a12" />;
+                })()}
                 {closed && (() => {
                   const [x, y] = px([(ends[0][1][0] + ends[1][1][0]) / 2, (ends[0][1][1] + ends[1][1][1]) / 2]);
                   return <Text x={x - 30} y={y + 8} text="CLOSED" fontSize={11} fontStyle="bold" fill="#c2412d" />;
@@ -222,6 +265,27 @@ export default function RealAirportMap({
               </Group>
             );
           })}
+          {holdingFixes.map((fix, i) => {
+            const [x, y] = px(fix);
+            return holders.length > 0 && (
+              <Circle key={"fix" + i} x={x} y={y} radius={HOLD_RADIUS * s} stroke="#9fb3c4" strokeWidth={1} dash={[4, 4]} />
+            );
+          })}
+          {holdingPositions.map(({ flight, at, ahead, since }) => {
+            const [x, y] = px(at), [ax, ay] = px(ahead);
+            const heading = (Math.atan2(ax - x, -(ay - y)) * 180) / Math.PI;
+            const isSelected = flight.flight_id === selected;
+            return (
+              <Group key={"hold:" + flight.flight_id} x={x} y={y}
+                onClick={() => onSelect(flight.flight_id)} onTap={() => onSelect(flight.flight_id)}>
+                {isSelected && <Circle radius={11} stroke="#2e8b57" strokeWidth={2} />}
+                <Line points={PLANE} closed rotation={heading} fill="#7b5ea7" stroke="#ffffff" strokeWidth={0.6}
+                  scaleX={planeScale} scaleY={planeScale} />
+                <Text x={8} y={-6} fontSize={10} fill="#4b3a6b"
+                  text={`${flight.airline}${flight.flight_number} · HOLD ${Math.max(0, Math.round((now - since) / 60000))}m`} />
+              </Group>
+            );
+          })}
           {aircraft.map(({ flight, at, phase, ahead }) => {
             const [x, y] = px(at);
             const isSelected = flight.flight_id === selected;
@@ -255,11 +319,18 @@ export default function RealAirportMap({
                 {i.flight.flight_number}
               </span>
               <span>{i.flight.origin}</span>
-              <span>{i.awaitingPlan ? "sched" : i.runway}</span>
-              <span className="eta">{countdown(i.eta, now).replace("in ", "")}</span>
+              <span>{i.awaitingPlan ? "no slot" : i.runway}</span>
+              <span className={i.holding ? "eta holding" : "eta"}>
+                {i.holding ? `HOLD ${Math.round((now - i.eta) / 60000)}m` : countdown(i.eta, now).replace("in ", "")}
+              </span>
             </button>
           ))}
           {inbound.length > 6 && <small>+{inbound.length - 6} more in 45 min</small>}
+          {holders.length > 0 && (
+            <small className="holding-note">
+              {holders.length} holding: no approved plan. Request a plan and approve it to land them.
+            </small>
+          )}
         </div>
       )}
       {selectedFlight?.plan && (
@@ -305,9 +376,10 @@ export default function RealAirportMap({
         <span style={{ color: PHASE_COLOR.TAXI_IN }}>✈ Arrival</span>{" "}
         <span style={{ color: PHASE_COLOR.TAXI_OUT }}>✈ Departure</span>{" "}
         <span style={{ color: PHASE_COLOR.AT_GATE }}>✈ At gate</span>{" "}
-        <span style={{ color: PARKED_COLOR }}>✈ Parked</span>
+        <span style={{ color: PARKED_COLOR }}>✈ Parked</span>{" "}
+        <span style={{ color: "#7b5ea7" }}>✈ Holding</span>
         <span>■ Gate occupied</span> <span style={{ color: PHASE_COLOR.TAXI_OUT }}>◯ Pushback ≤5 min</span>
-        <span>┅ Selected route</span> <span style={{ color: "#c2412d" }}>■ Closed</span>
+        <span>┅ Selected route</span> <span style={{ color: "#c79a3b" }}>▬ Runway in use</span> <span style={{ color: "#c2412d" }}>■ Closed</span>
       </div>
     </div>
   );

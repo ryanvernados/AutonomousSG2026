@@ -4,8 +4,9 @@
 #
 # Loopback demo only: AUTH_MODE=demo with local SQLite. Settings are passed as process
 # environment variables, which override .env, so your Supabase configuration is untouched.
-# Agents run in MOCK model mode unless you pass -ModelMode live (needs AIRPORT_MODEL and
-# OPENAI_API_KEY in this shell). Opens two windows: API on :8000 and UI on :5173.
+# Agents run in MOCK model mode unless you pass -ModelMode live: set ANTHROPIC_API_KEY in this
+# shell for Claude (default model claude-sonnet-5-5; override with AIRPORT_MODEL), or
+# OPENAI_API_KEY and AIRPORT_MODEL for OpenAI. Opens two windows: API on :8000 and UI on :5173.
 param(
     [ValidateSet('mock', 'live')][string]$ModelMode = 'mock',
     [string]$DemoToken = 'local-integration-token',
@@ -17,6 +18,9 @@ $root = $PSScriptRoot
 
 # A server left over from an earlier run (e.g. the API-only backend.api.app, which has no agents)
 # would answer on these ports instead of the integrated stack. Stop it if it belongs to this repo.
+if ($ModelMode -eq 'live' -and -not ($env:ANTHROPIC_API_KEY -or $env:OPENAI_API_KEY)) {
+    throw 'Live mode needs ANTHROPIC_API_KEY (Claude) or OPENAI_API_KEY + AIRPORT_MODEL in this shell.'
+}
 foreach ($port in 8000, 5173) {
     $owners = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty OwningProcess -Unique

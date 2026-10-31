@@ -2066,3 +2066,13 @@ p.check-failed {
     display: none;
   }
 }
+.map-inbound .eta.holding {
+  color: #7b5ea7;
+  font-weight: 600;
+}
+.map-inbound .holding-note {
+  display: block;
+  margin-top: 4px;
+  max-width: 220px;
+  color: #7b5ea7;
+}

@@ -385,6 +385,7 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
   const locked =
     busy || effectiveConnection !== "connected" || tab === "replay";
   const n = snapshot.pending_negotiation;
+  const negotiating = n?.status === "NEGOTIATING";
   const scenario = scenarios.find((s) => s.scenario_id === chosen);
   const conflicts = snapshot.resource_reservations.filter((r) =>
     snapshot.active_instructions.some(
@@ -555,7 +556,8 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
                     ? "Pause simulation"
                     : "Resume simulation"
                 }
-                disabled={locked}
+                disabled={locked || (!snapshot.clock_running && negotiating)}
+                title={negotiating ? "Agents are negotiating; the clock stays paused" : undefined}
                 onClick={() =>
                   act("clock", {
                     action: snapshot.clock_running ? "PAUSE" : "RESUME",
@@ -589,14 +591,14 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
               </label>
               <button
                 className="button small"
-                disabled={locked || snapshot.clock_running}
+                disabled={locked || snapshot.clock_running || negotiating}
                 onClick={() => act("clock", { action: "STEP", seconds: 60 })}
               >
                 <SkipForward size={14} /> +1 min
               </button>
               <button
                 className="button small"
-                disabled={locked || snapshot.clock_running}
+                disabled={locked || snapshot.clock_running || negotiating}
                 onClick={() => act("clock", { action: "STEP", seconds: 600 })}
               >
                 <SkipForward size={14} /> +10 min
@@ -604,7 +606,7 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
               <button
                 className="icon-button"
                 aria-label="Reset simulation"
-                disabled={locked}
+                disabled={locked || negotiating}
                 onClick={() => {
                   if (
                     window.confirm(
