@@ -11,4 +11,7 @@ dist/
 .coverage
 htmlcov/
 
-dataset/
+# Raw Kaggle files stay outside version control (Member 2)
+data/raw/
+*.csv
+!backend/**/fixtures/*.csv

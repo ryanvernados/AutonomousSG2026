@@ -1,0 +1,104 @@
+{
+  "generated_by": "python -m backend.data.build",
+  "source_links": {
+    "dataset": "https://www.kaggle.com/datasets/usdot/flight-delays",
+    "field_definitions": "https://www.transtats.bts.gov/Fields.asp?gnoyr_VQ=FGJ",
+    "bts_master_coordinate": "BTS TranStats Aviation Support Tables, Master Coordinate (https://www.transtats.bts.gov/)"
+  },
+  "files": [
+    {
+      "file": "flights.csv",
+      "sha256": "afa4e42188b113dd69427a3fbd00a4b6979c6235c866f963c2899d18a3403a83",
+      "bytes": 592406591,
+      "header": [
+        "YEAR",
+        "MONTH",
+        "DAY",
+        "DAY_OF_WEEK",
+        "AIRLINE",
+        "FLIGHT_NUMBER",
+        "TAIL_NUMBER",
+        "ORIGIN_AIRPORT",
+        "DESTINATION_AIRPORT",
+        "SCHEDULED_DEPARTURE",
+        "DEPARTURE_TIME",
+        "DEPARTURE_DELAY",
+        "TAXI_OUT",
+        "WHEELS_OFF",
+        "SCHEDULED_TIME",
+        "ELAPSED_TIME",
+        "AIR_TIME",
+        "DISTANCE",
+        "WHEELS_ON",
+        "TAXI_IN",
+        "SCHEDULED_ARRIVAL",
+        "ARRIVAL_TIME",
+        "ARRIVAL_DELAY",
+        "DIVERTED",
+        "CANCELLED",
+        "CANCELLATION_REASON",
+        "AIR_SYSTEM_DELAY",
+        "SECURITY_DELAY",
+        "AIRLINE_DELAY",
+        "LATE_AIRCRAFT_DELAY",
+        "WEATHER_DELAY"
+      ],
+      "data_rows": 5819079
+    },
+    {
+      "file": "airlines.csv",
+      "sha256": "ec54f453260c2a46fc76d497ab0eb0a4c13724b566fba8a7ce3bb8ad712acca3",
+      "bytes": 359,
+      "header": [
+        "IATA_CODE",
+        "AIRLINE"
+      ],
+      "data_rows": 14
+    },
+    {
+      "file": "airports.csv",
+      "sha256": "23c4cea98c318225bd923b2068ead8af089845071f79fd9ea0037ba6a61cd4e2",
+      "bytes": 23867,
+      "header": [
+        "IATA_CODE",
+        "AIRPORT",
+        "CITY",
+        "STATE",
+        "COUNTRY",
+        "LATITUDE",
+        "LONGITUDE"
+      ],
+      "data_rows": 322
+    }
+  ],
+  "units": {
+    "clock_fields": "Local HHMM at the origin (departure fields) or destination (arrival fields); 2400 is midnight ending the day",
+    "durations_and_delays": "minutes",
+    "distance": "statute miles",
+    "normalized_timestamps": "UTC, ISO 8601 with Z suffix"
+  },
+  "identifiers": {
+    "flight_id": "first 12 hex chars of flights.csv sha256, colon, 1-based data row number (header excluded)",
+    "source_row_id": "flights.csv:<1-based data row number>"
+  },
+  "timezone_assignment": {
+    "source_type": "SOURCED_UNREVIEWED",
+    "zone_rules": "IANA tz database via the pinned tzdata package",
+    "assignment": "State default plus per-airport overrides in backend/data/timezones.py"
+  },
+  "selection_parameters": {
+    "airport_iata": "SFO",
+    "airport_timezone": "America/Los_Angeles",
+    "qualify_rule": "WEATHER_DELAY > 15 min or LATE_AIRCRAFT_DELAY > 20 min",
+    "window_minutes": 120,
+    "init_buffer_minutes": 60,
+    "recovery_buffer_minutes": 60,
+    "window_start_local_hours": [
+      5,
+      21
+    ],
+    "dev_fixture_size": 30,
+    "time_consistency_tolerance_minutes": 5,
+    "source_type": "SYNTHETIC"
+  }
+}

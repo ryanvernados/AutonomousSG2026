@@ -1,0 +1,31 @@
+{
+  "fixture_id": "pushback-tug-failure",
+  "disruption": "GROUND_EQUIPMENT_FAILURE",
+  "events": [
+    {
+      "at_utc": "2015-12-22T04:00:00Z",
+      "instruction": {
+        "instruction_id": "sfo-2015-12-21-2000-full:fixture-3",
+        "instruction_version": 0,
+        "scenario_id": "sfo-2015-12-21-2000-full",
+        "base_state_version": 0,
+        "kind": "EQUIPMENT_FAILURE",
+        "resource_id": "EQ-PUSHBACK-TUGS",
+        "starts_at_utc": "2015-12-22T04:00:00Z",
+        "ends_at_utc": "2015-12-22T04:30:00Z",
+        "flight_id": null,
+        "parameters": {
+          "reason": "SIMULATED"
+        },
+        "entered_by": ""
+      }
+    }
+  ],
+  "expected": {
+    "scheduled_departures_in_outage": 17
+  },
+  "scenario_id": "sfo-2015-12-21-2000-full",
+  "seed": 20151221,
+  "source_type": "SYNTHETIC",
+  "note": "Timing and duration are declared simulation inputs, not historical events."
+}

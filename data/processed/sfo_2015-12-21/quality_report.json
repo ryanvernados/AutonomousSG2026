@@ -1,0 +1,139 @@
+{
+  "source_flights_sha256": "afa4e42188b113dd69427a3fbd00a4b6979c6235c866f963c2899d18a3403a83",
+  "dataset": {
+    "data_rows": 5819079,
+    "numeric_airport_id_rows_by_month": {
+      "10": 486165
+    },
+    "numeric_airport_ids_resolved": false
+  },
+  "sfo": {
+    "identified_rows": 295974,
+    "identified_rows_by_month": {
+      "1": 25774,
+      "2": 23124,
+      "3": 26853,
+      "4": 26034,
+      "5": 27063,
+      "6": 27690,
+      "7": 28879,
+      "8": 29195,
+      "9": 26644,
+      "11": 27064,
+      "12": 27654
+    },
+    "flag_counts": {
+      "OVERNIGHT_SCHEDULED": 19996,
+      "CANCELLED": 4453,
+      "TAIL_NUMBER_MISSING": 1079,
+      "DIVERTED": 621,
+      "ARRIVAL_TIME:HHMM_2400": 150,
+      "WHEELS_ON:HHMM_2400": 105,
+      "WHEELS_OFF:HHMM_2400": 46,
+      "DEPARTURE_TIME:HHMM_2400": 39,
+      "SCHEDULED_ARRIVAL:INCONSISTENT_WITH_DURATIONS": 2,
+      "WHEELS_OFF:LOCAL_TIME_AMBIGUOUS_DST": 2,
+      "ARRIVAL_TIME:INCONSISTENT_WITH_DURATIONS": 1,
+      "WHEELS_ON:INCONSISTENT_WITH_DURATIONS": 1
+    },
+    "unresolved_rows": 0,
+    "unresolved_examples": []
+  },
+  "airports_csv_issues": [
+    {
+      "airport": "ECP",
+      "issue": "COORDINATES_MISSING"
+    },
+    {
+      "airport": "GUM",
+      "issue": "LONGITUDE_SIGN_SUSPECT",
+      "detail": "Guam lies east of 180; airports.csv gives a west longitude"
+    },
+    {
+      "airport": "PBG",
+      "issue": "COORDINATES_MISSING"
+    },
+    {
+      "airport": "UST",
+      "issue": "COORDINATES_MISSING"
+    }
+  ],
+  "selected_slice": {
+    "airport_iata": "SFO",
+    "timezone": "America/Los_Angeles",
+    "local_date": "2015-12-21",
+    "start_utc": "2015-12-22T04:00:00Z",
+    "end_utc": "2015-12-22T06:00:00Z",
+    "buffer_start_utc": "2015-12-22T03:00:00Z",
+    "buffer_end_utc": "2015-12-22T07:00:00Z",
+    "day_selection": {
+      "rule": "Most qualifying SFO rows on the local SFO day; ties by total movements, then earliest date",
+      "excluded_months": [
+        10
+      ],
+      "candidate_days": 334,
+      "days_with_qualifying_rows": 334,
+      "top_days": [
+        {
+          "date": "2015-12-21",
+          "qualifying_rows": 293,
+          "movements": 970
+        },
+        {
+          "date": "2015-07-08",
+          "qualifying_rows": 270,
+          "movements": 963
+        },
+        {
+          "date": "2015-12-22",
+          "qualifying_rows": 259,
+          "movements": 967
+        },
+        {
+          "date": "2015-12-18",
+          "qualifying_rows": 233,
+          "movements": 978
+        },
+        {
+          "date": "2015-03-02",
+          "qualifying_rows": 213,
+          "movements": 883
+        }
+      ]
+    },
+    "window_selection": {
+      "rule": "Whole-hour local start with the most qualifying SFO movements; ties by movements, then earliest",
+      "start_local_hour": 20,
+      "qualifying_rows_in_window": 48,
+      "movements_in_window": 128
+    },
+    "flights": 218,
+    "by_segment": {
+      "INIT_BUFFER": 43,
+      "CORE": 128,
+      "RECOVERY_BUFFER": 47
+    },
+    "arrivals": 130,
+    "departures": 88,
+    "cancelled": 35,
+    "diverted": 2,
+    "qualifying_rows": 77,
+    "flag_counts": {
+      "CANCELLED": 35,
+      "OVERNIGHT_SCHEDULED": 35,
+      "DIVERTED": 2,
+      "TAIL_NUMBER_MISSING": 1,
+      "ARRIVAL_TIME:HHMM_2400": 1,
+      "WHEELS_ON:HHMM_2400": 1,
+      "WHEELS_OFF:HHMM_2400": 1
+    },
+    "dev_fixture_flights": 30
+  },
+  "coverage_limits": [
+    "BTS on-time data covers reporting carriers' scheduled domestic passenger legs only; international, cargo, general aviation and non-reporting regional traffic at SFO are absent.",
+    "Clock fields have one-minute resolution and no seconds.",
+    "No radar positions, runway, taxiway, gate or aircraft type are in the source rows.",
+    "October 2015 rows use numeric BTS airport IDs; without the BTS lookup they cannot be matched to SFO and October is excluded from day selection.",
+    "Time zone assignment per airport is curated and awaits review (see source_manifest.json)."
+  ]
+}
