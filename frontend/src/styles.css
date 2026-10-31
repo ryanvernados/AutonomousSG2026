@@ -1890,3 +1890,44 @@ footer span:first-child {
     order: -1;
   }
 }
+
+/* Ground control list (live scenarios with authorized plans) */
+.ground-panel .ground-empty {
+  margin: 0;
+  padding: 4px 22px 20px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6f8573;
+}
+.ground-table-wrap {
+  overflow-x: auto;
+  padding: 0 14px 16px;
+}
+.ground-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.ground-table th,
+.ground-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid #e3e9e1;
+  text-align: left;
+  white-space: nowrap;
+}
+.ground-table thead th {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #7f9684;
+  font-weight: 600;
+}
+.ground-table tbody tr {
+  cursor: pointer;
+}
+.ground-table tbody tr.active {
+  background: #f3f7ef;
+}
+.ground-table tbody tr.selected {
+  outline: 2px solid #2e8b57;
+  outline-offset: -2px;
+}

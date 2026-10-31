@@ -29,7 +29,7 @@ from datetime import timedelta
 from backend.agents.adapters import MockAdapter, ModelAdapter
 from backend.api.coordinator import CoordinationOutcome
 from backend.contracts import AgentMessage, Plan, Snapshot, plan_hash
-from backend.engine.planning import baseline_plan, compute_impact, search_candidates, select_fallback
+from backend.engine.planning import compute_impact, search_candidates, select_fallback
 from backend.engine.validation import validate_plan
 
 from .coordinator import Budgets, Coordinator
@@ -61,8 +61,8 @@ class PlatformEngine:
 
     def __init__(self, snapshot: Snapshot):
         self.snapshot = snapshot
-        self._preview: Plan | None = None
-        self._preview_done = False
+        self._search: tuple[list[Plan], dict] | None = None
+        self._search_lock = asyncio.Lock()
 
     def _json_snapshot(self) -> Json:
         data = self.snapshot.model_dump(mode="json")
@@ -78,12 +78,17 @@ class PlatformEngine:
         # Member 1 already passes the whole unfinished slice as the affected set.
         return []
 
+    async def _search_once(self) -> tuple[list[Plan], dict]:
+        # One deterministic search per frozen snapshot, shared by the agents' authorized windows
+        # and the candidate batch, so the negotiation pays for the engine search only once.
+        async with self._search_lock:
+            if self._search is None:
+                self._search = await asyncio.to_thread(search_candidates, self.snapshot, None, 100)
+        return self._search
+
     async def _preview_plan(self) -> Plan | None:
-        if not self._preview_done:
-            plans, _ = await asyncio.to_thread(search_candidates, self.snapshot, None, 100)
-            self._preview = plans[0] if plans else None
-            self._preview_done = True
-        return self._preview
+        plans, _ = await self._search_once()
+        return plans[0] if plans else None
 
     async def domain_view(self, snapshot: Json, role: str, flight_id: str | None,
                           affected_ids: list[str]) -> Json:
@@ -123,7 +128,7 @@ class PlatformEngine:
                 "assumptions": {k: v.model_dump(mode="json") for k, v in flight.assumptions.items()}}
 
     async def enumerate_candidates(self, snapshot: Json, constraints: list[Json], limit: int = 100) -> Json:
-        plans, metadata = await asyncio.to_thread(search_candidates, self.snapshot, None, limit)
+        plans, metadata = await self._search_once()
         out = []
         for p in plans[:limit]:
             p = p.model_copy(update={"source": "CONSENSUS"})
@@ -173,11 +178,11 @@ class PlatformCoordinator:
     async def coordinate(self, snapshot: Snapshot, affected_ids: list[str],
                          negotiation_id: str) -> CoordinationOutcome:
         engine = PlatformEngine(snapshot)
-        baseline = await asyncio.to_thread(baseline_plan, snapshot)
+        # No separate baseline search inside the negotiation deadline: Member 1 exposes the FCFS
+        # baseline on GET /sessions/{id}/baseline, and impact is ranked on Impact.score.
         result = await Coordinator(engine, self.model, MemoryPersistence(), self.budgets).run(
             snapshot.scenario_id, list(affected_ids), instruction_version=snapshot.instruction_version,
-            objective=OBJECTIVE, baseline_plan=baseline.plan.model_dump(mode="json") if baseline.plan else None,
-            negotiation_id=negotiation_id)
+            objective=OBJECTIVE, baseline_plan=None, negotiation_id=negotiation_id)
         self.last_trace = result.get("trace", [])
         messages = []
         for record in self.last_trace:

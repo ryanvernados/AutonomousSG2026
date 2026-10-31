@@ -1,5 +1,5 @@
 """Bounded constructive search. Finding no candidate is not an infeasibility proof."""
-from collections import Counter
+from collections import Counter, defaultdict, deque
 from datetime import datetime, timedelta
 
 from backend.contracts import (
@@ -71,19 +71,24 @@ def compute_impact(snapshot: Snapshot, plan: Plan, baseline_plan: Plan | None = 
 
 
 def _paths(snapshot, start, end, max_paths=4):
-    edges = [r for r in snapshot.infrastructure.resources if r.kind == "TAXIWAY"]
-    queue = [(start, [], {start})]
+    # Adjacency built once per call in resource-ID order, so expansion order (and therefore the
+    # routes found) matches scanning every sorted edge at each step.
+    adjacency = defaultdict(list)
+    for edge in sorted((r for r in snapshot.infrastructure.resources if r.kind == "TAXIWAY"),
+                       key=lambda x: x.resource_id):
+        adjacency[edge.node_from].append((edge.resource_id, edge.node_to))
+        if edge.bidirectional and edge.node_to != edge.node_from:
+            adjacency[edge.node_to].append((edge.resource_id, edge.node_from))
+    queue = deque([(start, [], {start})])
     found = []
     while queue and len(found) < max_paths:
-        node, path, seen = queue.pop(0)
+        node, path, seen = queue.popleft()
         if node == end:
             found.append(path)
             continue
-        for edge in sorted(edges, key=lambda x: x.resource_id):
-            nxt = edge.node_to if edge.node_from == node else (
-                edge.node_from if edge.bidirectional and edge.node_to == node else None)
+        for edge_id, nxt in adjacency.get(node, ()):
             if nxt and nxt not in seen:
-                queue.append((nxt, path + [edge.resource_id], seen | {nxt}))
+                queue.append((nxt, path + [edge_id], seen | {nxt}))
     return found
 
 
@@ -119,11 +124,19 @@ def _assignment(snapshot, flight, runway, route, slot):
                                                        starts_at_utc=taxi_start, ends_at_utc=taxi_end)])
 
 
-def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseline=False):
-    """Budget counts every placement validation, not only successful full schedules.
+PLACEMENTS_PER_FLIGHT = 1
 
-    constraints is a typed Instruction list from Member 3's tools, never arbitrary executable input.
-    Two stable orderings are explored within one shared budget. The search is non-exhaustive.
+
+def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseline=False):
+    """Bounded search with two separate limits.
+
+    ``limit`` (at most rules_config.search_limit and 100) caps complete candidate plans, as the
+    shared specification requires. Placement work has its own deterministic budget of
+    PLACEMENTS_PER_FLIGHT x plan limit x flights to place, counting every placement validation,
+    so a full traffic slice can be placed at all. No wall-clock limit is used, so baseline and
+    fallback runs stay reproducible. constraints is a typed Instruction list from Member 3's
+    tools, never arbitrary executable input. Two stable orderings share the placement budget.
+    The search is non-exhaustive.
     """
     if not all((snapshot.infrastructure, snapshot.rules_config, snapshot.start_utc,
                 snapshot.end_utc, snapshot.airport_iata)):
@@ -132,7 +145,7 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
                     "rejection_counts": {"snapshot.context_unknown": 1}}
     if constraints:
         snapshot = snapshot.model_copy(update={"active_instructions": snapshot.active_instructions + list(constraints)})
-    budget = min(max(int(limit), 1), snapshot.rules_config.search_limit, 100)
+    plan_limit = min(max(int(limit), 1), snapshot.rules_config.search_limit, 100)
     attempted = 0
     rejected = Counter()
     plans = []
@@ -140,6 +153,7 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
     flights = [f for f in snapshot.flights if f.state not in {"DEPARTED", "COMPLETED"}
                and not any(r.flight_id == f.flight_id and r.starts_at_utc < snapshot.sim_time_utc
                            and r.ends_at_utc > snapshot.sim_time_utc for r in snapshot.resource_reservations)]
+    budget = max(1, int(PLACEMENTS_PER_FLIGHT * plan_limit * max(1, len(flights))))
 
     def scheduled(f):
         return f.scheduled_gate_arrival_utc if f.destination == snapshot.airport_iata else f.scheduled_gate_departure_utc
@@ -189,11 +203,13 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
                         base_state_version=snapshot.state_version, instruction_version=snapshot.instruction_version,
                         assignments=assignments + [candidate], source="BASELINE" if baseline else "FALLBACK",
                         expires_at_utc=utcnow() + timedelta(seconds=snapshot.rules_config.proposal_validity_seconds)))
-                    checks = validate_plan(snapshot, plan)
-                    if feasible(checks):
+                    # Failures only: accepted exactly when no hard check is FAIL or UNKNOWN,
+                    # the same decision feasible() makes on the full check list.
+                    failed = [c for c in validate_plan(snapshot, plan, include_passes=False) if c.severity == "HARD"]
+                    if not failed:
                         chosen = candidate
                         break
-                    rejected.update(c.constraint_id for c in checks if c.severity == "HARD" and c.status != "PASS")
+                    rejected.update(c.constraint_id for c in failed)
                 if chosen:
                     break
                 offset += snapshot.rules_config.search_step_seconds
@@ -206,10 +222,11 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
                 assignments=assignments, source="BASELINE" if baseline else "FALLBACK",
                 expires_at_utc=utcnow() + timedelta(seconds=snapshot.rules_config.proposal_validity_seconds)))
             plan = seal_plan(plan.model_copy(update={"impact": compute_impact(snapshot, plan)}))
-            if feasible(validate_plan(snapshot, plan)):
+            if feasible(validate_plan(snapshot, plan)) and len(plans) < plan_limit:
                 plans.append(plan)
-    return plans, {"attempted_placements": attempted, "limit": budget, "exhaustive": False,
-                   "limit_reached": attempted >= budget, "rejection_counts": dict(rejected),
+    return plans, {"attempted_placements": attempted, "limit": plan_limit, "placement_budget": budget,
+                   "exhaustive": False, "limit_reached": attempted >= budget,
+                   "rejection_counts": dict(rejected),
                    "objective_weights": snapshot.rules_config.objective_weights,
                    "policy": "FUEL_URGENT_THEN_FCFS" if baseline else "BOUNDED_STABLE_SEARCH"}
 

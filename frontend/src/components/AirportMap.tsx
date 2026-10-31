@@ -10,7 +10,20 @@ import {
   Path,
 } from "react-konva";
 import type { Snapshot } from "../api/types";
-export default function AirportMap({
+import type { LiveSnapshot } from "../api/canonical";
+import RealAirportMap from "./RealAirportMap";
+
+// Scenarios that carry layout geometry get the real map; others keep the illustrative schematic.
+export default function AirportMap(props: {
+  snapshot: Snapshot;
+  selected: string;
+  onSelect: (id: string) => void;
+}) {
+  const layout = (props.snapshot as LiveSnapshot).layout_map;
+  return layout ? <RealAirportMap {...props} map={layout} /> : <IllustrativeMap {...props} />;
+}
+
+function IllustrativeMap({
   snapshot,
   selected,
   onSelect,

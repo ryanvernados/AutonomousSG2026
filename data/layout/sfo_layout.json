@@ -150,7 +150,7 @@
       ],
       "relationship": "INTERSECTING",
       "source_type": "SOURCED",
-      "rule": "Not independent capacity; occupancy of one blocks the crossing on the other"
+      "rule": "Not independent capacity: occupancy may not overlap (intersecting_runway_ids); wake pairs do not apply across the crossing"
     },
     {
       "runways": [
@@ -159,7 +159,7 @@
       ],
       "relationship": "INTERSECTING",
       "source_type": "SOURCED",
-      "rule": "Not independent capacity; occupancy of one blocks the crossing on the other"
+      "rule": "Not independent capacity: occupancy may not overlap (intersecting_runway_ids); wake pairs do not apply across the crossing"
     },
     {
       "runways": [
@@ -168,7 +168,7 @@
       ],
       "relationship": "INTERSECTING",
       "source_type": "SOURCED",
-      "rule": "Not independent capacity; occupancy of one blocks the crossing on the other"
+      "rule": "Not independent capacity: occupancy may not overlap (intersecting_runway_ids); wake pairs do not apply across the crossing"
     },
     {
       "runways": [
@@ -177,7 +177,7 @@
       ],
       "relationship": "INTERSECTING",
       "source_type": "SOURCED",
-      "rule": "Not independent capacity; occupancy of one blocks the crossing on the other"
+      "rule": "Not independent capacity: occupancy may not overlap (intersecting_runway_ids); wake pairs do not apply across the crossing"
     },
     {
       "runways": [
@@ -188,7 +188,7 @@
       "source_type": "SOURCED",
       "spacing_m": 230,
       "spacing_source_type": "SYNTHETIC",
-      "rule": "Treated as dependent capacity; separation values belong to Member 1 rules_config"
+      "rule": "Dependent capacity (dependent_runway_ids): occupancy and wake pairs from Member 1 rules_config apply"
     },
     {
       "runways": [
@@ -199,7 +199,7 @@
       "source_type": "SOURCED",
       "spacing_m": 230,
       "spacing_source_type": "SYNTHETIC",
-      "rule": "Treated as dependent capacity; separation values belong to Member 1 rules_config"
+      "rule": "Dependent capacity (dependent_runway_ids): occupancy and wake pairs from Member 1 rules_config apply"
     }
   ],
   "arrival_exit_nodes": {
@@ -1568,7 +1568,7 @@
       "boarding_area": "E",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_E",
-      "max_wake_category": "MEDIUM",
+      "max_wake_category": "HEAVY",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1840,7 +1840,7 @@
       "boarding_area": "F",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_F",
-      "max_wake_category": "MEDIUM",
+      "max_wake_category": "HEAVY",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1848,7 +1848,7 @@
       "boarding_area": "F",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_F",
-      "max_wake_category": "MEDIUM",
+      "max_wake_category": "HEAVY",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1856,7 +1856,7 @@
       "boarding_area": "F",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_F",
-      "max_wake_category": "MEDIUM",
+      "max_wake_category": "HEAVY",
       "source_type": "SYNTHETIC"
     },
     {
@@ -1864,7 +1864,7 @@
       "boarding_area": "F",
       "boarding_area_source_type": "SOURCED",
       "apron_node": "APRON_F",
-      "max_wake_category": "MEDIUM",
+      "max_wake_category": "HEAVY",
       "source_type": "SYNTHETIC"
     },
     {

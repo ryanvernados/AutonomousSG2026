@@ -13,6 +13,7 @@ import type {
   ScenarioSummary,
   Snapshot,
 } from "./types";
+import type { LayoutMap } from "../map/movement";
 
 
 type Json = Record<string, any>;
@@ -34,7 +35,11 @@ export interface ResourceCatalog {
   taxiways: string[];
   equipment: string[];
 }
-export type LiveSnapshot = Snapshot & { resource_catalog?: ResourceCatalog };
+export type LiveSnapshot = Snapshot & {
+  resource_catalog?: ResourceCatalog;
+  // Member 2 drawing geometry (source_manifest.member2.layout.map); absent for synthetic fixtures.
+  layout_map?: LayoutMap;
+};
 
 const z = (v: unknown) => (typeof v === "string" && v.endsWith("+00:00") ? v.replace("+00:00", "Z") : v);
 
@@ -190,6 +195,7 @@ export function toUiSnapshot(response: Json, lastEventSeq: number): LiveSnapshot
     pending_negotiation: latest ? toUiNegotiation(latest, response.proposals ?? []) : null,
     last_event_seq: lastEventSeq,
     resource_catalog: catalog(s.infrastructure),
+    layout_map: s.data_quality?.source_manifest?.member2?.layout?.map,
   } as LiveSnapshot;
 }
 

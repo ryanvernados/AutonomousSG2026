@@ -2,6 +2,7 @@
 
 These are declared simulator constraints, not operational aviation certification.
 """
+from collections import defaultdict
 from datetime import datetime, timedelta
 from itertools import combinations
 
@@ -60,7 +61,9 @@ def instruction_issues(snapshot: Snapshot, instruction) -> list[str]:
     return issues
 
 
-def validate_plan(snapshot: Snapshot, plan: Plan) -> list[CheckResult]:
+def validate_plan(snapshot: Snapshot, plan: Plan, *, include_passes: bool = True) -> list[CheckResult]:
+    """All checks for the plan. include_passes=False returns only non-PASS checks; the search uses
+    it to decide feasibility without building ~10^3 PASS records per placement attempt."""
     if not all((snapshot.infrastructure, snapshot.rules_config, snapshot.start_utc,
                 snapshot.end_utc, snapshot.airport_iata)):
         return [CheckResult(constraint_id="snapshot.context", domain="PLATFORM", status="UNKNOWN",
@@ -68,11 +71,20 @@ def validate_plan(snapshot: Snapshot, plan: Plan) -> list[CheckResult]:
                             explanation="Infrastructure, rules, UTC horizon and airport context required")]
     results: list[CheckResult] = []
 
+    def number(value):
+        # Same coercion full validation applies to float | str | None (ints become floats).
+        return float(value) if isinstance(value, int) and not isinstance(value, bool) else value
+
     def check(cid, domain, passed, ids, explanation, measured=None, limit=None, unit=None):
-        results.append(CheckResult(constraint_id=cid, domain=domain,
-                                   status="UNKNOWN" if passed is None else "PASS" if passed else "FAIL",
-                                   affected_ids=ids, explanation=explanation, measured_value=measured,
-                                   limit_value=limit, unit=unit))
+        status = "UNKNOWN" if passed is None else "PASS" if passed else "FAIL"
+        if status == "PASS" and not include_passes:
+            return
+        # Values are generated here from typed models, so skip re-validating ~10^6 records per search.
+        results.append(CheckResult.model_construct(
+            constraint_id=cid, domain=domain, severity="HARD",
+            status=status,
+            affected_ids=list(ids), explanation=explanation, measured_value=number(measured),
+            limit_value=number(limit), unit=unit))
 
     check("plan.identity", "PLATFORM", plan_hash(plan) == plan.plan_hash, [plan.proposal_id],
           "Canonical SHA-256 content identity")
@@ -213,8 +225,11 @@ def validate_plan(snapshot: Snapshot, plan: Plan) -> list[CheckResult]:
                     r.starts_at_utc, r.ends_at_utc, instruction.starts_at_utc,
                     instruction.ends_at_utc or datetime.max.replace(tzinfo=r.starts_at_utc.tzinfo)),
                     [r.flight_id, r.resource_id, instruction.instruction_id], "Confirmed restriction must hold")
+    by_resource = defaultdict(list)
+    for r in occupied:
+        by_resource[r.resource_id].append(r)
     for rid, resource in resources.items():
-        intervals = [r for r in occupied if r.resource_id == rid]
+        intervals = by_resource.get(rid, [])
         # End events sort before starts: touching intervals do not overlap.
         capacity_intervals = [(r.starts_at_utc, r.ends_at_utc, r.quantity) for r in intervals]
         if resource.kind == "GATE":
@@ -260,9 +275,17 @@ def validate_plan(snapshot: Snapshot, plan: Plan) -> list[CheckResult]:
         lres, rres = resources.get(left.resource_id), resources.get(right.resource_id)
         dependent = left.resource_id == right.resource_id or (lres and rres and (
             right.resource_id in lres.dependent_runway_ids or left.resource_id in rres.dependent_runway_ids))
-        if not dependent:
-            continue
         pair_ids = [left.flight_id, right.flight_id]
+        if not dependent:
+            # Intersecting runways are not independent capacity: the intersection must be clear,
+            # so their occupancy intervals may not overlap. Wake pairs apply only to the same or
+            # dependent runways.
+            if lres and rres and (right.resource_id in lres.intersecting_runway_ids
+                                  or left.resource_id in rres.intersecting_runway_ids):
+                check("runway.intersection", "ATC", not overlap(left.starts_at_utc, left.ends_at_utc,
+                      right.starts_at_utc, right.ends_at_utc), pair_ids,
+                      "Intersecting runways cannot be occupied simultaneously")
+            continue
         check("runway.intersection", "ATC", not overlap(left.starts_at_utc, left.ends_at_utc,
               right.starts_at_utc, right.ends_at_utc), pair_ids,
               "Dependent runways cannot be occupied simultaneously")

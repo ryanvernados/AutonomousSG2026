@@ -16,6 +16,10 @@
     "2015-12-22T03:00:00Z",
     "2015-12-22T07:00:00Z"
   ],
+  "horizon_dev": [
+    "2015-12-22T04:55:00Z",
+    "2015-12-22T07:00:00Z"
+  ],
   "flights_full": 218,
   "flights_dev": 30,
   "arrivals_full": 130,
@@ -26,7 +30,7 @@
   "initial_occupancy": 44,
   "flights_without_gate": 0,
   "simulated_gates": 133,
-  "heavy_capable_gates": 53,
+  "heavy_capable_gates": 58,
   "synthetic_connections": 68,
   "crews": 162,
   "resources": 512,

@@ -57,6 +57,12 @@ def rotations(legs: list[dict]) -> dict[str, dict]:
     return link
 
 
+def stay_category(*legs) -> str:
+    """A gate must fit the largest aircraft category of every leg that uses it."""
+    cats = {A.wake_category(leg.get("distance_mi")) for leg in legs if leg}
+    return "HEAVY" if "HEAVY" in cats else "MEDIUM"
+
+
 def gate_stays(slice_legs, context_legs, link, t0, t_end) -> list[dict]:
     """One stay per aircraft on a gate during the horizon, with the slice flights that use it.
 
@@ -80,7 +86,7 @@ def gate_stays(slice_legs, context_legs, link, t0, t_end) -> list[dict]:
             continue
         uses = [nxt["flight_id"]] if nxt and nxt["flight_id"] in in_slice else []
         stays.append({"start": t0, "end": dep if uses else t_end, "flights": uses, "occupant": leg["flight_id"],
-                      "category": A.wake_category((nxt or leg).get("distance_mi")), "tail": leg["tail_number"],
+                      "category": stay_category(leg, nxt), "tail": leg["tail_number"],
                       "source_type": "HISTORICAL",
                       "basis": "Arrived before scenario start; same tail's next SFO departure at or after start"})
         covered.update(uses)
@@ -93,7 +99,8 @@ def gate_stays(slice_legs, context_legs, link, t0, t_end) -> list[dict]:
         start = A.parse(leg["sfo_scheduled_movement_utc"])
         end = A.parse(nxt["sfo_scheduled_movement_utc"]) if len(uses) == 2 else t_end
         stays.append({"start": start, "end": max(start, end), "flights": uses, "occupant": None,
-                      "category": A.wake_category(leg.get("distance_mi")), "tail": leg.get("tail_number")})
+                      "category": stay_category(leg, nxt if len(uses) == 2 else None),
+                      "tail": leg.get("tail_number")})
         covered.update(uses)
 
     for leg in slice_legs:  # departures with no covering inbound: aircraft assumed on gate at t0
@@ -161,6 +168,22 @@ def occupancy_provenance(stays: list[dict]) -> list[dict]:
              "gate_id": s["gate_id"], "release_flight_ids": s["flights"], "source_type": s["source_type"],
              "gate_assignment_source_type": "SYNTHETIC", "basis": s["basis"]}
             for s in stays if s["occupant"] is not None]
+
+
+DEV_LEAD_MINUTES = 20
+
+
+def dev_start(flights: list[dict], t0) -> str:
+    """Start the dev fixture DEV_LEAD_MINUTES before its first scheduled SFO movement (SYNTHETIC).
+
+    The fixture is a short contiguous run late in the window; starting at the full buffer start
+    would leave almost two hours of simulated time with nothing to do.
+    """
+    first = min(A.parse(f["scheduled_gate_arrival_utc"] if f["destination"] == config.AIRPORT_IATA
+                        else f["scheduled_gate_departure_utc"]) for f in flights)
+    start = first - A.minutes(DEV_LEAD_MINUTES)
+    start = start.replace(minute=start.minute - start.minute % 5, second=0)
+    return A.iso(max(t0, start))
 
 
 def build(slice_dir: Path) -> dict:
@@ -246,7 +269,8 @@ def build(slice_dir: Path) -> dict:
             [leg for leg in operating if leg["operation"] == "DEPARTURE"], SEED),
         "layout": {"file": "data/layout/sfo_layout.json", "sha256": sha256_file(layout_path),
                    "runway_relationships": layout["runway_relationships"],
-                   "node_positions": layout["taxiway_nodes"], "coordinate_frame": layout["coordinate_frame"]},
+                   "node_positions": layout["taxiway_nodes"], "coordinate_frame": layout["coordinate_frame"],
+                   "map": sfo_layout.map_geometry(layout, max_piece_m=p["taxi_piece_max_m"]["value"])},
         "historical_outcomes": {
             "use": "Replay and calibration only. Not an input to baseline or agent decisions.",
             "source_type": "HISTORICAL",
@@ -268,11 +292,11 @@ def build(slice_dir: Path) -> dict:
         "member2": member2,
     }
 
-    def scenario(scenario_id: str, chosen: list[dict]) -> Scenario:
+    def scenario(scenario_id: str, chosen: list[dict], start_utc: str | None = None) -> Scenario:
         return Scenario.model_validate({
             "schema_version": "1", "scenario_id": scenario_id, "project_id": PROJECT_ID,
             "airport_iata": config.AIRPORT_IATA, "timezone": config.AIRPORT_TZ, "seed": SEED,
-            "start_utc": w["buffer_start_utc"], "end_utc": w["buffer_end_utc"],
+            "start_utc": start_utc or w["buffer_start_utc"], "end_utc": w["buffer_end_utc"],
             "source_manifest": source_manifest, "rules_config": RulesConfig().model_dump(mode="json"),
             "flights": chosen, "infrastructure": infrastructure, "initial_occupancy": occupancy,
         })
@@ -280,7 +304,8 @@ def build(slice_dir: Path) -> dict:
     dev_ids = {leg["flight_id"] for leg in dev["flights"]}
     slug = f"sfo-{w['local_date']}-{w['window_selection']['start_local_hour']:02d}00"
     full = scenario(f"{slug}-full", flights)
-    dev_s = scenario(f"{slug}-dev", [f for f in flights if f["flight_id"] in dev_ids])
+    dev_flights = [f for f in flights if f["flight_id"] in dev_ids]
+    dev_s = scenario(f"{slug}-dev", dev_flights, dev_start(dev_flights, t0))
     SCENARIO_DIR.mkdir(parents=True, exist_ok=True)
     for s in (full, dev_s):
         (SCENARIO_DIR / f"{s.scenario_id}.json").write_text(
@@ -291,6 +316,7 @@ def build(slice_dir: Path) -> dict:
         "scenario_files": [f"data/processed/scenarios/{s.scenario_id}.json" for s in (full, dev_s)],
         "local_date": w["local_date"], "window": [w["start_utc"], w["end_utc"]],
         "horizon": [w["buffer_start_utc"], w["buffer_end_utc"]],
+        "horizon_dev": [A.iso(dev_s.start_utc), A.iso(dev_s.end_utc)],
         "flights_full": len(full.flights), "flights_dev": len(dev_s.flights),
         "arrivals_full": sum(f.destination == config.AIRPORT_IATA for f in full.flights),
         "departures_full": sum(f.origin == config.AIRPORT_IATA for f in full.flights),
