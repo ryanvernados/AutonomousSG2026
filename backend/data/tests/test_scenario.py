@@ -137,3 +137,26 @@ def test_evaluation_inputs_identical_across_policies():
     report = run(SLICES[-1], "runway-10R-28L-closure", {"a": "scheduled", "b": "scheduled"})
     assert report["runs"]["a"]["metrics"]["per_flight"] == report["runs"]["b"]["metrics"]["per_flight"]
     assert len(report["input_sha256"]) == 64
+
+
+def test_supabase_rows_and_https_verify(scenarios, monkeypatch):
+    httpx = pytest.importorskip("httpx")
+    from backend.data import supabase_import
+
+    rows = supabase_import.rows_for([scenarios["dev"]], None)
+    assert [len(rows[t]) for t in ("airports", "scenarios", "scenario_flights")] == [1, 1, 30]
+    stored = {rows["scenario_flights"][0]["flight_id"]: rows["scenario_flights"][0]["document"]}
+
+    def handler(request):
+        assert request.method == "GET" and request.headers["apikey"] == "test-secret"
+        table = request.url.path.rsplit("/", 1)[-1]
+        if table == "scenario_flights":
+            fid = request.url.params["flight_id"].removeprefix("eq.")
+            return httpx.Response(200, json=[{"document": stored[fid]}] if fid in stored else [])
+        return httpx.Response(200, json=[])
+
+    monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
+    monkeypatch.setenv("SUPABASE_SECRET_KEY", "test-secret")
+    summary = supabase_import.verify_https(rows, transport=httpx.MockTransport(handler))
+    assert summary["scenario_flights"] == {"present_identical": 1, "present_different": 0, "missing": 29}
+    assert summary["scenarios"]["missing"] == 1

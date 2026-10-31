@@ -1,8 +1,14 @@
 """Repeatable importer for Member 2 scenarios into the Member 1 Supabase schema.
 
     python -m backend.data.supabase_import                         # dry run: writes JSONL rows
-    python -m backend.data.supabase_import --apply                 # needs SUPABASE_DB_URL and psycopg
+    python -m backend.data.supabase_import --apply                 # write over Postgres (DATABASE_URL)
+    python -m backend.data.supabase_import --verify-https          # read-only check over HTTPS
     python -m backend.data.supabase_import --project-id <uuid>     # import into another project
+
+Environment variables match Member 1's .env: DATABASE_URL for direct Postgres, or
+SUPABASE_URL and SUPABASE_SECRET_KEY for the HTTPS adapter. Over HTTPS the backend key
+only has SELECT on these tables (migration 202610310002); mutations stay in Member 1's
+transaction RPC, so --verify-https reports missing or different rows but never writes.
 
 Target tables (supabase/migrations/202610310001_platform.sql):
     airports(project_id, airport_iata, document)
@@ -24,7 +30,7 @@ from backend.contracts import Scenario
 from . import config
 from .scenario import SCENARIO_DIR
 
-DB_URL_ENV = "SUPABASE_DB_URL"
+DB_URL_ENV = "DATABASE_URL"
 
 TABLES = {
     "airports": (["project_id", "airport_iata"], ["project_id", "airport_iata", "document"]),
@@ -86,18 +92,50 @@ def apply(rows: dict) -> None:
             print(f"{table}: {inserted} inserted, {len(rows[table]) - inserted} already present")
 
 
+def verify_https(rows: dict, *, transport=None) -> dict[str, dict[str, int]]:
+    """Compare local rows with what Supabase already holds, using the backend-only secret key."""
+    import httpx
+
+    url, key = os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_SECRET_KEY")
+    if not url or not key:
+        raise SystemExit("Set SUPABASE_URL and SUPABASE_SECRET_KEY (backend only) for --verify-https.")
+    summary = {}
+    with httpx.Client(base_url=url.rstrip("/") + "/rest/v1/", headers={"apikey": key},
+                      timeout=15, transport=transport) as client:
+        for table, (keycols, _) in TABLES.items():
+            counts = {"present_identical": 0, "present_different": 0, "missing": 0}
+            for r in rows[table]:
+                params = {"select": "document", **{c: f"eq.{r[c]}" for c in keycols}}
+                response = client.get(table, params=params)
+                response.raise_for_status()
+                found = response.json()
+                if not found:
+                    counts["missing"] += 1
+                elif found[0]["document"] == r["document"]:
+                    counts["present_identical"] += 1
+                else:
+                    counts["present_different"] += 1
+            summary[table] = counts
+            print(f"{table}: {counts}")
+    return summary
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Import contract scenarios into Supabase")
     parser.add_argument("--scenario", action="append", default=[],
                         help="Scenario JSON path (repeatable; default: every file in data/processed/scenarios)")
     parser.add_argument("--project-id", default=None, help="Project UUID; default is the scenario's project_id")
-    parser.add_argument("--apply", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--apply", action="store_true", help="Write over direct Postgres (DATABASE_URL)")
+    mode.add_argument("--verify-https", action="store_true", help="Read-only comparison over the HTTPS adapter")
     args = parser.parse_args(argv)
     paths = [Path(p) for p in args.scenario] or sorted(SCENARIO_DIR.glob("*.json"))
     scenarios = [Scenario.model_validate_json(p.read_text(encoding="utf-8")) for p in paths]
     rows = rows_for(scenarios, args.project_id)
     if args.apply:
         apply(rows)
+    elif args.verify_https:
+        verify_https(rows)
     else:
         dry_run(rows, config.PROCESSED_DIR / "supabase_rows")
 

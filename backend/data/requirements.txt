@@ -1,7 +1,7 @@
 # Member 2 data pipeline. Member 1 should fold the first block into the shared root lockfile;
 # the second block mirrors versions already pinned in uv.lock.
 pandas==3.1.0
-numpy==2.5.4
+numpy==2.4.6  # 2.5 needs Python >= 3.12; Member 1 targets 3.11
 python-dateutil==3.0.0
 six==1.17.0
 tzdata==2026.6

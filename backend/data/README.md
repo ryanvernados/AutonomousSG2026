@@ -9,7 +9,7 @@ The pipeline imports Member 1's `backend.contracts` (Pydantic) and, for engine c
 
 ```sh
 uv sync --frozen
-alias m2='uv run --frozen --with pandas==3.1.0 --with tzdata==2026.6'
+alias m2='uv run --frozen --with pandas==3.1.0 --with numpy==2.4.6 --with tzdata==2026.6'
 ```
 
 Without uv: `pip install -r backend/data/requirements.txt pydantic simpy`.
@@ -42,7 +42,7 @@ m2 python -m backend.data.disruptions
 m2 python -m backend.data.contract_check   # Member 1 models + engine-required assumptions
 m2 python -m backend.data.evaluate --fixture runway-10R-28L-closure --variant dev \
       --policy baseline=engine-baseline --policy sched=scheduled
-m2 python -m backend.data.supabase_import  # dry run; --apply needs SUPABASE_DB_URL
+m2 python -m backend.data.supabase_import  # dry run; --apply needs DATABASE_URL; --verify-https is read-only
 m2 pytest tests backend/data/tests
 ```
 
@@ -161,5 +161,8 @@ every hard check. Member 1's FCFS baseline still returns `NO_FEASIBLE_PLAN_FOUND
   clearance, and whether the 100-placement budget should apply per flight; both currently prevent a plan.
   `EQUIPMENT_FAILURE` blocks the whole tug pool; a partial outage needs a capacity parameter.
   Fold `pandas` and `tzdata` into the root lockfile.
+  Scenario writes over the HTTPS adapter need a backend RPC (service_role only has SELECT on
+  `airports`, `scenarios`, `scenario_flights`); until then import with `--apply` over `DATABASE_URL`
+  and check with `--verify-https`. Pins work on Python 3.11 (numpy 2.4.6).
 * **Member 3:** supply an agent `run(scenario, events, seed)` policy for `evaluate.py`.
 * **Member 4:** `sfo_layout.json` gives schematic x/y in metres for the Konva view; positions are not surveyed.
