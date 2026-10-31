@@ -24,7 +24,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-No `.env` is needed for the demo. `pnpm build` creates `dist/`; `pnpm preview` serves the production build. Deploy `dist/` to static hosting after setting the desired build-time environment variables. `npm install` and `npm run dev` also work, but pnpm uses the committed lockfile.
+No `.env` is needed for the demo. `pnpm build` creates `dist/`; `pnpm preview` serves the production build. Deploy `dist/` to static hosting after setting the desired build-time environment variables. Use pnpm with the committed lockfile for reproducible installs. The Windows launcher also supports `-Mode install`, `-Mode test`, `-Mode build`, and `-Mode e2e` (installs Chromium before running browser tests).
 
 ## Demonstrate the product
 
@@ -49,7 +49,7 @@ pnpm test:e2e
 
 Tests cover the preview boundary; immutable published schedules during negotiation/rejection; full-plan approval and retry idempotency; stale/expired proposals; manual cancellation; unknown/missing checks; incomplete or conflicting ballots; fallback; authenticated API errors; SSE parsing/reconnection; and keyboard/mobile workflows. They validate frontend and mock behavior, not backend database policies or real aircraft constraints.
 
-Browser tests write workflow screenshots to `evidence/`. The final verification counts and limitations are recorded in `HANDOFF.md`.
+Browser tests write workflow screenshots to ignored `test-results/` folders. The existing `evidence/` images are saved handoff examples. The original verification counts and limitations are recorded in `HANDOFF.md`.
 
 ## Connect the team's backend
 

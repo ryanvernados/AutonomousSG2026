@@ -33,7 +33,7 @@ Verification on 31 October 2026:
 | Access handling | Missing token prevents fetch; mocked 401/403/409/422/503 surfaced |
 | SSE | Split CRLF/multiline parsing, heartbeat, cursor replay and reconnect verified |
 
-Browser evidence: `evidence/01-controller-desktop.png`, `02-instruction-preview.png`, `03-proposal-review.png`, `04-controller-mobile.png`. The reproducible tests regenerate these files.
+Saved browser evidence: `evidence/01-controller-desktop.png`, `02-instruction-preview.png`, `03-proposal-review.png`, `04-controller-mobile.png`. New test runs generate screenshots in ignored `test-results/` folders, preserving these handoff examples.
 
 ## Example
 

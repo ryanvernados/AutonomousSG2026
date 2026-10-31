@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
-    "test:e2e": "playwright test",
+    "test:e2e": "node scripts/test-e2e.mjs",
     "generate:types": "openapi-typescript contracts/ui-draft.openapi.json -o src/api/generated.ts"
   },
   "dependencies": {

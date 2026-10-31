@@ -29,14 +29,14 @@ for (const outcome of ["unknown", "expired", "fallback", "no-plan"]) {
 }
 test("complete recovery workflow, rejection boundary, disconnect and manual control", async ({
   page,
-}) => {
+}, testInfo) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.setViewportSize({ width: 1440, height: 1100 });
   await page.goto("/");
   await expect(page.getByText("Keep the recovery moving.")).toBeVisible();
   await page.screenshot({
-    path: "evidence/01-controller-desktop.png",
+    path: testInfo.outputPath("01-controller-desktop.png"),
     fullPage: true,
   });
   const board = page.locator(".flight-table tbody");
@@ -45,7 +45,7 @@ test("complete recovery workflow, rejection boundary, disconnect and manual cont
   await page.getByRole("button", { name: "Preview instruction" }).click();
   await expect(page.getByText("READ-ONLY PREVIEW")).toBeVisible();
   await page.screenshot({
-    path: "evidence/02-instruction-preview.png",
+    path: testInfo.outputPath("02-instruction-preview.png"),
     fullPage: true,
   });
   await page.getByRole("button", { name: "Confirm instruction" }).click();
@@ -55,7 +55,7 @@ test("complete recovery workflow, rejection boundary, disconnect and manual cont
   ).toBeEnabled();
   expect(await board.innerText()).toBe(initial);
   await page.screenshot({
-    path: "evidence/03-proposal-review.png",
+    path: testInfo.outputPath("03-proposal-review.png"),
     fullPage: true,
   });
   await page.getByRole("button", { name: "Reject proposal" }).click();
@@ -88,7 +88,7 @@ test("complete recovery workflow, rejection boundary, disconnect and manual cont
   ).toContainText("Runway closure");
   expect(errors).toEqual([]);
 });
-test("narrow screen and keyboard access", async ({ page }) => {
+test("narrow screen and keyboard access", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   await expect(page.getByText("Keep the recovery moving.")).toBeVisible();
@@ -110,7 +110,7 @@ test("narrow screen and keyboard access", async ({ page }) => {
     ),
   ).toBe(true);
   await page.screenshot({
-    path: "evidence/04-controller-mobile.png",
+    path: testInfo.outputPath("04-controller-mobile.png"),
     fullPage: true,
   });
 });

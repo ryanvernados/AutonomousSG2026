@@ -1,7 +1,7 @@
 # Member 3: independent agents and bounded coordination
 
-Implemented from `Airport_Simulation_Team_Delivery_Plan.docx`, the common
-specification, and `03_MEMBER_3_AGENT_ASSIGNMENT.txt`. Changes stay inside
+Implemented from [the delivery plan](../../docs/plans/Airport_Simulation_Team_Delivery_Plan.docx), the common
+specification, and [the member 3 assignment](../../docs/handoff/03_MEMBER_3_AGENT_ASSIGNMENT.txt). Changes stay inside
 `backend/agents/` and `backend/coordination/`. The existing Git branch is retained.
 
 This module provides ATC, ground, and one pilot agent per affected flight; strict
