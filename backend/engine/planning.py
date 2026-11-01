@@ -107,7 +107,7 @@ class FlightRequest:
     gate_id: str | None = None
 
 
-def _assignment(snapshot, flight, runway, route, slot, gate_id=None):
+def _assignment(snapshot, flight, runway, route, slot, gate_id=None, gate_start=None):
     assumptions = flight.assumptions
     gate = assumptions.get("gate_id")
     crew = assumptions.get("crew_id")
@@ -121,7 +121,8 @@ def _assignment(snapshot, flight, runway, route, slot, gate_id=None):
     taxi_start = slot + timedelta(seconds=snapshot.rules_config.runway_occupancy_seconds) if arrival else (
         slot - timedelta(seconds=taxi_seconds))
     taxi_end = taxi_start + timedelta(seconds=taxi_seconds)
-    gate_start = taxi_end if arrival else max(snapshot.sim_time_utc,
+    # A turnaround departure takes over the gate exactly when its inbound arrival's occupancy ends.
+    gate_start = taxi_end if arrival else gate_start or max(snapshot.sim_time_utc,
         flight.scheduled_gate_departure_utc - timedelta(minutes=20))
     gate_end = gate_start + timedelta(seconds=snapshot.rules_config.minimum_turnaround_seconds) if arrival else (
         taxi_start)
@@ -158,7 +159,8 @@ def _gate_choices(snapshot, flight, scheduled_gate):
     return [scheduled_gate] + alternatives[:ALTERNATIVE_GATES]
 
 
-def _place(snapshot, flight, options, anchor, last, assignments, baseline, budget, attempted, rejected):
+def _place(snapshot, flight, options, anchor, last, assignments, baseline, budget, attempted, rejected,
+           gate_start=None):
     """Earliest validated slot for one flight over (runway, route, gate) options, anchor to last.
 
     Returns (assignment or None, placements attempted so far). Every attempt validates the
@@ -169,7 +171,8 @@ def _place(snapshot, flight, options, anchor, last, assignments, baseline, budge
         for runway, route, gate_id in options:
             if attempted >= budget:
                 break
-            candidate = _assignment(snapshot, flight, runway, route, anchor + timedelta(seconds=offset), gate_id)
+            candidate = _assignment(snapshot, flight, runway, route, anchor + timedelta(seconds=offset), gate_id,
+                                    gate_start)
             attempted += 1
             if not candidate:
                 rejected["flight.missing_assumptions"] += 1
@@ -188,7 +191,8 @@ def _place(snapshot, flight, options, anchor, last, assignments, baseline, budge
     return None, attempted
 
 
-def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseline=False, requests=None):
+def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseline=False, requests=None,
+                      flight_ids=None):
     """Bounded search with two separate limits.
 
     ``limit`` (at most rules_config.search_limit and 100) caps complete candidate plans, as the
@@ -213,7 +217,10 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
     rejected = Counter()
     plans = []
     runways = sorted(r.resource_id for r in snapshot.infrastructure.resources if r.kind == "RUNWAY")
+    # flight_ids limits replanning to an affected subset; every other published assignment stays
+    # fixed and is validated alongside the new placements.
     flights = [f for f in snapshot.flights if f.state not in {"DEPARTED", "COMPLETED"}
+               and (flight_ids is None or f.flight_id in flight_ids)
                and not any(r.flight_id == f.flight_id and r.starts_at_utc < snapshot.sim_time_utc
                            and r.ends_at_utc > snapshot.sim_time_utc for r in snapshot.resource_reservations)]
     budget = max(1, int(PLACEMENTS_PER_FLIGHT * plan_limit * max(1, len(flights))))
@@ -228,6 +235,21 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
             return deadline if deadline.tzinfo else snapshot.end_utc
         except (ValueError, TypeError):
             return snapshot.end_utc
+
+    # Same-tail rotations, matching validation: each departure's immediately preceding leg, when that
+    # leg is an arrival here, is its inbound aircraft and fixes its gate and earliest pushback.
+    tails = defaultdict(list)
+    for f in snapshot.flights:
+        if f.tail_number:
+            tails[f.tail_number].append(f)
+    inbound = {}
+    for legs in tails.values():
+        legs.sort(key=lambda f: (scheduled(f), f.flight_id))
+        for prev, nxt in zip(legs, legs[1:]):
+            if prev.destination == snapshot.airport_iata and nxt.origin == snapshot.airport_iata:
+                inbound[nxt.flight_id] = prev.flight_id
+    turnaround = timedelta(seconds=snapshot.rules_config.minimum_turnaround_seconds)
+    published = {f.flight_id: f.plan for f in snapshot.flights if f.plan}
 
     # Fuel-urgent flights take precedence; otherwise first come first served.
     orderings = [sorted(flights, key=lambda f: (
@@ -252,11 +274,19 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
                 break
             # A gate the agents chose is binding; otherwise fall back to compatible alternatives.
             gate_ids = [request.gate_id] if request.gate_id else _gate_choices(snapshot, flight, str(gate.value))
+            placed = {a.flight_id: a for a in assignments}
+            prior = placed.get(inbound.get(flight.flight_id)) or published.get(inbound.get(flight.flight_id))
+            hand_over = None
+            if prior and prior.gate_id and prior.gate_end_utc:
+                # The aircraft is already at its inbound gate: stay there, push after turnaround.
+                gate_ids, hand_over = [prior.gate_id], prior.gate_end_utc
             usable = [r for r in runways if not request.runway_ids or r in request.runway_ids]
             earliest = snapshot.sim_time_utc + timedelta(minutes=5)
             anchor = max(earliest, request.earliest_utc) if request.earliest_utc else max(
                 earliest, scheduled(flight) + (timedelta(minutes=-4) if arrival else timedelta(minutes=3)))
             last = min(snapshot.end_utc, request.latest_utc) if request.latest_utc else snapshot.end_utc
+            if hand_over:
+                anchor = max(anchor, prior.taxi_end_utc + turnaround)
             options = {g: [(r, path, g) for r in usable for path in _paths(snapshot,
                 r if arrival else g, g if arrival else r)] for g in gate_ids}
             # Scheduled gate first for a short delay; beyond that, the earliest slot at any choice.
@@ -269,7 +299,7 @@ def search_candidates(snapshot: Snapshot, constraints=None, limit=100, *, baseli
                     rejected["taxi.no_connected_route"] += 1
                     continue
                 chosen, attempted = _place(snapshot, flight, opts, anchor, until, assignments,
-                                           baseline, budget, attempted, rejected)
+                                           baseline, budget, attempted, rejected, hand_over)
                 if chosen:
                     break
             if chosen is None:
@@ -298,8 +328,8 @@ def enumerate_candidates(snapshot: Snapshot, constraints=None, limit=100) -> lis
     return search_candidates(snapshot, constraints, limit)[0]
 
 
-def select_fallback(snapshot: Snapshot, reason: str) -> FallbackResult:
-    plans, metadata = search_candidates(snapshot)
+def select_fallback(snapshot: Snapshot, reason: str, flight_ids=None) -> FallbackResult:
+    plans, metadata = search_candidates(snapshot, flight_ids=flight_ids)
     selected = min(plans, key=lambda p: (p.impact.score, tuple(a.flight_id for a in p.assignments))) if plans else None
     return FallbackResult(status="AWAITING_AUTHORIZATION" if selected else "NO_FEASIBLE_PLAN_FOUND",
                           reason=reason, plan=selected, checks=validate_plan(snapshot, selected) if selected else [],

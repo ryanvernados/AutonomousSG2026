@@ -5,8 +5,8 @@ import { routeNames, runwayDesignator, type LayoutMap } from "../map/movement";
 
 // Role-specific working instructions derived from the authorized plan (or, before approval, the
 // pending proposal), with each agent's own notes from the negotiation. Times are the plan's.
-type Role = "ATC" | "GROUND" | "PILOT";
-interface Movement {
+export type Role = "ATC" | "GROUND" | "PILOT";
+export interface Movement {
   flight: Flight;
   a: Assignment;
 }
@@ -30,18 +30,8 @@ function notes(snapshot: Snapshot, sender: string): string[] {
     .filter(Boolean);
 }
 
-export default function StaffInstructions({
-  snapshot,
-  map,
-  selected,
-  onSelect,
-}: {
-  snapshot: Snapshot;
-  map?: LayoutMap;
-  selected: string;
-  onSelect: (id: string) => void;
-}) {
-  const [role, setRole] = useState<Role>("ATC");
+/** Authorized movements, or the pending proposal's before approval (flagged by isProposal). */
+export function planMovements(snapshot: Snapshot): { movements: Movement[]; isProposal: boolean } {
   const published = snapshot.flights.filter((f) => f.plan).map((f) => ({ flight: f, a: f.plan! }));
   const proposal = snapshot.pending_negotiation?.plan;
   const proposed =
@@ -51,28 +41,52 @@ export default function StaffInstructions({
           return flight ? [{ flight, a }] : [];
         })
       : [];
-  const movements: Movement[] = (published.length ? published : proposed).sort(
+  const movements = (published.length ? published : proposed).sort(
     (x, y) => Date.parse(x.a.runway_time_utc) - Date.parse(y.a.runway_time_utc),
   );
-  const isProposal = !published.length && proposed.length > 0;
+  return { movements, isProposal: !published.length && proposed.length > 0 };
+}
+
+export default function StaffInstructions({
+  snapshot,
+  map,
+  selected,
+  onSelect,
+  fixedRole,
+  large = false,
+}: {
+  snapshot: Snapshot;
+  map?: LayoutMap;
+  selected: string;
+  onSelect: (id: string) => void;
+  /** Team screens show one role, without the role tabs. */
+  fixedRole?: Role;
+  large?: boolean;
+}) {
+  const [chosenRole, setRole] = useState<Role>("ATC");
+  const role = fixedRole ?? chosenRole;
+  const { movements, isProposal } = planMovements(snapshot);
   const t = Date.parse(snapshot.sim_time_utc);
   const closures = snapshot.active_instructions.filter((i) => i.resource_id);
 
   return (
-    <section className="panel staff-panel" aria-label="Staff instructions">
+    <section className={`panel staff-panel ${large ? "large" : ""}`} aria-label="Staff instructions">
       <div className="panel-heading">
         <div>
           <span className="eyebrow">STAFF INSTRUCTIONS</span>
-          <h2>What each team does next</h2>
+          <h2>
+            {fixedRole === "ATC" ? "Runway sequence" : fixedRole === "GROUND" ? "Gate and pushback tasks"
+              : fixedRole === "PILOT" ? "Flight clearances" : "What each team does next"}
+          </h2>
         </div>
-        <div className="role-tabs" role="tablist">
+        {!fixedRole && <div className="role-tabs" role="tablist">
           {(["ATC", "GROUND", "PILOT"] as Role[]).map((r) => (
             <button key={r} role="tab" aria-selected={role === r} className={role === r ? "active" : ""}
               onClick={() => setRole(r)}>
               {r === "ATC" ? "ATC" : r === "GROUND" ? "Ground ops" : "Pilots"}
             </button>
           ))}
-        </div>
+        </div>}
       </div>
       {!movements.length ? (
         <p className="ground-empty">

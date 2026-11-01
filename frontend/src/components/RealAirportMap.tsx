@@ -52,6 +52,7 @@ export default function RealAirportMap({
   const wrap = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(800);
   const [zoom, setZoom] = useState(1);
+  const [inboundOpen, setInboundOpen] = useState(true);
   const [offset, setOffset] = useState<Point>([0, 0]);
   const [tick, setTick] = useState(Date.now());
   const received = useRef(Date.now());
@@ -309,9 +310,12 @@ export default function RealAirportMap({
         </Layer>
       </Stage>
       {inbound.length > 0 && (
-        <div className="map-inbound" aria-label="Inbound arrivals">
-          <strong>Inbound</strong>
-          {inbound.slice(0, 6).map((i) => (
+        <div className={`map-inbound ${inboundOpen ? "" : "collapsed"}`} aria-label="Inbound arrivals">
+          <button type="button" className="inbound-toggle" aria-expanded={inboundOpen}
+            onClick={() => setInboundOpen((v) => !v)}>
+            Inbound · {inbound.length} {inboundOpen ? "▴" : "▾"}
+          </button>
+          {inboundOpen && inbound.slice(0, 6).map((i) => (
             <button key={i.flight.flight_id} type="button" onClick={() => onSelect(i.flight.flight_id)}
               className={i.flight.flight_id === selected ? "selected" : ""}>
               <span>
@@ -319,14 +323,16 @@ export default function RealAirportMap({
                 {i.flight.flight_number}
               </span>
               <span>{i.flight.origin}</span>
-              <span>{i.awaitingPlan ? "no slot" : i.runway}</span>
+              <span title={i.awaitingPlan ? "No approved runway slot yet: request a plan and approve it" : undefined}>
+                {i.awaitingPlan ? "unplanned" : i.runway}
+              </span>
               <span className={i.holding ? "eta holding" : "eta"}>
                 {i.holding ? `HOLD ${Math.round((now - i.eta) / 60000)}m` : countdown(i.eta, now).replace("in ", "")}
               </span>
             </button>
           ))}
-          {inbound.length > 6 && <small>+{inbound.length - 6} more in 45 min</small>}
-          {holders.length > 0 && (
+          {inboundOpen && inbound.length > 6 && <small>+{inbound.length - 6} more in 45 min</small>}
+          {inboundOpen && holders.length > 0 && (
             <small className="holding-note">
               {holders.length} holding: no approved plan. Request a plan and approve it to land them.
             </small>

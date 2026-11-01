@@ -13,6 +13,8 @@ import {
   Play,
   Plus,
   Radio,
+  Truck,
+  Plane,
   RotateCcw,
   Search,
   Shield,
@@ -48,6 +50,7 @@ import {
 import AirportMap from "./components/AirportMap";
 import GroundMovements from "./components/GroundMovements";
 import StaffInstructions from "./components/StaffInstructions";
+import TeamScreen from "./components/TeamScreen";
 import type { LiveSnapshot } from "./api/canonical";
 import Instructions from "./components/Instructions";
 import ProposalReview from "./components/ProposalReview";
@@ -160,7 +163,7 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
   const [events, setEvents] = useState<AuditEvent[]>([]),
     [history, setHistory] = useState<Snapshot[]>([]),
     [replayIndex, setReplayIndex] = useState(-1);
-  const [tab, setTab] = useState<"operations" | "replay" | "comparison">(
+  const [tab, setTab] = useState<"operations" | "replay" | "comparison" | "atc" | "ground" | "pilot">(
       "operations",
     ),
     [selected, setSelected] = useState(""),
@@ -180,6 +183,34 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
   const commandInFlight = useRef(false);
   const sessions = useRef(
     new globalThis.Map<string, ReturnType<typeof client.createSession>>(),
+  );
+  // Reopen this browser's last session for the scenario, so a reload keeps the approved plan;
+  // create a new one only when there is none or the server no longer has it.
+  const openSession = useCallback(
+    async (scenarioId: string): Promise<{ session_id: string; snapshot: Snapshot }> => {
+      const key = `groundline.session.${client.mode}.${scenarioId}`;
+      let saved: string | null = null;
+      try {
+        saved = localStorage.getItem(key);
+      } catch {
+        saved = null;
+      }
+      if (saved) {
+        try {
+          return { session_id: saved, snapshot: await client.snapshot(saved) };
+        } catch {
+          // Unknown or expired session: fall through to a fresh one.
+        }
+      }
+      const created = await client.createSession(scenarioId);
+      try {
+        localStorage.setItem(key, created.session_id);
+      } catch {
+        // Storage unavailable (private window): the session still works for this page.
+      }
+      return created;
+    },
+    [],
   );
   const ingest = useCallback((s: Snapshot) => {
     setSnapshot(s);
@@ -236,7 +267,7 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
     let active = true;
     setConnection("connecting");
     if (!sessions.current.has(chosen))
-      sessions.current.set(chosen, client.createSession(chosen));
+      sessions.current.set(chosen, openSession(chosen));
     void sessions.current
       .get(chosen)!
       .then((result) => {
@@ -386,7 +417,10 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
   const locked =
     busy || effectiveConnection !== "connected" || tab === "replay";
   const n = snapshot.pending_negotiation;
+  const team = tab === "atc" ? "ATC" : tab === "ground" ? "GROUND" : tab === "pilot" ? "PILOT" : null;
   const negotiating = n?.status === "NEGOTIATING";
+  // Resuming the clock makes a pending proposal stale, so Play waits for the controller's decision.
+  const awaitingDecision = n?.status === "AWAITING_AUTHORIZATION";
   const scenario = scenarios.find((s) => s.scenario_id === chosen);
   const conflicts = snapshot.resource_reservations.filter((r) =>
     snapshot.active_instructions.some(
@@ -438,6 +472,18 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
             onClick={() => setTab("comparison")}
           >
             <Layers size={18} /> Compare outcomes
+          </button>
+        </nav>
+        <span className="nav-label">TEAM SCREENS</span>
+        <nav aria-label="Team screens">
+          <button className={tab === "atc" ? "active" : ""} onClick={() => setTab("atc")}>
+            <Radio size={18} /> ATC tower
+          </button>
+          <button className={tab === "ground" ? "active" : ""} onClick={() => setTab("ground")}>
+            <Truck size={18} /> Ground ops
+          </button>
+          <button className={tab === "pilot" ? "active" : ""} onClick={() => setTab("pilot")}>
+            <Plane size={18} /> Pilots
           </button>
         </nav>
         <div className="sidebar-scenario">
@@ -510,20 +556,26 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
         <main id="main">
           <div className="page-heading">
             <div>
-              <div className="eyebrow">SFO / CONTROLLER WORKSPACE</div>
+              <div className="eyebrow">
+                {team ? "SFO / TEAM SCREEN" : "SFO / CONTROLLER WORKSPACE"}
+              </div>
               <h1>
                 {tab === "operations"
                   ? "Keep the recovery moving."
                   : tab === "replay"
                     ? "Review every decision."
-                    : "Compare the trade-offs."}
+                    : team
+                      ? team === "ATC" ? "Sequence the runways." : team === "GROUND" ? "Turn the gates." : "Fly the clearance."
+                      : "Compare the trade-offs."}
               </h1>
               <p>
                 {tab === "operations"
                   ? "One shared view. Coordinated agents. You make the call."
                   : tab === "replay"
                     ? "Read-only snapshots recorded during this browser session."
-                    : "Published and proposed outcomes, with their assumptions in view."}
+                    : team
+                      ? "Only what this team needs: what happens next, where, and when."
+                      : "Published and proposed outcomes, with their assumptions in view."}
               </p>
             </div>
             <button className="button" onClick={exportTrace}>
@@ -557,8 +609,14 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
                     ? "Pause simulation"
                     : "Resume simulation"
                 }
-                disabled={locked || (!snapshot.clock_running && negotiating)}
-                title={negotiating ? "Agents are negotiating; the clock stays paused" : undefined}
+                disabled={locked || (!snapshot.clock_running && (negotiating || awaitingDecision))}
+                title={
+                  negotiating
+                    ? "Agents are negotiating; the clock stays paused"
+                    : awaitingDecision && !snapshot.clock_running
+                      ? "Approve or reject the proposal first: resuming would make it stale"
+                      : undefined
+                }
                 onClick={() =>
                   act("clock", {
                     action: snapshot.clock_running ? "PAUSE" : "RESUME",
@@ -781,7 +839,9 @@ function Workspace({ onSignOut }: { onSignOut: () => void }) {
               </p>
             </section>
           )}
-          {tab === "comparison" ? (
+          {team ? (
+            <TeamScreen role={team} snapshot={visible} selected={selected} onSelect={setSelected} />
+          ) : tab === "comparison" ? (
             <section className="panel comparison-panel">
               <h2>Counterfactual comparison</h2>
               <p>

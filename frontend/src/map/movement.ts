@@ -22,7 +22,7 @@ export type Phase =
 
 const APPROACH_SECONDS = 240;
 /** Final approach and climb-out drawn beyond each threshold; the map frame includes them. */
-export const FINAL_METRES = 1000;
+export const FINAL_METRES = 600;
 const APPROACH_METRES = FINAL_METRES;
 const ROLL_SECONDS = 60;
 const CLIMB_SECONDS = 45;

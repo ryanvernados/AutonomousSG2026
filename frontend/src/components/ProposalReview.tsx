@@ -357,6 +357,11 @@ export default function ProposalReview({
             </p>
           )}
           {n!.status === "AWAITING_AUTHORIZATION" && (
+            <p className="fine-print decision-hint">
+              The clock stays paused until you decide. Approve to publish the schedule, then press Play.
+            </p>
+          )}
+          {n!.status === "AWAITING_AUTHORIZATION" && (
             <div className="decision-actions">
               <button
                 className="button primary full"

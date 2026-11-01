@@ -95,8 +95,10 @@ def reason_text(reason) -> str:
 class PlatformEngine:
     """EnginePort over one frozen canonical Snapshot. No commit capability."""
 
-    def __init__(self, snapshot: Snapshot):
+    def __init__(self, snapshot: Snapshot, affected_ids: list[str] | None = None):
         self.snapshot = snapshot
+        # Searches replan only the platform's affected set; other published flights stay fixed.
+        self.affected_ids = list(affected_ids) if affected_ids is not None else None
         self._search: tuple[list[Plan], dict] | None = None
         self.request_search: dict = {}
         self._search_lock = asyncio.Lock()
@@ -120,7 +122,8 @@ class PlatformEngine:
         # and the candidate batch, so the negotiation pays for the engine search only once.
         async with self._search_lock:
             if self._search is None:
-                self._search = await run_in_process(search_candidates, self.snapshot, None, 100)
+                self._search = await run_in_process(
+                    partial(search_candidates, flight_ids=self.affected_ids), self.snapshot, None, 100)
         return self._search
 
     async def _preview_plan(self) -> Plan | None:
@@ -197,7 +200,7 @@ class PlatformEngine:
         requested = []
         if requests:
             requested, self.request_search = await run_in_process(
-                partial(search_candidates, requests=requests), self.snapshot, None, 100)
+                partial(search_candidates, requests=requests, flight_ids=self.affected_ids), self.snapshot, None, 100)
         plans = requested + engine_plans
         out = []
         for p in plans[:limit]:
@@ -217,7 +220,7 @@ class PlatformEngine:
         return impact.model_dump(mode="json")
 
     async def select_fallback(self, snapshot: Json, reason: str) -> Json:
-        result = await asyncio.to_thread(select_fallback, self.snapshot, reason)
+        result = await run_in_process(select_fallback, self.snapshot, reason, self.affected_ids)
         meta = result.search_metadata
         return {"plan": result.plan.model_dump(mode="json") if result.plan else None,
                 "search_exhausted": bool(meta.get("exhaustive", False)), "limit": int(meta.get("limit", 100))}
@@ -255,7 +258,7 @@ class PlatformCoordinator:
 
     async def coordinate(self, snapshot: Snapshot, affected_ids: list[str],
                          negotiation_id: str) -> CoordinationOutcome:
-        engine = PlatformEngine(snapshot)
+        engine = PlatformEngine(snapshot, affected_ids)
         # No separate baseline search inside the negotiation deadline: Member 1 exposes the FCFS
         # baseline on GET /sessions/{id}/baseline, and impact is ranked on Impact.score.
         result = await Coordinator(engine, self.model, MemoryPersistence(), self.budgets).run(

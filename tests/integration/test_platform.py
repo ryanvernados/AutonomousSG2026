@@ -388,3 +388,21 @@ def test_clock_cannot_move_during_negotiation(service, session):
         assert blocked.value.body.code == "NEGOTIATION_RUNNING"
     assert service.store.get(session).negotiations[result["negotiation_id"]].status == "RUNNING"
 
+
+
+def test_published_schedule_replans_only_affected_flights(service, session):
+    from backend.api.service import affected_flights
+
+    plan = propose(service, session)
+    service.decision(session, plan.proposal_id, decision(plan), DEMO_USER)
+    snap = service.get_snapshot(session)
+    target = min((f.plan for f in snap.flights), key=lambda a: a.runway_time_utc)
+    instruction = Instruction(scenario_id=snap.scenario_id, base_state_version=snap.state_version,
+                              kind="RUNWAY_UNAVAILABLE", resource_id=target.runway_id,
+                              starts_at_utc=target.runway_time_utc - timedelta(minutes=1),
+                              ends_at_utc=target.runway_time_utc + timedelta(minutes=5))
+    service.instruction(session, InstructionCommand(command_id=uid(), base_state_version=snap.state_version,
+                                                    instruction=instruction), DEMO_USER)
+    affected = affected_flights(service.get_snapshot(session))
+    assert target.flight_id in affected
+    assert 0 < len(affected) < len(snap.flights)

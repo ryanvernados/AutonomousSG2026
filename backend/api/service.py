@@ -3,6 +3,7 @@ import hashlib
 import json
 import threading
 import time
+from datetime import timedelta
 
 from backend.api.coordinator import CoordinationOutcome, CoordinationRejected
 from backend.api.errors import PlatformError
@@ -15,6 +16,7 @@ from backend.contracts import (
     SessionDocument,
     Snapshot,
     plan_hash,
+    seal_plan,
     uid,
     utcnow,
 )
@@ -24,6 +26,49 @@ from backend.engine.scenarios import initial_snapshot
 from backend.engine.validation import instruction_issues
 
 ACTIVE_PROPOSALS = {"PROPOSED", "CONSENSUS_REACHED", "AWAITING_AUTHORIZATION"}
+
+
+CASCADE_AFTER_RESTRICTION = timedelta(minutes=15)
+
+
+def affected_flights(snapshot):
+    """Flights a negotiation replans.
+
+    With nothing published yet, the whole unfinished slice (the conservative closure). Once a
+    schedule is published, only what the disruption touches: unscheduled flights, flights whose
+    published slot breaks a confirmed restriction, flights with runway slots from each
+    restriction's start to CASCADE_AFTER_RESTRICTION after its end (where the knock-on delay
+    lands), and the next same-tail leg of any of these. Everything else stays as published.
+    """
+    unfinished = [f for f in snapshot.flights if f.state not in {"DEPARTED", "COMPLETED"}
+                  and not any(r.flight_id == f.flight_id and r.starts_at_utc < snapshot.sim_time_utc
+                              and r.ends_at_utc > snapshot.sim_time_utc for r in snapshot.resource_reservations)]
+    if not any(f.plan for f in unfinished):
+        return sorted(f.flight_id for f in unfinished)
+    chosen = {f.flight_id for f in unfinished if f.plan is None}
+    current = [f.plan for f in unfinished if f.plan]
+    if current and snapshot.active_instructions:
+        check = seal_plan(Plan(scenario_id=snapshot.scenario_id, base_state_version=snapshot.state_version,
+                               instruction_version=snapshot.instruction_version, assignments=current,
+                               expires_at_utc=utcnow() + timedelta(minutes=5)))
+        for c in validate_plan(snapshot, check, include_passes=False):
+            if c.constraint_id.startswith("instruction.") and c.status != "PASS":
+                chosen.update(c.affected_ids)
+    for i in snapshot.active_instructions:
+        until = (i.ends_at_utc or snapshot.end_utc) + CASCADE_AFTER_RESTRICTION
+        chosen.update(f.flight_id for f in unfinished
+                      if f.plan and i.starts_at_utc <= f.plan.runway_time_utc <= until)
+    by_tail = {}
+    for f in sorted(snapshot.flights, key=lambda f: (f.scheduled_gate_departure_utc if f.origin == snapshot.airport_iata
+                                                     else f.scheduled_gate_arrival_utc, f.flight_id)):
+        if f.tail_number:
+            by_tail.setdefault(f.tail_number, []).append(f.flight_id)
+    for legs in by_tail.values():
+        for prev, nxt in zip(legs, legs[1:]):
+            if prev in chosen:
+                chosen.add(nxt)
+    known = {f.flight_id for f in unfinished}
+    return sorted(chosen & known)
 
 
 def fingerprint(action, command, actor_id):
@@ -194,9 +239,7 @@ class PlatformService:
             known = {f.flight_id for f in doc.snapshot.flights}
             if set(command.affected_ids) - known:
                 raise PlatformError(422, "UNKNOWN_FLIGHT", "Affected IDs must reference scenario flights")
-            # Conservative transitive closure: whole traffic slice, including resource and rotation dependencies.
-            affected = sorted(f.flight_id for f in doc.snapshot.flights
-                              if f.state not in {"DEPARTED", "COMPLETED"})
+            affected = affected_flights(doc.snapshot)
             record = NegotiationRecord(affected_ids=affected)
             snap = doc.snapshot
             if snap.clock_status != "PAUSED":
@@ -270,7 +313,7 @@ class PlatformService:
         if reason == "CONSENSUS":
             plan, checks, metadata = outcome.plan, validate_plan(frozen, outcome.plan), {}
         else:
-            fallback = await run_in_process(select_fallback, frozen, reason)
+            fallback = await run_in_process(select_fallback, frozen, reason, list(record.affected_ids))
             plan, checks, metadata = fallback.plan, fallback.checks, fallback.search_metadata
         duration = time.monotonic() - started
         await asyncio.to_thread(self.finish_negotiation, session_id, negotiation_id, actor_id, frozen,
@@ -384,14 +427,14 @@ class PlatformService:
             for nid, record in doc.negotiations.items():
                 if record.status == "RUNNING":
                     if defer_fallbacks:
-                        deferred.append((doc.session_id, nid, doc.snapshot))
+                        deferred.append((doc.session_id, nid, doc.snapshot, list(record.affected_ids)))
                         continue
-                    result = select_fallback(doc.snapshot, "PROCESS_RESTART")
+                    result = select_fallback(doc.snapshot, "PROCESS_RESTART", list(record.affected_ids))
                     self.finish_negotiation(doc.session_id, nid, "SYSTEM", doc.snapshot, None, result.plan,
                         result.checks, result.search_metadata, "PROCESS_RESTART", 0)
         return deferred
 
-    async def finish_recovered(self, session_id, nid, snapshot):
-        result = await run_in_process(select_fallback, snapshot, "PROCESS_RESTART")
+    async def finish_recovered(self, session_id, nid, snapshot, affected_ids):
+        result = await run_in_process(select_fallback, snapshot, "PROCESS_RESTART", affected_ids)
         await asyncio.to_thread(self.finish_negotiation, session_id, nid, "SYSTEM", snapshot, None, result.plan,
                                 result.checks, result.search_metadata, "PROCESS_RESTART", 0)

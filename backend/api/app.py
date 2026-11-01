@@ -81,9 +81,9 @@ def create_app(settings=None, store=None, coordinator=None):
         app.state.service = PlatformService(persistence, ScenarioRepository(config.scenario_dir), coordinator,
                                             default_clock_speed=config.sim_speed)
         interrupted = await asyncio.to_thread(app.state.service.recover, True)
-        for session_id, nid, snapshot in interrupted:
+        for session_id, nid, snapshot, affected in interrupted:
             tasks[(session_id, nid)] = asyncio.create_task(
-                app.state.service.finish_recovered(session_id, nid, snapshot))
+                app.state.service.finish_recovered(session_id, nid, snapshot, affected))
 
         async def run_clock():
             while True:
